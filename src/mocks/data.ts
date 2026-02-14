@@ -19,6 +19,7 @@ import type {
   CommunitySettings,
   CommunityStats,
   Plugin,
+  UserPreferences,
 } from '@/lib/api/types'
 
 const COMMUNITY_DID = 'did:plc:test-community-123'
@@ -825,3 +826,16 @@ export const mockPlugins: Plugin[] = [
     installedAt: YESTERDAY,
   },
 ]
+
+// --- User Preferences ---
+
+export const mockUserPreferences: UserPreferences = {
+  maturityLevel: 'sfw',
+  ageDeclarationAt: null,
+  mutedWords: ['spam', 'offensive'],
+  blockedDids: [],
+  mutedDids: [],
+  crossPostBluesky: true,
+  crossPostFrontpage: false,
+  updatedAt: NOW,
+}
