@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import { AgeGateDialog } from '@/components/age-gate-dialog'
 import { cn } from '@/lib/utils'
 import { getPreferences, updatePreferences } from '@/lib/api/client'
 
@@ -41,7 +42,6 @@ export default function SettingsPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [ageDeclarationAt, setAgeDeclarationAt] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- prepared for Task 11 (age gate dialog)
   const [showAgeGate, setShowAgeGate] = useState(false)
 
   // Load preferences on mount
@@ -279,6 +279,20 @@ export default function SettingsPage() {
           </form>
         )}
       </div>
+
+      <AgeGateDialog
+        open={showAgeGate}
+        onConfirm={(ageAt) => {
+          setAgeDeclarationAt(ageAt)
+          setShowAgeGate(false)
+          // Re-trigger save now that age is declared
+          void handleSave({ preventDefault: () => {} } as React.FormEvent)
+        }}
+        onCancel={() => {
+          setShowAgeGate(false)
+          setValues((prev) => ({ ...prev, maturityLevel: 'sfw' }))
+        }}
+      />
     </ForumLayout>
   )
 }
