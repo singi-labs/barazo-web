@@ -14,6 +14,7 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ReputationBadge } from '@/components/reputation-badge'
 import { BanIndicator } from '@/components/ban-indicator'
+import { BlockMuteButton } from '@/components/block-mute-button'
 
 interface UserProfilePageProps {
   params: Promise<{ handle: string }> | { handle: string }
@@ -21,6 +22,8 @@ interface UserProfilePageProps {
 
 export default function UserProfilePage({ params }: UserProfilePageProps) {
   const [handle, setHandle] = useState<string | null>(null)
+  const [isBlocked, setIsBlocked] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
 
   useEffect(() => {
     async function resolveParams() {
@@ -103,6 +106,22 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
                   {mockProfile.bannedFromOtherCommunities === 1 ? 'community' : 'communities'}
                 </p>
               )}
+
+              {/* Block/Mute actions */}
+              <div className="mt-3 flex gap-2">
+                <BlockMuteButton
+                  targetDid={mockProfile.did}
+                  action="block"
+                  isActive={isBlocked}
+                  onToggle={setIsBlocked}
+                />
+                <BlockMuteButton
+                  targetDid={mockProfile.did}
+                  action="mute"
+                  isActive={isMuted}
+                  onToggle={setIsMuted}
+                />
+              </div>
             </div>
           </div>
         </div>
