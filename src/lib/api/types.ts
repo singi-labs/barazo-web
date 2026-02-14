@@ -382,6 +382,33 @@ export interface PluginsResponse {
   plugins: Plugin[]
 }
 
+// --- User Preferences ---
+
+export interface UserPreferences {
+  maturityLevel: 'sfw' | 'mature'
+  ageDeclarationAt: string | null
+  mutedWords: string[]
+  blockedDids: string[]
+  mutedDids: string[]
+  crossPostBluesky: boolean
+  crossPostFrontpage: boolean
+  updatedAt: string
+}
+
+export interface UpdatePreferencesInput {
+  maturityLevel?: 'sfw' | 'mature'
+  mutedWords?: string[]
+  blockedDids?: string[]
+  mutedDids?: string[]
+  crossPostBluesky?: boolean
+  crossPostFrontpage?: boolean
+}
+
+export interface AgeDeclarationResponse {
+  success: boolean
+  ageDeclarationAt: string
+}
+
 // --- Shared ---
 
 export type MaturityRating = 'safe' | 'mature' | 'adult'

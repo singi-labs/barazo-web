@@ -5,6 +5,7 @@
  */
 
 import type {
+  AgeDeclarationResponse,
   CategoriesResponse,
   CategoryTreeNode,
   CategoryWithTopicCount,
@@ -13,7 +14,9 @@ import type {
   CreateTopicInput,
   Topic,
   TopicsResponse,
+  UpdatePreferencesInput,
   UpdateTopicInput,
+  UserPreferences,
   RepliesResponse,
   SearchResponse,
   NotificationsResponse,
@@ -489,6 +492,93 @@ export function uninstallPlugin(
   options?: FetchOptions
 ): Promise<void> {
   return apiFetch<void>(`/api/plugins/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+// --- User Preference endpoints ---
+
+export function getPreferences(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<UserPreferences> {
+  return apiFetch<UserPreferences>('/api/users/me/preferences', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function updatePreferences(
+  input: UpdatePreferencesInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<UserPreferences> {
+  return apiFetch<UserPreferences>('/api/users/me/preferences', {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function declareAge(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<AgeDeclarationResponse> {
+  return apiFetch<AgeDeclarationResponse>('/api/users/me/age-declaration', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { confirm: true },
+  })
+}
+
+// --- Block/Mute endpoints ---
+
+export function blockUser(
+  did: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(`/api/users/me/block/${encodeURIComponent(did)}`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function unblockUser(
+  did: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(`/api/users/me/block/${encodeURIComponent(did)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function muteUser(
+  did: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(`/api/users/me/mute/${encodeURIComponent(did)}`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function unmuteUser(
+  did: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(`/api/users/me/mute/${encodeURIComponent(did)}`, {
     ...options,
     method: 'DELETE',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
