@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChatCircle, Users, FolderSimple, WarningCircle, TrendUp } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getCommunityStats } from '@/lib/api/client'
 import type { CommunityStats } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
@@ -45,13 +46,15 @@ export default function AdminDashboardPage() {
   const { getAccessToken } = useAuth()
   const [stats, setStats] = useState<CommunityStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchStats = useCallback(async () => {
+    setError(null)
     try {
       const data = await getCommunityStats(getAccessToken() ?? '')
       setStats(data)
     } catch {
-      // Silently handle
+      setError('Failed to load dashboard statistics. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -67,6 +70,8 @@ export default function AdminDashboardPage() {
         <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
 
         {loading && <p className="text-sm text-muted-foreground">Loading statistics...</p>}
+
+        {error && <ErrorAlert message={error} variant="page" onRetry={() => void fetchStats()} />}
 
         {stats && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

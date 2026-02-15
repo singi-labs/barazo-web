@@ -46,8 +46,10 @@ export function useOnboarding(): UseOnboardingResult {
       const result = await getOnboardingStatus(token)
       setStatus(result)
     } catch {
-      // If fetch fails, assume no onboarding required
-      setStatus({ complete: true, fields: [], responses: {}, missingFields: [] })
+      // Set status to null so callers can detect the error state.
+      // The UI will still function -- onboarding won't block posting
+      // if we can't determine onboarding status.
+      setStatus(null)
     } finally {
       setLoading(false)
     }

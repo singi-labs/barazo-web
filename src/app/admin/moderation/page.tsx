@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { WarningCircle, ShieldCheck, Clock, Prohibit } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import {
   getModerationReports,
   resolveReport,
@@ -502,8 +503,11 @@ export default function AdminModerationPage() {
   const [reportedUsers, setReportedUsers] = useState<ReportedUser[]>([])
   const [thresholds, setThresholds] = useState<ModerationThresholds | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
+    setLoadError(null)
     try {
       const [reportsRes, queueRes, logRes, usersRes, thresholdsRes] = await Promise.all([
         getModerationReports(getAccessToken() ?? ''),
@@ -518,7 +522,7 @@ export default function AdminModerationPage() {
       setReportedUsers(usersRes.users)
       setThresholds(thresholdsRes)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load moderation data. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -529,38 +533,44 @@ export default function AdminModerationPage() {
   }, [fetchData])
 
   const handleResolveReport = async (id: string, resolution: ReportResolution) => {
+    setActionError(null)
     try {
       await resolveReport(id, resolution, getAccessToken() ?? '')
       setReports((prev) => prev.filter((r) => r.id !== id))
     } catch {
-      // Silently handle
+      setActionError('Failed to resolve report. Please try again.')
     }
   }
 
   const handleResolveFirstPost = async (id: string, action: 'approved' | 'rejected') => {
+    setActionError(null)
     try {
       await resolveFirstPost(id, action, getAccessToken() ?? '')
       setFirstPostQueue((prev) => prev.filter((item) => item.id !== id))
     } catch {
-      // Silently handle
+      setActionError(
+        `Failed to ${action === 'approved' ? 'approve' : 'reject'} post. Please try again.`
+      )
     }
   }
 
   const handleBatchResolveFirstPost = async (ids: string[], action: 'approved' | 'rejected') => {
+    setActionError(null)
     try {
       await Promise.all(ids.map((id) => resolveFirstPost(id, action, getAccessToken() ?? '')))
       setFirstPostQueue((prev) => prev.filter((item) => !ids.includes(item.id)))
     } catch {
-      // Silently handle
+      setActionError('Failed to process batch action. Some items may not have been updated.')
     }
   }
 
   const handleSaveThresholds = async (updated: Partial<ModerationThresholds>) => {
+    setActionError(null)
     try {
       const result = await updateModerationThresholds(updated, getAccessToken() ?? '')
       setThresholds(result)
     } catch {
-      // Silently handle
+      setActionError('Failed to save thresholds. Please try again.')
     }
   }
 
@@ -595,6 +605,12 @@ export default function AdminModerationPage() {
             </button>
           ))}
         </div>
+
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchData()} />
+        )}
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {loading && <p className="text-sm text-muted-foreground">Loading...</p>}
 

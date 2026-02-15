@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getCommunitySettings, updateCommunitySettings } from '@/lib/api/client'
 import type { CommunitySettings, MaturityRating } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
@@ -18,13 +19,16 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<CommunitySettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const fetchSettings = useCallback(async () => {
+    setLoadError(null)
     try {
       const data = await getCommunitySettings()
       setSettings(data)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load community settings. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -37,6 +41,7 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     if (!settings) return
     setSaving(true)
+    setSaveError(null)
     try {
       const updated = await updateCommunitySettings(
         {
@@ -51,7 +56,7 @@ export default function AdminSettingsPage() {
       )
       setSettings(updated)
     } catch {
-      // Silently handle
+      setSaveError('Failed to save settings. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -63,6 +68,10 @@ export default function AdminSettingsPage() {
         <h1 className="text-2xl font-bold text-foreground">Community Settings</h1>
 
         {loading && <p className="text-sm text-muted-foreground">Loading settings...</p>}
+
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchSettings()} />
+        )}
 
         {settings && (
           <div className="max-w-lg space-y-6">
@@ -184,6 +193,8 @@ export default function AdminSettingsPage() {
                 />
               </div>
             </fieldset>
+
+            {saveError && <ErrorAlert message={saveError} onDismiss={() => setSaveError(null)} />}
 
             <button
               type="button"
