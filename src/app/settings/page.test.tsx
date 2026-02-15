@@ -16,6 +16,24 @@ vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
 }))
 
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: {
+      did: 'did:plc:user-alice-001',
+      handle: 'alice.bsky.social',
+      displayName: 'Alice',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: () => 'mock-access-token',
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 // Mock localStorage for jsdom environment
 const localStorageMock = (() => {
   let store: Record<string, string> = {}

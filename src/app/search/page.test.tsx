@@ -42,6 +42,20 @@ vi.mock('next/link', () => ({
   ),
 }))
 
+// Mock useAuth hook
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    getAccessToken: () => null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 // Mock API client
 vi.mock('@/lib/api/client', () => ({
   searchContent: vi.fn(),

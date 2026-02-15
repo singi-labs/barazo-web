@@ -46,6 +46,24 @@ vi.mock('@/lib/api/client', () => ({
   markNotificationsRead: vi.fn(),
 }))
 
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: {
+      did: 'did:plc:user-alice-001',
+      handle: 'alice.bsky.social',
+      displayName: 'Alice',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: () => 'mock-access-token',
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 import { getNotifications, markNotificationsRead } from '@/lib/api/client'
 
 const mockGetNotifications = vi.mocked(getNotifications)

@@ -7,6 +7,26 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BlockMuteButton } from './block-mute-button'
 
+const mockGetAccessToken = vi.fn(() => 'mock-access-token')
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: {
+      did: 'did:plc:user-alice-001',
+      handle: 'alice.bsky.social',
+      displayName: 'Alice',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: mockGetAccessToken,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 // Mock localStorage
 const mockStorage: Record<string, string> = {}
 
@@ -123,7 +143,7 @@ describe('BlockMuteButton', () => {
   })
 
   it('does not call onToggle without auth token', async () => {
-    delete mockStorage['accessToken']
+    mockGetAccessToken.mockReturnValue(null)
     const onToggle = vi.fn()
     render(
       <BlockMuteButton
