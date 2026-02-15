@@ -29,6 +29,12 @@ import type {
   AdminUsersResponse,
   MaturityRating,
   PluginsResponse,
+  OnboardingField,
+  OnboardingFieldsResponse,
+  CreateOnboardingFieldInput,
+  UpdateOnboardingFieldInput,
+  OnboardingStatus,
+  SubmitOnboardingInput,
 } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
@@ -583,6 +589,95 @@ export function unmuteUser(
     ...options,
     method: 'DELETE',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+// --- Admin onboarding field endpoints ---
+
+export function getOnboardingFields(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<OnboardingFieldsResponse> {
+  return apiFetch<OnboardingFieldsResponse>('/api/admin/onboarding-fields', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function createOnboardingField(
+  input: CreateOnboardingFieldInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<OnboardingField> {
+  return apiFetch<OnboardingField>('/api/admin/onboarding-fields', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function updateOnboardingField(
+  id: string,
+  input: UpdateOnboardingFieldInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<OnboardingField> {
+  return apiFetch<OnboardingField>(`/api/admin/onboarding-fields/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function deleteOnboardingField(
+  id: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  return apiFetch<void>(`/api/admin/onboarding-fields/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function reorderOnboardingFields(
+  fields: Array<{ id: string; sortOrder: number }>,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>('/api/admin/onboarding-fields/reorder', {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { fields },
+  })
+}
+
+// --- User onboarding endpoints ---
+
+export function getOnboardingStatus(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<OnboardingStatus> {
+  return apiFetch<OnboardingStatus>('/api/onboarding/status', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function submitOnboarding(
+  input: SubmitOnboardingInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>('/api/onboarding/submit', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
   })
 }
 

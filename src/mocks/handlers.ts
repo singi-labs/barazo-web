@@ -22,6 +22,7 @@ import {
   mockAdminUsers,
   mockPlugins,
   mockUserPreferences,
+  mockOnboardingFields,
 } from './data'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
@@ -503,6 +504,96 @@ export const handlers = [
 
   // DELETE /api/users/me/mute/:did
   http.delete(`${API_URL}/api/users/me/mute/:did`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ success: true })
+  }),
+
+  // --- Onboarding field endpoints ---
+
+  // GET /api/admin/onboarding-fields
+  http.get(`${API_URL}/api/admin/onboarding-fields`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ fields: mockOnboardingFields })
+  }),
+
+  // POST /api/admin/onboarding-fields
+  http.post(`${API_URL}/api/admin/onboarding-fields`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    const now = new Date().toISOString()
+    const newField = {
+      id: `field-${Date.now()}`,
+      communityDid: 'did:plc:test-community-123',
+      fieldType: body.fieldType,
+      label: body.label,
+      description: body.description ?? null,
+      isMandatory: body.isMandatory ?? true,
+      sortOrder: body.sortOrder ?? 0,
+      config: body.config ?? null,
+      createdAt: now,
+      updatedAt: now,
+    }
+    return HttpResponse.json(newField, { status: 201 })
+  }),
+
+  // PUT /api/admin/onboarding-fields/:id
+  http.put(`${API_URL}/api/admin/onboarding-fields/:id`, async ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = params['id'] as string
+    const existing = mockOnboardingFields.find((f) => f.id === id)
+    if (!existing) {
+      return HttpResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    return HttpResponse.json({ ...existing, ...body, updatedAt: new Date().toISOString() })
+  }),
+
+  // DELETE /api/admin/onboarding-fields/:id
+  http.delete(`${API_URL}/api/admin/onboarding-fields/:id`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // PUT /api/admin/onboarding-fields/reorder
+  http.put(`${API_URL}/api/admin/onboarding-fields/reorder`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ success: true })
+  }),
+
+  // GET /api/onboarding/status
+  http.get(`${API_URL}/api/onboarding/status`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({
+      complete: true,
+      fields: mockOnboardingFields,
+      responses: {},
+      missingFields: [],
+    })
+  }),
+
+  // POST /api/onboarding/submit
+  http.post(`${API_URL}/api/onboarding/submit`, async ({ request }) => {
     const auth = request.headers.get('Authorization')
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CreateTopicInput } from '@/lib/api/types'
 import { createTopic } from '@/lib/api/client'
@@ -15,13 +15,17 @@ import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicForm } from '@/components/topic-form'
+import { OnboardingModal } from '@/components/onboarding-modal'
+import { useOnboarding } from '@/hooks/use-onboarding'
 
 export default function NewTopicPage() {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const onboarding = useOnboarding()
+  const pendingValues = useRef<CreateTopicInput | null>(null)
 
-  const handleSubmit = async (values: CreateTopicInput) => {
+  const doSubmit = async (values: CreateTopicInput) => {
     setSubmitting(true)
     setError(null)
 
@@ -34,6 +38,26 @@ export default function NewTopicPage() {
       setError(err instanceof Error ? err.message : 'Failed to create topic')
       setSubmitting(false)
     }
+  }
+
+  const handleSubmit = async (values: CreateTopicInput) => {
+    if (!onboarding.loading && !onboarding.complete) {
+      pendingValues.current = values
+      onboarding.openModal()
+      return
+    }
+    await doSubmit(values)
+  }
+
+  const handleOnboardingComplete = async (
+    responses: Array<{ fieldId: string; response: unknown }>
+  ) => {
+    const success = await onboarding.submit(responses)
+    if (success && pendingValues.current) {
+      await doSubmit(pendingValues.current)
+      pendingValues.current = null
+    }
+    return success
   }
 
   return (
@@ -53,6 +77,16 @@ export default function NewTopicPage() {
         )}
 
         <TopicForm onSubmit={handleSubmit} submitting={submitting} />
+
+        <OnboardingModal
+          open={onboarding.showModal}
+          fields={onboarding.status?.fields ?? []}
+          onSubmit={handleOnboardingComplete}
+          onCancel={() => {
+            onboarding.closeModal()
+            pendingValues.current = null
+          }}
+        />
       </div>
     </ForumLayout>
   )

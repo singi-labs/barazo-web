@@ -70,7 +70,7 @@ Before starting any milestone, read the master plan's **Execution Strategy** sec
 - Which model to use per milestone (the plan has a per-milestone model map)
 - Review gates (spec compliance + code quality) that must pass before marking tasks complete
 
-**This repo's milestones (Phase 4):** M1-M3 use `opus` (scaffold, design system, auth -- establishes all patterns). M4-M13 use `sonnet` (follows established component and page patterns). Reviewers always use `sonnet`.
+**This repo's milestones (completed during P1):** Implementation milestones Web M1-M14 are internal to this repo and completed during P1 (Core MVP). Web M1-M3 use `opus` (scaffold, design system, auth -- establishes all patterns). Web M4-M14 use `sonnet` (follows established component and page patterns). Reviewers always use `sonnet`.
 
 ## Project Context
 

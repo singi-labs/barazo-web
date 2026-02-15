@@ -2,7 +2,7 @@
  * Tests for new topic page.
  */
 
-import { describe, it, expect, vi, beforeAll, afterAll, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach, afterAll, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
 import { setupServer } from 'msw/node'
 import { handlers } from '@/mocks/handlers'
@@ -10,7 +10,24 @@ import NewTopicPage from './page'
 
 const server = setupServer(...handlers)
 
+const mockStorage: Record<string, string> = {}
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+beforeEach(() => {
+  vi.stubGlobal('localStorage', {
+    getItem: vi.fn((key: string) => mockStorage[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage[key] = value
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete mockStorage[key]
+    }),
+    clear: vi.fn(),
+    length: 0,
+    key: vi.fn(),
+  })
+  mockStorage['accessToken'] = 'test-token'
+})
 afterEach(() => {
   cleanup()
   server.resetHandlers()
