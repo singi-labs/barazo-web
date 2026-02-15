@@ -46,6 +46,7 @@ export interface Topic {
   cid: string
   replyCount: number
   reactionCount: number
+  categoryMaturityRating: MaturityRating
   lastActivityAt: string
   createdAt: string
   indexedAt: string
@@ -161,6 +162,13 @@ export interface CommunitySettings {
   requireLoginForMature: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface PublicSettings {
+  communityName: string
+  maturityRating: MaturityRating
+  communityDescription: string | null
+  communityLogoUrl: string | null
 }
 
 export interface CommunityStats {

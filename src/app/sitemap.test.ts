@@ -67,6 +67,7 @@ beforeEach(() => {
         cid: 'bafyabc',
         replyCount: 5,
         reactionCount: 3,
+        categoryMaturityRating: 'safe' as const,
         lastActivityAt: '2025-06-15T12:00:00Z',
         createdAt: '2025-06-01T00:00:00Z',
         indexedAt: '2025-06-01T00:00:00Z',
@@ -84,6 +85,7 @@ beforeEach(() => {
         cid: 'bafydef',
         replyCount: 0,
         reactionCount: 1,
+        categoryMaturityRating: 'safe' as const,
         lastActivityAt: '2025-06-10T08:00:00Z',
         createdAt: '2025-06-10T00:00:00Z',
         indexedAt: '2025-06-10T00:00:00Z',
@@ -160,5 +162,116 @@ describe('sitemap', () => {
     // Should still return at least the homepage
     expect(result.length).toBeGreaterThanOrEqual(1)
     expect(result[0].url).toBe('https://barazo.forum')
+  })
+
+  it('excludes adult-rated categories from sitemap', async () => {
+    mockGetCategories.mockResolvedValue({
+      categories: [
+        {
+          id: '1',
+          slug: 'general',
+          name: 'General',
+          description: null,
+          parentId: null,
+          sortOrder: 0,
+          communityDid: 'did:plc:test',
+          maturityRating: 'safe' as const,
+          createdAt: '2025-01-01T00:00:00Z',
+          updatedAt: '2025-06-01T00:00:00Z',
+          children: [],
+        },
+        {
+          id: '3',
+          slug: 'adult-zone',
+          name: 'Adult Zone',
+          description: null,
+          parentId: null,
+          sortOrder: 1,
+          communityDid: 'did:plc:test',
+          maturityRating: 'adult' as const,
+          createdAt: '2025-01-01T00:00:00Z',
+          updatedAt: '2025-06-01T00:00:00Z',
+          children: [],
+        },
+      ],
+    })
+
+    const result = await sitemap()
+    const urls = result.map((entry) => entry.url)
+    expect(urls).toContain('https://barazo.forum/c/general')
+    expect(urls).not.toContain('https://barazo.forum/c/adult-zone')
+  })
+
+  it('excludes topics with adult categoryMaturityRating from sitemap', async () => {
+    mockGetTopics.mockResolvedValue({
+      topics: [
+        {
+          uri: 'at://did:plc:test/forum.barazo.topic/safe1',
+          rkey: 'safe1',
+          authorDid: 'did:plc:author1',
+          title: 'Safe Topic',
+          content: 'Safe content',
+          contentFormat: null,
+          category: 'general',
+          tags: null,
+          communityDid: 'did:plc:test',
+          cid: 'bafysafe',
+          replyCount: 0,
+          reactionCount: 0,
+          categoryMaturityRating: 'safe' as const,
+          lastActivityAt: '2025-06-15T12:00:00Z',
+          createdAt: '2025-06-01T00:00:00Z',
+          indexedAt: '2025-06-01T00:00:00Z',
+        },
+        {
+          uri: 'at://did:plc:test/forum.barazo.topic/adult1',
+          rkey: 'adult1',
+          authorDid: 'did:plc:author2',
+          title: 'Adult Topic',
+          content: 'Adult content',
+          contentFormat: null,
+          category: 'adult-zone',
+          tags: null,
+          communityDid: 'did:plc:test',
+          cid: 'bafyadult',
+          replyCount: 0,
+          reactionCount: 0,
+          categoryMaturityRating: 'adult' as const,
+          lastActivityAt: '2025-06-10T08:00:00Z',
+          createdAt: '2025-06-10T00:00:00Z',
+          indexedAt: '2025-06-10T00:00:00Z',
+        },
+      ],
+      cursor: null,
+    })
+
+    const result = await sitemap()
+    const urls = result.map((entry) => entry.url)
+    expect(urls).toContain('https://barazo.forum/t/safe-topic/safe1')
+    expect(urls).not.toContain('https://barazo.forum/t/adult-topic/adult1')
+  })
+
+  it('includes mature-rated categories in sitemap', async () => {
+    mockGetCategories.mockResolvedValue({
+      categories: [
+        {
+          id: '1',
+          slug: 'mature-zone',
+          name: 'Mature Zone',
+          description: null,
+          parentId: null,
+          sortOrder: 0,
+          communityDid: 'did:plc:test',
+          maturityRating: 'mature' as const,
+          createdAt: '2025-01-01T00:00:00Z',
+          updatedAt: '2025-06-01T00:00:00Z',
+          children: [],
+        },
+      ],
+    })
+
+    const result = await sitemap()
+    const urls = result.map((entry) => entry.url)
+    expect(urls).toContain('https://barazo.forum/c/mature-zone')
   })
 })

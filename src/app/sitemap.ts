@@ -1,6 +1,7 @@
 /**
  * Dynamic sitemap generation.
  * Includes homepage, categories (flattened tree), and topics.
+ * Excludes Adult-rated categories and their topics.
  * @see specs/prd-web.md Section 5 (Sitemaps)
  */
 
@@ -38,10 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getTopics({ limit: 1000, sort: 'latest' }).catch(() => null),
   ])
 
-  // Add category pages
+  // Add category pages (exclude Adult-rated)
   if (categoriesResult) {
     const allCategories = flattenCategories(categoriesResult.categories)
     for (const category of allCategories) {
+      if (category.maturityRating === 'adult') continue
       entries.push({
         url: `${SITE_URL}/c/${category.slug}`,
         lastModified: new Date(category.updatedAt),
@@ -51,9 +53,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Add topic pages
+  // Add topic pages (exclude Adult-rated)
   if (topicsResult) {
     for (const topic of topicsResult.topics) {
+      if (topic.categoryMaturityRating === 'adult') continue
       entries.push({
         url: `${SITE_URL}/t/${slugify(topic.title)}/${topic.rkey}`,
         lastModified: new Date(topic.lastActivityAt),

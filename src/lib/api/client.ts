@@ -12,6 +12,7 @@ import type {
   CommunitySettings,
   CommunityStats,
   CreateTopicInput,
+  PublicSettings,
   Topic,
   TopicsResponse,
   UpdatePreferencesInput,
@@ -232,6 +233,10 @@ export function getCommunitySettings(options?: FetchOptions): Promise<CommunityS
     ...options,
     headers: { ...options?.headers },
   })
+}
+
+export function getPublicSettings(options?: FetchOptions): Promise<PublicSettings> {
+  return apiFetch<PublicSettings>('/api/settings/public', options)
 }
 
 export function getCommunityStats(
