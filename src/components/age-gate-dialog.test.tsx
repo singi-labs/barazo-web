@@ -7,7 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AgeGateDialog } from './age-gate-dialog'
 
-const mockGetAccessToken = vi.fn(() => 'mock-access-token')
+const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
 
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({

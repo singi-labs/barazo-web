@@ -8,7 +8,7 @@ import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 import { useOnboarding } from './use-onboarding'
 
-const mockGetAccessToken = vi.fn(() => 'mock-access-token')
+const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
 
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
