@@ -7,6 +7,26 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AgeGateDialog } from './age-gate-dialog'
 
+const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: {
+      did: 'did:plc:user-alice-001',
+      handle: 'alice.bsky.social',
+      displayName: 'Alice',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: mockGetAccessToken,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 // Mock localStorage
 const mockStorage: Record<string, string> = {}
 
@@ -119,7 +139,7 @@ describe('AgeGateDialog', () => {
   })
 
   it('shows error when not authenticated', async () => {
-    delete mockStorage['accessToken']
+    mockGetAccessToken.mockReturnValue(null)
     render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
 
     const user = userEvent.setup()

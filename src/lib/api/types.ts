@@ -189,11 +189,15 @@ export interface AuthSession {
   expiresAt: string
   did: string
   handle: string
+  displayName: string | null
+  avatarUrl: string | null
 }
 
 export interface AuthUser {
   did: string
   handle: string
+  displayName: string | null
+  avatarUrl: string | null
 }
 
 // --- Notifications ---

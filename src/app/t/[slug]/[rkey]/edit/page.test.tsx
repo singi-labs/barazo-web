@@ -14,6 +14,20 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
+// Mock useAuth hook
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    getAccessToken: () => null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: () => ({

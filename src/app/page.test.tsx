@@ -39,6 +39,20 @@ vi.mock('next/link', () => ({
   ),
 }))
 
+// Mock useAuth hook
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    getAccessToken: () => null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 import { getCategories, getTopics } from '@/lib/api/client'
 import { mockCategories, mockTopics } from '@/mocks/data'
 import HomePage from './page'

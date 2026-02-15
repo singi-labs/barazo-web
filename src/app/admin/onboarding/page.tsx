@@ -22,9 +22,7 @@ import type {
   OnboardingFieldType,
   CreateOnboardingFieldInput,
 } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 const FIELD_TYPE_LABELS: Record<OnboardingFieldType, string> = {
   age_confirmation: 'Age Confirmation',
@@ -54,6 +52,7 @@ const EMPTY_FIELD: EditingField = {
 }
 
 export default function AdminOnboardingPage() {
+  const { getAccessToken } = useAuth()
   const [fields, setFields] = useState<OnboardingField[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingField | null>(null)
@@ -62,14 +61,14 @@ export default function AdminOnboardingPage() {
 
   const fetchFields = useCallback(async () => {
     try {
-      const response = await getOnboardingFields(MOCK_TOKEN)
+      const response = await getOnboardingFields(getAccessToken() ?? '')
       setFields(response.fields)
     } catch {
       // Silently handle
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchFields()
@@ -94,7 +93,7 @@ export default function AdminOnboardingPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteOnboardingField(id, MOCK_TOKEN)
+      await deleteOnboardingField(id, getAccessToken() ?? '')
       void fetchFields()
     } catch {
       // Silently handle
@@ -120,7 +119,7 @@ export default function AdminOnboardingPage() {
             isMandatory: editing.isMandatory,
             config: editing.config,
           },
-          MOCK_TOKEN
+          getAccessToken() ?? ''
         )
       } else {
         const input: CreateOnboardingFieldInput = {
@@ -131,7 +130,7 @@ export default function AdminOnboardingPage() {
           sortOrder: fields.length,
           config: editing.config ?? undefined,
         }
-        await createOnboardingField(input, MOCK_TOKEN)
+        await createOnboardingField(input, getAccessToken() ?? '')
       }
       setEditing(null)
       void fetchFields()
@@ -151,7 +150,7 @@ export default function AdminOnboardingPage() {
     setFields(newFields)
     await reorderOnboardingFields(
       newFields.map((f, i) => ({ id: f.id, sortOrder: i })),
-      MOCK_TOKEN
+      getAccessToken() ?? ''
     )
   }
 
@@ -164,7 +163,7 @@ export default function AdminOnboardingPage() {
     setFields(newFields)
     await reorderOnboardingFields(
       newFields.map((f, i) => ({ id: f.id, sortOrder: i })),
-      MOCK_TOKEN
+      getAccessToken() ?? ''
     )
   }
 

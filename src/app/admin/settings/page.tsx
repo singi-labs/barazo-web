@@ -11,11 +11,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { getCommunitySettings, updateCommunitySettings } from '@/lib/api/client'
 import type { CommunitySettings, MaturityRating } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function AdminSettingsPage() {
+  const { getAccessToken } = useAuth()
   const [settings, setSettings] = useState<CommunitySettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -48,7 +47,7 @@ export default function AdminSettingsPage() {
           primaryColor: settings.primaryColor,
           accentColor: settings.accentColor,
         },
-        MOCK_TOKEN
+        getAccessToken() ?? ''
       )
       setSettings(updated)
     } catch {

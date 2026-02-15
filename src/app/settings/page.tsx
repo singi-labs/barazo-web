@@ -14,6 +14,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
 import { cn } from '@/lib/utils'
 import { getPreferences, updatePreferences } from '@/lib/api/client'
+import { useAuth } from '@/hooks/use-auth'
 
 type MaturityLevel = 'sfw' | 'sfw-mature'
 
@@ -28,6 +29,7 @@ interface SettingsValues {
 }
 
 export default function SettingsPage() {
+  const { getAccessToken } = useAuth()
   const [values, setValues] = useState<SettingsValues>({
     maturityLevel: 'sfw',
     mutedWords: '',
@@ -46,7 +48,7 @@ export default function SettingsPage() {
 
   // Load preferences on mount
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
+    const token = getAccessToken()
     if (!token) {
       setLoading(false)
       return
@@ -67,7 +69,7 @@ export default function SettingsPage() {
       })
       .catch(() => setError('Failed to load preferences'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [getAccessToken])
 
   const handleSave = useCallback(
     async (e: React.FormEvent) => {
@@ -76,7 +78,7 @@ export default function SettingsPage() {
       setError(null)
       setSuccess(false)
 
-      const token = localStorage.getItem('accessToken')
+      const token = getAccessToken()
       if (!token) {
         setError('Not authenticated')
         setSaving(false)
@@ -112,7 +114,7 @@ export default function SettingsPage() {
         setSaving(false)
       }
     },
-    [values, declaredAge]
+    [values, declaredAge, getAccessToken]
   )
 
   return (

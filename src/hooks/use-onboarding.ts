@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getOnboardingStatus, submitOnboarding } from '@/lib/api/client'
 import type { OnboardingStatus, OnboardingFieldType } from '@/lib/api/types'
+import { useAuth } from '@/hooks/use-auth'
 
 export interface UseOnboardingResult {
   /** Whether onboarding status has been loaded */
@@ -29,12 +30,13 @@ export interface UseOnboardingResult {
 }
 
 export function useOnboarding(): UseOnboardingResult {
+  const { getAccessToken } = useAuth()
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<OnboardingStatus | null>(null)
   const [showModal, setShowModal] = useState(false)
 
   const fetchStatus = useCallback(async () => {
-    const token = localStorage.getItem('accessToken')
+    const token = getAccessToken()
     if (!token) {
       setLoading(false)
       return
@@ -49,7 +51,7 @@ export function useOnboarding(): UseOnboardingResult {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchStatus()
@@ -57,7 +59,7 @@ export function useOnboarding(): UseOnboardingResult {
 
   const submit = useCallback(
     async (responses: Array<{ fieldId: string; response: unknown }>): Promise<boolean> => {
-      const token = localStorage.getItem('accessToken')
+      const token = getAccessToken()
       if (!token) return false
 
       try {
@@ -69,7 +71,7 @@ export function useOnboarding(): UseOnboardingResult {
         return false
       }
     },
-    [fetchStatus]
+    [fetchStatus, getAccessToken]
   )
 
   return {

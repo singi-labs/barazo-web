@@ -8,6 +8,26 @@ import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 import { useOnboarding } from './use-onboarding'
 
+const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: {
+      did: 'did:plc:user-alice-001',
+      handle: 'alice.bsky.social',
+      displayName: 'Alice',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: mockGetAccessToken,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
 const mockStorage: Record<string, string> = {}
@@ -114,7 +134,7 @@ describe('useOnboarding', () => {
   })
 
   it('handles missing auth token gracefully', async () => {
-    delete mockStorage['accessToken']
+    mockGetAccessToken.mockReturnValue(null)
 
     const { result } = renderHook(() => useOnboarding())
 

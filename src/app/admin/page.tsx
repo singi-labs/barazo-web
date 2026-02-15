@@ -12,9 +12,7 @@ import { ChatCircle, Users, FolderSimple, WarningCircle, TrendUp } from '@phosph
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { getCommunityStats } from '@/lib/api/client'
 import type { CommunityStats } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 interface StatCardProps {
   label: string
@@ -44,19 +42,20 @@ function StatCard({ label, value, recentValue, icon: Icon }: StatCardProps) {
 }
 
 export default function AdminDashboardPage() {
+  const { getAccessToken } = useAuth()
   const [stats, setStats] = useState<CommunityStats | null>(null)
   const [loading, setLoading] = useState(true)
 
   const fetchStats = useCallback(async () => {
     try {
-      const data = await getCommunityStats(MOCK_TOKEN)
+      const data = await getCommunityStats(getAccessToken() ?? '')
       setStats(data)
     } catch {
       // Silently handle
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchStats()

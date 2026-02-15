@@ -17,9 +17,11 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicForm } from '@/components/topic-form'
 import { OnboardingModal } from '@/components/onboarding-modal'
 import { useOnboarding } from '@/hooks/use-onboarding'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function NewTopicPage() {
   const router = useRouter()
+  const { getAccessToken } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const onboarding = useOnboarding()
@@ -30,8 +32,7 @@ export default function NewTopicPage() {
     setError(null)
 
     try {
-      // TODO: Get access token from auth context when auth is implemented
-      const accessToken = ''
+      const accessToken = getAccessToken() ?? ''
       const topic = await createTopic(values, accessToken)
       router.push(getTopicUrl(topic))
     } catch (err) {

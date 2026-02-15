@@ -4,6 +4,8 @@
  */
 
 import type {
+  AuthSession,
+  AuthUser,
   CategoryTreeNode,
   CategoryWithTopicCount,
   Topic,
@@ -38,6 +40,24 @@ export const mockUsers = [
   { did: 'did:plc:user-dave-004', handle: 'dave.bsky.social' },
   { did: 'did:plc:user-eve-005', handle: 'eve.forum.example' },
 ] as const
+
+// --- Auth ---
+
+export const mockAuthSession: AuthSession = {
+  accessToken: 'mock-access-token-xyz',
+  expiresAt: '2026-02-15T13:00:00.000Z',
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+}
+
+export const mockAuthUser: AuthUser = {
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+}
 
 // --- Categories ---
 

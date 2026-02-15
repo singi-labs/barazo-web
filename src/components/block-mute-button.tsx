@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { Prohibit, SpeakerSimpleSlash } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { blockUser, unblockUser, muteUser, unmuteUser } from '@/lib/api/client'
+import { useAuth } from '@/hooks/use-auth'
 
 interface BlockMuteButtonProps {
   targetDid: string
@@ -26,12 +27,13 @@ export function BlockMuteButton({
   onToggle,
   className,
 }: BlockMuteButtonProps) {
+  const { getAccessToken } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleClick = async () => {
     setLoading(true)
 
-    const token = localStorage.getItem('accessToken')
+    const token = getAccessToken()
     if (!token) {
       setLoading(false)
       return

@@ -13,9 +13,7 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import { getAdminUsers, banUser, unbanUser } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { AdminUser } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 const ROLE_COLORS: Record<string, string> = {
   admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
@@ -32,19 +30,20 @@ function formatDate(dateStr: string) {
 }
 
 export default function AdminUsersPage() {
+  const { getAccessToken } = useAuth()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await getAdminUsers(MOCK_TOKEN)
+      const response = await getAdminUsers(getAccessToken() ?? '')
       setUsers(response.users)
     } catch {
       // Silently handle
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchUsers()
@@ -52,7 +51,7 @@ export default function AdminUsersPage() {
 
   const handleBan = async (did: string) => {
     try {
-      await banUser(did, 'Banned by admin', MOCK_TOKEN)
+      await banUser(did, 'Banned by admin', getAccessToken() ?? '')
       setUsers((prev) =>
         prev.map((u) =>
           u.did === did
@@ -72,7 +71,7 @@ export default function AdminUsersPage() {
 
   const handleUnban = async (did: string) => {
     try {
-      await unbanUser(did, MOCK_TOKEN)
+      await unbanUser(did, getAccessToken() ?? '')
       setUsers((prev) =>
         prev.map((u) =>
           u.did === did ? { ...u, isBanned: false, bannedAt: null, banReason: null } : u
