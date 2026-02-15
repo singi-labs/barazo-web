@@ -412,6 +412,61 @@ export interface AgeDeclarationResponse {
   declaredAge: number
 }
 
+// --- Onboarding Fields ---
+
+export type OnboardingFieldType =
+  | 'age_confirmation'
+  | 'tos_acceptance'
+  | 'newsletter_email'
+  | 'custom_text'
+  | 'custom_select'
+  | 'custom_checkbox'
+
+export interface OnboardingField {
+  id: string
+  communityDid: string
+  fieldType: OnboardingFieldType
+  label: string
+  description: string | null
+  isMandatory: boolean
+  sortOrder: number
+  config: Record<string, unknown> | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface OnboardingFieldsResponse {
+  fields: OnboardingField[]
+}
+
+export interface CreateOnboardingFieldInput {
+  fieldType: OnboardingFieldType
+  label: string
+  description?: string
+  isMandatory?: boolean
+  sortOrder?: number
+  config?: Record<string, unknown>
+}
+
+export interface UpdateOnboardingFieldInput {
+  label?: string
+  description?: string | null
+  isMandatory?: boolean
+  sortOrder?: number
+  config?: Record<string, unknown> | null
+}
+
+export interface OnboardingStatus {
+  complete: boolean
+  fields: OnboardingField[]
+  responses: Record<string, unknown>
+  missingFields: Array<{ id: string; label: string; fieldType: OnboardingFieldType }>
+}
+
+export interface SubmitOnboardingInput {
+  responses: Array<{ fieldId: string; response: unknown }>
+}
+
 // --- Shared ---
 
 export type MaturityRating = 'safe' | 'mature' | 'adult'

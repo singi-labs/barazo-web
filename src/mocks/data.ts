@@ -20,6 +20,7 @@ import type {
   CommunityStats,
   Plugin,
   UserPreferences,
+  OnboardingField,
 } from '@/lib/api/types'
 
 const COMMUNITY_DID = 'did:plc:test-community-123'
@@ -842,3 +843,32 @@ export const mockUserPreferences: UserPreferences = {
   crossPostFrontpage: false,
   updatedAt: NOW,
 }
+
+// --- Onboarding Fields ---
+
+export const mockOnboardingFields: OnboardingField[] = [
+  {
+    id: 'field-tos',
+    communityDid: COMMUNITY_DID,
+    fieldType: 'tos_acceptance',
+    label: 'Terms of Service',
+    description: 'You must accept our community rules to participate.',
+    isMandatory: true,
+    sortOrder: 0,
+    config: { tosUrl: 'https://example.com/tos' },
+    createdAt: TWO_DAYS_AGO,
+    updatedAt: TWO_DAYS_AGO,
+  },
+  {
+    id: 'field-intro',
+    communityDid: COMMUNITY_DID,
+    fieldType: 'custom_text',
+    label: 'Introduce yourself',
+    description: 'Tell us a bit about yourself and why you joined.',
+    isMandatory: false,
+    sortOrder: 1,
+    config: null,
+    createdAt: TWO_DAYS_AGO,
+    updatedAt: TWO_DAYS_AGO,
+  },
+]
