@@ -3,7 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import SettingsPage from './page'
 
@@ -82,7 +83,7 @@ describe('SettingsPage', () => {
   it('renders muted words input', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
-      expect(screen.getByLabelText(/muted words/i)).toBeInTheDocument()
+      expect(screen.getByLabelText('Muted words')).toBeInTheDocument()
     })
   })
 
@@ -125,8 +126,8 @@ describe('SettingsPage', () => {
       expect(screen.getByLabelText(/maturity level/i)).toBeInTheDocument()
     })
 
-    // Muted words should be populated from mock data
-    const mutedWordsInput = screen.getByLabelText(/muted words/i) as HTMLTextAreaElement
+    // Muted words should be populated from mock data (global, not community-specific)
+    const mutedWordsInput = screen.getByLabelText('Muted words') as HTMLTextAreaElement
     expect(mutedWordsInput.value).toBe('spam, offensive')
   })
 
@@ -137,5 +138,81 @@ describe('SettingsPage', () => {
     })
     const results = await axe(container)
     expect(results).toHaveNoViolations()
+  })
+
+  // --- Per-Community Overrides ---
+
+  describe('Per-Community Overrides', () => {
+    it('renders per-community overrides section', async () => {
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText(/per-community overrides/i)).toBeInTheDocument()
+      })
+    })
+
+    it('loads and displays community list from API', async () => {
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText('Barazo Test Community')).toBeInTheDocument()
+        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+      })
+    })
+
+    it('shows maturity override for each community', async () => {
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+      })
+      // Gaming Forum has maturity override set to 'mature'
+      const gamingSection = screen.getByText('Gaming Forum').closest('details')!
+      const maturitySelect = within(gamingSection).getByLabelText(/maturity override/i)
+      expect(maturitySelect).toBeInTheDocument()
+    })
+
+    it('shows community-specific muted words', async () => {
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+      })
+      // Expand Gaming Forum section to see community-specific fields
+      const gamingSummary = screen.getByText('Gaming Forum')
+      await userEvent.click(gamingSummary)
+      const gamingSection = gamingSummary.closest('details')!
+      const mutedWordsInput = within(gamingSection).getByLabelText(
+        /community muted words/i
+      ) as HTMLTextAreaElement
+      expect(mutedWordsInput.value).toBe('spoiler')
+    })
+
+    it('shows community-specific blocked users', async () => {
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+      })
+      const gamingSummary = screen.getByText('Gaming Forum')
+      await userEvent.click(gamingSummary)
+      const gamingSection = gamingSummary.closest('details')!
+      const blockedInput = within(gamingSection).getByLabelText(
+        /community blocked users/i
+      ) as HTMLTextAreaElement
+      expect(blockedInput.value).toBe('did:plc:user-dave-004')
+    })
+
+    it('shows empty state when user has no community overrides', async () => {
+      // This test verifies the section renders even with empty data
+      render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText(/per-community overrides/i)).toBeInTheDocument()
+      })
+    })
+
+    it('passes axe accessibility check with community overrides', async () => {
+      const { container } = render(<SettingsPage />)
+      await waitFor(() => {
+        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+      })
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
   })
 })

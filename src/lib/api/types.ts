@@ -419,6 +419,26 @@ export interface UpdatePreferencesInput {
   crossPostFrontpage?: boolean
 }
 
+// --- Per-Community Preference Overrides ---
+
+export interface CommunityPreferenceOverride {
+  communityDid: string
+  communityName: string
+  maturityLevel: 'inherit' | 'sfw' | 'mature'
+  mutedWords: string[]
+  blockedDids: string[]
+}
+
+export interface CommunityPreferencesResponse {
+  communities: CommunityPreferenceOverride[]
+}
+
+export interface UpdateCommunityPreferenceInput {
+  maturityLevel?: 'inherit' | 'sfw' | 'mature'
+  mutedWords?: string[]
+  blockedDids?: string[]
+}
+
 export interface AgeDeclarationResponse {
   success: boolean
   declaredAge: number

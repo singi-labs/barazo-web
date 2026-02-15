@@ -11,12 +11,15 @@ import type {
   CategoriesResponse,
   CategoryTreeNode,
   CategoryWithTopicCount,
+  CommunityPreferencesResponse,
   CommunitySettings,
   CommunityStats,
+  CommunityPreferenceOverride,
   CreateTopicInput,
   PublicSettings,
   Topic,
   TopicsResponse,
+  UpdateCommunityPreferenceInput,
   UpdatePreferencesInput,
   UpdateTopicInput,
   UserPreferences,
@@ -588,6 +591,35 @@ export function declareAge(
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: { declaredAge },
   })
+}
+
+// --- Per-Community Preference endpoints ---
+
+export function getCommunityPreferences(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunityPreferencesResponse> {
+  return apiFetch<CommunityPreferencesResponse>('/api/users/me/preferences/communities', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function updateCommunityPreference(
+  communityDid: string,
+  input: UpdateCommunityPreferenceInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunityPreferenceOverride> {
+  return apiFetch<CommunityPreferenceOverride>(
+    `/api/users/me/preferences/communities/${encodeURIComponent(communityDid)}`,
+    {
+      ...options,
+      method: 'PUT',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+      body: input,
+    }
+  )
 }
 
 // --- Block/Mute endpoints ---
