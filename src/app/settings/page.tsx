@@ -41,7 +41,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [ageDeclarationAt, setAgeDeclarationAt] = useState<string | null>(null)
+  const [declaredAge, setDeclaredAge] = useState<number | null>(null)
   const [showAgeGate, setShowAgeGate] = useState(false)
 
   // Load preferences on mount
@@ -63,7 +63,7 @@ export default function SettingsPage() {
           notifyMentions: true,
           notifyReactions: false,
         })
-        setAgeDeclarationAt(prefs.ageDeclarationAt)
+        setDeclaredAge(prefs.declaredAge)
       })
       .catch(() => setError('Failed to load preferences'))
       .finally(() => setLoading(false))
@@ -84,7 +84,7 @@ export default function SettingsPage() {
       }
 
       // If switching to mature and no age declaration, show age gate
-      if (values.maturityLevel === 'sfw-mature' && !ageDeclarationAt) {
+      if (values.maturityLevel === 'sfw-mature' && !declaredAge) {
         setShowAgeGate(true)
         setSaving(false)
         return
@@ -112,7 +112,7 @@ export default function SettingsPage() {
         setSaving(false)
       }
     },
-    [values, ageDeclarationAt]
+    [values, declaredAge]
   )
 
   return (
@@ -282,8 +282,8 @@ export default function SettingsPage() {
 
       <AgeGateDialog
         open={showAgeGate}
-        onConfirm={(ageAt) => {
-          setAgeDeclarationAt(ageAt)
+        onConfirm={(age) => {
+          setDeclaredAge(age)
           setShowAgeGate(false)
           // Re-trigger save now that age is declared
           void handleSave({ preventDefault: () => {} } as React.FormEvent)
