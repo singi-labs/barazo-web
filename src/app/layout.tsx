@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Source_Sans_3, Source_Code_Pro } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthProvider } from '@/context/auth-context'
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -61,7 +62,7 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>
