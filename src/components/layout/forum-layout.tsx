@@ -113,6 +113,11 @@ export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
                   Terms
                 </Link>
               </li>
+              <li>
+                <Link href="/legal/cookies" className="transition-colors hover:text-foreground">
+                  Cookies
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
