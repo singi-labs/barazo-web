@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/auth/', '/api/', '/search', '/settings', '/notifications'],
       },
       {
-        userAgent: ['SemrushBot', 'AhrefsBot', 'MJ12bot'],
+        userAgent: ['SemrushBot', 'AhrefsBot', 'MJ12bot', 'BLEXBot'],
         disallow: '/',
       },
       {
