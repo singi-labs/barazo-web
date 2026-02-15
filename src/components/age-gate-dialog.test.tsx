@@ -39,11 +39,12 @@ describe('AgeGateDialog', () => {
     expect(container.innerHTML).toBe('')
   })
 
-  it('renders dialog when open', () => {
+  it('renders dialog with dropdown when open', () => {
     render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
-    expect(screen.getByText('Age Confirmation Required')).toBeInTheDocument()
-    expect(screen.getByText('I confirm I am 16 or older')).toBeInTheDocument()
+    expect(screen.getByText('Age Declaration')).toBeInTheDocument()
+    expect(screen.getByLabelText('Your age bracket')).toBeInTheDocument()
     expect(screen.getByText('Cancel')).toBeInTheDocument()
+    expect(screen.getByText('Confirm')).toBeInTheDocument()
   })
 
   it('has correct ARIA attributes', () => {
@@ -63,18 +64,58 @@ describe('AgeGateDialog', () => {
     expect(onCancel).toHaveBeenCalledOnce()
   })
 
-  it('calls onConfirm with timestamp when confirmed', async () => {
+  it('shows all age bracket options in dropdown', () => {
+    render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
+    const select = screen.getByLabelText('Your age bracket') as HTMLSelectElement
+    const options = Array.from(select.options).map((o) => o.text)
+
+    expect(options).toContain('Select age bracket...')
+    expect(options).toContain('Rather not say')
+    expect(options).toContain('13+')
+    expect(options).toContain('14+')
+    expect(options).toContain('15+')
+    expect(options).toContain('16+')
+    expect(options).toContain('18+')
+  })
+
+  it('disables Confirm button when no age selected', () => {
+    render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
+    const confirmBtn = screen.getByText('Confirm')
+    expect(confirmBtn).toBeDisabled()
+  })
+
+  it('enables Confirm button when age is selected', async () => {
+    render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
+
+    const user = userEvent.setup()
+    await user.selectOptions(screen.getByLabelText('Your age bracket'), '16')
+
+    expect(screen.getByText('Confirm')).not.toBeDisabled()
+  })
+
+  it('calls onConfirm with declaredAge when confirmed', async () => {
     const onConfirm = vi.fn()
     render(<AgeGateDialog open={true} onConfirm={onConfirm} onCancel={vi.fn()} />)
 
     const user = userEvent.setup()
-    await user.click(screen.getByText('I confirm I am 16 or older'))
+    await user.selectOptions(screen.getByLabelText('Your age bracket'), '16')
+    await user.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
       expect(onConfirm).toHaveBeenCalledOnce()
     })
-    // The mock handler returns an ageDeclarationAt string
-    expect(onConfirm).toHaveBeenCalledWith(expect.any(String))
+    expect(onConfirm).toHaveBeenCalledWith(16)
+  })
+
+  it('shows "Rather not say" explanation when 0 is selected', async () => {
+    render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
+
+    const user = userEvent.setup()
+    await user.selectOptions(screen.getByLabelText('Your age bracket'), '0')
+
+    expect(
+      screen.getByText(/Rather not say.*means you will only see Safe content/)
+    ).toBeInTheDocument()
   })
 
   it('shows error when not authenticated', async () => {
@@ -82,7 +123,8 @@ describe('AgeGateDialog', () => {
     render(<AgeGateDialog open={true} onConfirm={vi.fn()} onCancel={vi.fn()} />)
 
     const user = userEvent.setup()
-    await user.click(screen.getByText('I confirm I am 16 or older'))
+    await user.selectOptions(screen.getByLabelText('Your age bracket'), '16')
+    await user.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('Not authenticated')

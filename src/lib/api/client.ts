@@ -524,6 +524,7 @@ export function updatePreferences(
 }
 
 export function declareAge(
+  declaredAge: number,
   accessToken: string,
   options?: FetchOptions
 ): Promise<AgeDeclarationResponse> {
@@ -531,7 +532,7 @@ export function declareAge(
     ...options,
     method: 'POST',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
-    body: { confirm: true },
+    body: { declaredAge },
   })
 }
 

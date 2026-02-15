@@ -831,7 +831,7 @@ export const mockPlugins: Plugin[] = [
 
 export const mockUserPreferences: UserPreferences = {
   maturityLevel: 'sfw',
-  ageDeclarationAt: null,
+  declaredAge: null,
   mutedWords: ['spam', 'offensive'],
   blockedDids: [],
   mutedDids: [],

@@ -461,14 +461,16 @@ export const handlers = [
   }),
 
   // POST /api/users/me/age-declaration
-  http.post(`${API_URL}/api/users/me/age-declaration`, ({ request }) => {
+  http.post(`${API_URL}/api/users/me/age-declaration`, async ({ request }) => {
     const auth = request.headers.get('Authorization')
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const body = (await request.json()) as { declaredAge?: number }
+    const declaredAge = body.declaredAge ?? 0
     return HttpResponse.json({
       success: true,
-      ageDeclarationAt: new Date().toISOString(),
+      declaredAge,
     })
   }),
 
