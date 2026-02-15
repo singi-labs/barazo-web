@@ -2,12 +2,20 @@
  * Category page - Shows topics for a specific category.
  * URL: /c/{slug}
  * Server-side rendered with SEO metadata and JSON-LD.
+ * Maturity-aware: Adult categories are noindex'd, Mature get rating meta.
  * @see specs/prd-web.md Section 3.1
  */
 
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getCategoryBySlug, getCategories, getTopics, ApiError } from '@/lib/api/client'
+import {
+  getCategoryBySlug,
+  getCategories,
+  getTopics,
+  getPublicSettings,
+  ApiError,
+} from '@/lib/api/client'
+import { getEffectiveMaturity, getMaturityMeta, shouldIncludeOgTags } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -24,18 +32,32 @@ interface CategoryPageProps {
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params
   try {
-    const category = await getCategoryBySlug(slug)
+    const [category, publicSettings] = await Promise.all([
+      getCategoryBySlug(slug),
+      getPublicSettings().catch(() => null),
+    ])
+
+    const communityRating = publicSettings?.maturityRating ?? 'safe'
+    const effectiveMaturity = getEffectiveMaturity(communityRating, category.maturityRating)
+    const maturityMeta = getMaturityMeta(effectiveMaturity)
+    const includeOg = shouldIncludeOgTags(effectiveMaturity)
+
     return {
       title: category.name,
       description: category.description ?? `Topics in ${category.name}`,
       alternates: {
         canonical: `/c/${slug}`,
       },
-      openGraph: {
-        title: category.name,
-        description: category.description ?? `Topics in ${category.name}`,
-        type: 'website',
-      },
+      ...(includeOg
+        ? {
+            openGraph: {
+              title: category.name,
+              description: category.description ?? `Topics in ${category.name}`,
+              type: 'website',
+            },
+          }
+        : {}),
+      ...maturityMeta,
     }
   } catch {
     return { title: 'Category Not Found' }

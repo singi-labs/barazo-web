@@ -2,13 +2,26 @@
  * Topic detail page - Shows topic post and threaded replies.
  * URL: /t/{slug}/{rkey}
  * Server-side rendered with JSON-LD DiscussionForumPosting.
+ * Maturity-aware: Adult topics are noindex'd, Mature topics get rating meta.
  * @see specs/prd-web.md Section 3.1, Section 5
  */
 
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTopicByRkey, getCategories, getReplies, ApiError } from '@/lib/api/client'
+import {
+  getTopicByRkey,
+  getCategories,
+  getReplies,
+  getPublicSettings,
+  ApiError,
+} from '@/lib/api/client'
 import { slugify } from '@/lib/format'
+import {
+  getEffectiveMaturity,
+  getMaturityMeta,
+  shouldIncludeJsonLd,
+  shouldIncludeOgTags,
+} from '@/lib/seo'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { CategoryNav } from '@/components/category-nav'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -26,21 +39,35 @@ interface TopicPageProps {
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { rkey } = await params
   try {
-    const topic = await getTopicByRkey(rkey)
+    const [topic, publicSettings] = await Promise.all([
+      getTopicByRkey(rkey),
+      getPublicSettings().catch(() => null),
+    ])
     const description =
       topic.content.length > 160 ? topic.content.slice(0, 157) + '...' : topic.content
+
+    const communityRating = publicSettings?.maturityRating ?? 'safe'
+    const effectiveMaturity = getEffectiveMaturity(communityRating, topic.categoryMaturityRating)
+    const maturityMeta = getMaturityMeta(effectiveMaturity)
+    const includeOg = shouldIncludeOgTags(effectiveMaturity)
+
     return {
       title: topic.title,
       description,
       alternates: {
         canonical: `/t/${slugify(topic.title)}/${rkey}`,
       },
-      openGraph: {
-        title: topic.title,
-        description,
-        type: 'article',
-        publishedTime: topic.createdAt,
-      },
+      ...(includeOg
+        ? {
+            openGraph: {
+              title: topic.title,
+              description,
+              type: 'article',
+              publishedTime: topic.createdAt,
+            },
+          }
+        : {}),
+      ...maturityMeta,
     }
   } catch {
     return { title: 'Topic Not Found' }
@@ -61,6 +88,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
     }
     throw error
   }
+
+  // Fetch community settings for maturity context
+  const publicSettings = await getPublicSettings().catch(() => null)
+  const communityRating = publicSettings?.maturityRating ?? 'safe'
+  const effectiveMaturity = getEffectiveMaturity(communityRating, topic.categoryMaturityRating)
 
   let categoriesResult: CategoriesResponse = { categories: [] }
   let repliesResult: RepliesResponse = { replies: [], cursor: null }
@@ -124,11 +156,13 @@ export default async function TopicPage({ params }: TopicPageProps) {
         ) : undefined
       }
     >
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {/* JSON-LD: omitted for Adult content */}
+      {shouldIncludeJsonLd(effectiveMaturity) && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
 
       {/* Breadcrumbs */}
       <Breadcrumbs items={breadcrumbItems} />
