@@ -223,6 +223,13 @@
   --color-popover-foreground: var(--slate-dark-12);
 }
 
+/* Container -- Tailwind v4 no longer includes mx-auto/padding by default */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 80rem;
+}
+
 /* Base styles */
 * {
   border-color: var(--color-border);
