@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { declareAge } from '@/lib/api/client'
+import { useAuth } from '@/hooks/use-auth'
 
 /** Valid age bracket options. 0 = "Rather not say". */
 const AGE_OPTIONS = [
@@ -28,6 +29,7 @@ interface AgeGateDialogProps {
 }
 
 export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps) {
+  const { getAccessToken } = useAuth()
   const [selectedAge, setSelectedAge] = useState<number | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +45,7 @@ export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps)
     setConfirming(true)
     setError(null)
 
-    const token = localStorage.getItem('accessToken')
+    const token = getAccessToken()
     if (!token) {
       setError('Not authenticated')
       setConfirming(false)

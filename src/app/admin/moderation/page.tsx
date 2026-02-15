@@ -29,9 +29,7 @@ import type {
   ModerationThresholds,
   ReportResolution,
 } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 type TabId = 'reports' | 'first-post' | 'action-log' | 'reported-users' | 'thresholds'
 
@@ -496,6 +494,7 @@ function ThresholdsTab({
 }
 
 export default function AdminModerationPage() {
+  const { getAccessToken } = useAuth()
   const [activeTab, setActiveTab] = useState<TabId>('reports')
   const [reports, setReports] = useState<ModerationReport[]>([])
   const [firstPostQueue, setFirstPostQueue] = useState<FirstPostQueueItem[]>([])
@@ -507,11 +506,11 @@ export default function AdminModerationPage() {
   const fetchData = useCallback(async () => {
     try {
       const [reportsRes, queueRes, logRes, usersRes, thresholdsRes] = await Promise.all([
-        getModerationReports(MOCK_TOKEN),
-        getFirstPostQueue(MOCK_TOKEN),
-        getModerationLog(MOCK_TOKEN),
-        getReportedUsers(MOCK_TOKEN),
-        getModerationThresholds(MOCK_TOKEN),
+        getModerationReports(getAccessToken() ?? ''),
+        getFirstPostQueue(getAccessToken() ?? ''),
+        getModerationLog(getAccessToken() ?? ''),
+        getReportedUsers(getAccessToken() ?? ''),
+        getModerationThresholds(getAccessToken() ?? ''),
       ])
       setReports(reportsRes.reports)
       setFirstPostQueue(queueRes.items)
@@ -523,7 +522,7 @@ export default function AdminModerationPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchData()
@@ -531,7 +530,7 @@ export default function AdminModerationPage() {
 
   const handleResolveReport = async (id: string, resolution: ReportResolution) => {
     try {
-      await resolveReport(id, resolution, MOCK_TOKEN)
+      await resolveReport(id, resolution, getAccessToken() ?? '')
       setReports((prev) => prev.filter((r) => r.id !== id))
     } catch {
       // Silently handle
@@ -540,7 +539,7 @@ export default function AdminModerationPage() {
 
   const handleResolveFirstPost = async (id: string, action: 'approved' | 'rejected') => {
     try {
-      await resolveFirstPost(id, action, MOCK_TOKEN)
+      await resolveFirstPost(id, action, getAccessToken() ?? '')
       setFirstPostQueue((prev) => prev.filter((item) => item.id !== id))
     } catch {
       // Silently handle
@@ -549,7 +548,7 @@ export default function AdminModerationPage() {
 
   const handleBatchResolveFirstPost = async (ids: string[], action: 'approved' | 'rejected') => {
     try {
-      await Promise.all(ids.map((id) => resolveFirstPost(id, action, MOCK_TOKEN)))
+      await Promise.all(ids.map((id) => resolveFirstPost(id, action, getAccessToken() ?? '')))
       setFirstPostQueue((prev) => prev.filter((item) => !ids.includes(item.id)))
     } catch {
       // Silently handle
@@ -558,7 +557,7 @@ export default function AdminModerationPage() {
 
   const handleSaveThresholds = async (updated: Partial<ModerationThresholds>) => {
     try {
-      const result = await updateModerationThresholds(updated, MOCK_TOKEN)
+      const result = await updateModerationThresholds(updated, getAccessToken() ?? '')
       setThresholds(result)
     } catch {
       // Silently handle

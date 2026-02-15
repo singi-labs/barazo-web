@@ -15,9 +15,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { getNotifications, markNotificationsRead } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { Notification, NotificationType } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 const NOTIFICATION_ICONS: Record<NotificationType, typeof ChatCircle> = {
   reply: ChatCircle,
@@ -27,19 +25,20 @@ const NOTIFICATION_ICONS: Record<NotificationType, typeof ChatCircle> = {
 }
 
 export default function NotificationsPage() {
+  const { getAccessToken } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const response = await getNotifications(MOCK_TOKEN)
+      const response = await getNotifications(getAccessToken() ?? '')
       setNotifications(response.notifications)
     } catch {
       // Silently handle - notifications are non-critical
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchNotifications()
@@ -50,12 +49,12 @@ export default function NotificationsPage() {
     if (unreadIds.length === 0) return
 
     try {
-      await markNotificationsRead(MOCK_TOKEN, unreadIds)
+      await markNotificationsRead(getAccessToken() ?? '', unreadIds)
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
     } catch {
       // Silently handle
     }
-  }, [notifications])
+  }, [notifications, getAccessToken])
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {

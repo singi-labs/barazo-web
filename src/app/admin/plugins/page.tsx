@@ -14,9 +14,7 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import { getPlugins, togglePlugin, updatePluginSettings, uninstallPlugin } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { Plugin, PluginSettingsSchema } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 const SOURCE_STYLES: Record<string, string> = {
   core: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
@@ -193,6 +191,7 @@ function SettingsField({
 }
 
 export default function AdminPluginsPage() {
+  const { getAccessToken } = useAuth()
   const [plugins, setPlugins] = useState<Plugin[]>([])
   const [loading, setLoading] = useState(true)
   const [settingsPlugin, setSettingsPlugin] = useState<Plugin | null>(null)
@@ -203,14 +202,14 @@ export default function AdminPluginsPage() {
 
   const fetchPlugins = useCallback(async () => {
     try {
-      const response = await getPlugins(MOCK_TOKEN)
+      const response = await getPlugins(getAccessToken() ?? '')
       setPlugins(response.plugins)
     } catch {
       // Silently handle
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchPlugins()
@@ -231,7 +230,7 @@ export default function AdminPluginsPage() {
     }
 
     try {
-      await togglePlugin(plugin.id, !plugin.enabled, MOCK_TOKEN)
+      await togglePlugin(plugin.id, !plugin.enabled, getAccessToken() ?? '')
       setPlugins((prev) =>
         prev.map((p) => (p.id === plugin.id ? { ...p, enabled: !p.enabled } : p))
       )
@@ -243,7 +242,7 @@ export default function AdminPluginsPage() {
   const confirmDisable = async () => {
     if (!dependencyWarning) return
     try {
-      await togglePlugin(dependencyWarning.plugin.id, false, MOCK_TOKEN)
+      await togglePlugin(dependencyWarning.plugin.id, false, getAccessToken() ?? '')
       setPlugins((prev) =>
         prev.map((p) => (p.id === dependencyWarning.plugin.id ? { ...p, enabled: false } : p))
       )
@@ -256,7 +255,7 @@ export default function AdminPluginsPage() {
   const handleSaveSettings = async (settings: Record<string, boolean | string | number>) => {
     if (!settingsPlugin) return
     try {
-      await updatePluginSettings(settingsPlugin.id, settings, MOCK_TOKEN)
+      await updatePluginSettings(settingsPlugin.id, settings, getAccessToken() ?? '')
       setPlugins((prev) => prev.map((p) => (p.id === settingsPlugin.id ? { ...p, settings } : p)))
     } catch {
       // Silently handle
@@ -266,7 +265,7 @@ export default function AdminPluginsPage() {
 
   const handleUninstall = async (plugin: Plugin) => {
     try {
-      await uninstallPlugin(plugin.id, MOCK_TOKEN)
+      await uninstallPlugin(plugin.id, getAccessToken() ?? '')
       setPlugins((prev) => prev.filter((p) => p.id !== plugin.id))
     } catch {
       // Silently handle

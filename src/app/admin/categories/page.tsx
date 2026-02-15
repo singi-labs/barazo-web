@@ -13,9 +13,7 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { CategoryTreeNode, MaturityRating } from '@/lib/api/types'
-
-// TODO: Replace with actual auth token from session
-const MOCK_TOKEN = 'mock-access-token'
+import { useAuth } from '@/hooks/use-auth'
 
 const MATURITY_LABELS: Record<MaturityRating, string> = {
   safe: 'Safe',
@@ -107,6 +105,7 @@ function CategoryRow({
 }
 
 export default function AdminCategoriesPage() {
+  const { getAccessToken } = useAuth()
   const [categories, setCategories] = useState<CategoryTreeNode[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingCategory | null>(null)
@@ -150,7 +149,7 @@ export default function AdminCategoriesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteCategory(id, MOCK_TOKEN)
+      await deleteCategory(id, getAccessToken() ?? '')
       void fetchCategories()
     } catch {
       // Silently handle
@@ -171,7 +170,7 @@ export default function AdminCategoriesPage() {
             parentId: editing.parentId,
             maturityRating: editing.maturityRating,
           },
-          MOCK_TOKEN
+          getAccessToken() ?? ''
         )
       } else {
         await createCategory(
@@ -183,7 +182,7 @@ export default function AdminCategoriesPage() {
             sortOrder: categories.length,
             maturityRating: editing.maturityRating,
           },
-          MOCK_TOKEN
+          getAccessToken() ?? ''
         )
       }
       setEditing(null)
