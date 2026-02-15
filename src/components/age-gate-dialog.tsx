@@ -1,7 +1,7 @@
 /**
- * Age gate confirmation dialog.
+ * Age gate dialog with age bracket dropdown.
  * Shown when user tries to enable Mature content without prior age declaration.
- * Calls POST /api/users/me/age-declaration on confirm.
+ * Calls POST /api/users/me/age-declaration on confirm with selected age bracket.
  * @see decisions/features-and-ux.md "Content Maturity & User Safety"
  */
 
@@ -11,19 +11,35 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { declareAge } from '@/lib/api/client'
 
+/** Valid age bracket options. 0 = "Rather not say". */
+const AGE_OPTIONS = [
+  { value: 0, label: 'Rather not say' },
+  { value: 13, label: '13+' },
+  { value: 14, label: '14+' },
+  { value: 15, label: '15+' },
+  { value: 16, label: '16+' },
+  { value: 18, label: '18+' },
+] as const
+
 interface AgeGateDialogProps {
   open: boolean
-  onConfirm: (ageDeclarationAt: string) => void
+  onConfirm: (declaredAge: number) => void
   onCancel: () => void
 }
 
 export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps) {
+  const [selectedAge, setSelectedAge] = useState<number | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!open) return null
 
   const handleConfirm = async () => {
+    if (selectedAge === null) {
+      setError('Please select your age bracket')
+      return
+    }
+
     setConfirming(true)
     setError(null)
 
@@ -35,10 +51,10 @@ export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps)
     }
 
     try {
-      const result = await declareAge(token)
-      onConfirm(result.ageDeclarationAt)
+      const result = await declareAge(selectedAge, token)
+      onConfirm(result.declaredAge)
     } catch {
-      setError('Failed to confirm age')
+      setError('Failed to save age declaration')
     } finally {
       setConfirming(false)
     }
@@ -53,16 +69,44 @@ export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps)
     >
       <div className="mx-4 w-full max-w-md rounded-lg bg-background p-6 shadow-lg">
         <h2 id="age-gate-title" className="text-lg font-semibold text-foreground">
-          Age Confirmation Required
+          Age Declaration
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          To view Mature content, you must confirm that you are at least 16 years old. This is a
-          one-time declaration stored with your account.
+          To access Mature content, please select your age bracket. This determines which content is
+          available to you based on this community&apos;s settings.
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
           Mature content may include strong language, graphic descriptions, and sensitive topics
           (politics, drugs, violence). It does not include explicit sexual content.
         </p>
+
+        <div className="mt-4">
+          <label htmlFor="age-select" className="block text-sm font-medium text-foreground">
+            Your age bracket
+          </label>
+          <select
+            id="age-select"
+            value={selectedAge ?? ''}
+            onChange={(e) => setSelectedAge(e.target.value === '' ? null : Number(e.target.value))}
+            className={cn(
+              'mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground',
+              'focus:outline-none focus:ring-2 focus:ring-ring'
+            )}
+          >
+            <option value="">Select age bracket...</option>
+            {AGE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedAge === 0 && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Choosing &quot;Rather not say&quot; means you will only see Safe content.
+          </p>
+        )}
 
         {error && (
           <p className="mt-2 text-sm text-destructive" role="alert">
@@ -84,14 +128,14 @@ export function AgeGateDialog({ open, onConfirm, onCancel }: AgeGateDialogProps)
           <button
             type="button"
             onClick={handleConfirm}
-            disabled={confirming}
+            disabled={confirming || selectedAge === null}
             className={cn(
               'rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground',
               'hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
-            {confirming ? 'Confirming...' : 'I confirm I am 16 or older'}
+            {confirming ? 'Saving...' : 'Confirm'}
           </button>
         </div>
       </div>

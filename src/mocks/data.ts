@@ -434,6 +434,9 @@ export const mockCommunitySettings: CommunitySettings = {
   communityLogoUrl: null,
   primaryColor: '#31748f',
   accentColor: '#c4a7e7',
+  jurisdictionCountry: null,
+  ageThreshold: 16,
+  requireLoginForMature: true,
   createdAt: TWO_DAYS_AGO,
   updatedAt: NOW,
 }
@@ -831,7 +834,7 @@ export const mockPlugins: Plugin[] = [
 
 export const mockUserPreferences: UserPreferences = {
   maturityLevel: 'sfw',
-  ageDeclarationAt: null,
+  declaredAge: null,
   mutedWords: ['spam', 'offensive'],
   blockedDids: [],
   mutedDids: [],

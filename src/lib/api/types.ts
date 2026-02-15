@@ -156,6 +156,9 @@ export interface CommunitySettings {
   communityLogoUrl: string | null
   primaryColor: string | null
   accentColor: string | null
+  jurisdictionCountry: string | null
+  ageThreshold: number
+  requireLoginForMature: boolean
   createdAt: string
   updatedAt: string
 }
@@ -386,7 +389,7 @@ export interface PluginsResponse {
 
 export interface UserPreferences {
   maturityLevel: 'sfw' | 'mature'
-  ageDeclarationAt: string | null
+  declaredAge: number | null
   mutedWords: string[]
   blockedDids: string[]
   mutedDids: string[]
@@ -406,7 +409,7 @@ export interface UpdatePreferencesInput {
 
 export interface AgeDeclarationResponse {
   success: boolean
-  ageDeclarationAt: string
+  declaredAge: number
 }
 
 // --- Shared ---
