@@ -11,6 +11,7 @@ import { SkipLinks } from '@/components/skip-links'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { SearchInput } from '@/components/search-input'
 import { NotificationBell } from '@/components/notification-bell'
+import { UserMenu } from '@/components/auth/user-menu'
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 
 interface ForumLayoutProps {
@@ -63,6 +64,7 @@ export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
             </Link>
             <NotificationBell unreadCount={0} />
             <ThemeToggle />
+            <UserMenu />
           </div>
         </div>
       </header>
