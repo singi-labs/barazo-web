@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getCategories, getCommunitySettings } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { CategoryTreeNode, CommunitySettings, MaturityRating } from '@/lib/api/types'
@@ -54,14 +55,16 @@ export default function AdminContentRatingsPage() {
   const [categories, setCategories] = useState<CategoryTreeNode[]>([])
   const [communitySettings, setCommunitySettings] = useState<CommunitySettings | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
+    setError(null)
     try {
       const [catRes, settingsRes] = await Promise.all([getCategories(), getCommunitySettings()])
       setCategories(catRes.categories)
       setCommunitySettings(settingsRes)
     } catch {
-      // Silently handle
+      setError('Failed to load content ratings. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -99,6 +102,8 @@ export default function AdminContentRatingsPage() {
             )}
           </dl>
         </div>
+
+        {error && <ErrorAlert message={error} variant="page" onRetry={() => void fetchData()} />}
 
         {loading && <p className="text-sm text-muted-foreground">Loading...</p>}
 

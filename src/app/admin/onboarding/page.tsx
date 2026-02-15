@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Plus, PencilSimple, TrashSimple, ArrowUp, ArrowDown } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import {
   getOnboardingFields,
   createOnboardingField,
@@ -58,13 +59,16 @@ export default function AdminOnboardingPage() {
   const [editing, setEditing] = useState<EditingField | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchFields = useCallback(async () => {
+    setLoadError(null)
     try {
       const response = await getOnboardingFields(getAccessToken() ?? '')
       setFields(response.fields)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load onboarding fields. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -92,11 +96,12 @@ export default function AdminOnboardingPage() {
   }
 
   const handleDelete = async (id: string) => {
+    setActionError(null)
     try {
       await deleteOnboardingField(id, getAccessToken() ?? '')
       void fetchFields()
     } catch {
-      // Silently handle
+      setActionError('Failed to delete field. Please try again.')
     }
   }
 
@@ -186,6 +191,8 @@ export default function AdminOnboardingPage() {
             Add Field
           </button>
         </div>
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {/* Edit/Create form */}
         {editing && (
@@ -283,6 +290,10 @@ export default function AdminOnboardingPage() {
         )}
 
         {/* Field list */}
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchFields()} />
+        )}
+
         {loading && <p className="text-sm text-muted-foreground">Loading onboarding fields...</p>}
 
         {!loading && fields.length === 0 && !editing && (

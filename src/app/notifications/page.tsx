@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { ChatCircle, Heart, At, ShieldCheck, CheckCircle } from '@phosphor-icons/react'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import { ErrorAlert } from '@/components/error-alert'
 import { getNotifications, markNotificationsRead } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { Notification, NotificationType } from '@/lib/api/types'
@@ -28,13 +29,16 @@ export default function NotificationsPage() {
   const { getAccessToken } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchNotifications = useCallback(async () => {
+    setLoadError(null)
     try {
       const response = await getNotifications(getAccessToken() ?? '')
       setNotifications(response.notifications)
     } catch {
-      // Silently handle - notifications are non-critical
+      setLoadError('Failed to load notifications. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -48,11 +52,12 @@ export default function NotificationsPage() {
     const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id)
     if (unreadIds.length === 0) return
 
+    setActionError(null)
     try {
       await markNotificationsRead(getAccessToken() ?? '', unreadIds)
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
     } catch {
-      // Silently handle
+      setActionError('Failed to mark notifications as read. Please try again.')
     }
   }, [notifications, getAccessToken])
 
@@ -85,6 +90,16 @@ export default function NotificationsPage() {
             </button>
           )}
         </div>
+
+        {loadError && (
+          <ErrorAlert
+            message={loadError}
+            variant="page"
+            onRetry={() => void fetchNotifications()}
+          />
+        )}
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {loading && (
           <div className="animate-pulse space-y-3">

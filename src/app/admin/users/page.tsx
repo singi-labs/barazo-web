@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Prohibit, WarningCircle } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getAdminUsers, banUser, unbanUser } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { AdminUser } from '@/lib/api/types'
@@ -33,13 +34,16 @@ export default function AdminUsersPage() {
   const { getAccessToken } = useAuth()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchUsers = useCallback(async () => {
+    setLoadError(null)
     try {
       const response = await getAdminUsers(getAccessToken() ?? '')
       setUsers(response.users)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load users. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -50,6 +54,7 @@ export default function AdminUsersPage() {
   }, [fetchUsers])
 
   const handleBan = async (did: string) => {
+    setActionError(null)
     try {
       await banUser(did, 'Banned by admin', getAccessToken() ?? '')
       setUsers((prev) =>
@@ -65,11 +70,12 @@ export default function AdminUsersPage() {
         )
       )
     } catch {
-      // Silently handle
+      setActionError('Failed to ban user. Please try again.')
     }
   }
 
   const handleUnban = async (did: string) => {
+    setActionError(null)
     try {
       await unbanUser(did, getAccessToken() ?? '')
       setUsers((prev) =>
@@ -78,7 +84,7 @@ export default function AdminUsersPage() {
         )
       )
     } catch {
-      // Silently handle
+      setActionError('Failed to unban user. Please try again.')
     }
   }
 
@@ -86,6 +92,12 @@ export default function AdminUsersPage() {
     <AdminLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold text-foreground">User Management</h1>
+
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchUsers()} />
+        )}
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {loading && <p className="text-sm text-muted-foreground">Loading users...</p>}
 

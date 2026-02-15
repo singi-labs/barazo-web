@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { PencilSimple, Plus, TrashSimple } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { CategoryTreeNode, MaturityRating } from '@/lib/api/types'
@@ -109,13 +110,16 @@ export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<CategoryTreeNode[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingCategory | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchCategories = useCallback(async () => {
+    setLoadError(null)
     try {
       const response = await getCategories()
       setCategories(response.categories)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load categories. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -148,11 +152,12 @@ export default function AdminCategoriesPage() {
   }
 
   const handleDelete = async (id: string) => {
+    setActionError(null)
     try {
       await deleteCategory(id, getAccessToken() ?? '')
       void fetchCategories()
     } catch {
-      // Silently handle
+      setActionError('Failed to delete category. Please try again.')
     }
   }
 
@@ -188,7 +193,7 @@ export default function AdminCategoriesPage() {
       setEditing(null)
       void fetchCategories()
     } catch {
-      // Silently handle
+      setActionError('Failed to save category. Please try again.')
     }
   }
 
@@ -206,6 +211,8 @@ export default function AdminCategoriesPage() {
             Add Category
           </button>
         </div>
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {/* Edit form */}
         {editing && (
@@ -288,6 +295,10 @@ export default function AdminCategoriesPage() {
         )}
 
         {/* Category list */}
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchCategories()} />
+        )}
+
         {loading && <p className="text-sm text-muted-foreground">Loading categories...</p>}
 
         {!loading && categories.length === 0 && (

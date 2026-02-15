@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Gear, Trash, WarningCircle, X } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { ErrorAlert } from '@/components/error-alert'
 import { getPlugins, togglePlugin, updatePluginSettings, uninstallPlugin } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { Plugin, PluginSettingsSchema } from '@/lib/api/types'
@@ -199,13 +200,16 @@ export default function AdminPluginsPage() {
     plugin: Plugin
     dependents: string[]
   } | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const fetchPlugins = useCallback(async () => {
+    setLoadError(null)
     try {
       const response = await getPlugins(getAccessToken() ?? '')
       setPlugins(response.plugins)
     } catch {
-      // Silently handle
+      setLoadError('Failed to load plugins. The API may be unreachable.')
     } finally {
       setLoading(false)
     }
@@ -229,46 +233,50 @@ export default function AdminPluginsPage() {
       return
     }
 
+    setActionError(null)
     try {
       await togglePlugin(plugin.id, !plugin.enabled, getAccessToken() ?? '')
       setPlugins((prev) =>
         prev.map((p) => (p.id === plugin.id ? { ...p, enabled: !p.enabled } : p))
       )
     } catch {
-      // Silently handle
+      setActionError(`Failed to ${plugin.enabled ? 'disable' : 'enable'} plugin. Please try again.`)
     }
   }
 
   const confirmDisable = async () => {
     if (!dependencyWarning) return
+    setActionError(null)
     try {
       await togglePlugin(dependencyWarning.plugin.id, false, getAccessToken() ?? '')
       setPlugins((prev) =>
         prev.map((p) => (p.id === dependencyWarning.plugin.id ? { ...p, enabled: false } : p))
       )
     } catch {
-      // Silently handle
+      setActionError('Failed to disable plugin. Please try again.')
     }
     setDependencyWarning(null)
   }
 
   const handleSaveSettings = async (settings: Record<string, boolean | string | number>) => {
     if (!settingsPlugin) return
+    setActionError(null)
     try {
       await updatePluginSettings(settingsPlugin.id, settings, getAccessToken() ?? '')
       setPlugins((prev) => prev.map((p) => (p.id === settingsPlugin.id ? { ...p, settings } : p)))
     } catch {
-      // Silently handle
+      setActionError('Failed to save plugin settings. Please try again.')
     }
     setSettingsPlugin(null)
   }
 
   const handleUninstall = async (plugin: Plugin) => {
+    setActionError(null)
     try {
       await uninstallPlugin(plugin.id, getAccessToken() ?? '')
       setPlugins((prev) => prev.filter((p) => p.id !== plugin.id))
     } catch {
-      // Silently handle
+      setActionError('Failed to uninstall plugin. Please try again.')
     }
   }
 
@@ -281,6 +289,12 @@ export default function AdminPluginsPage() {
             {plugins.filter((p) => p.enabled).length} of {plugins.length} enabled
           </p>
         </div>
+
+        {loadError && (
+          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchPlugins()} />
+        )}
+
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {loading && <p className="text-sm text-muted-foreground">Loading plugins...</p>}
 
