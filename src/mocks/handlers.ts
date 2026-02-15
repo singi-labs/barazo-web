@@ -6,6 +6,8 @@
 
 import { http, HttpResponse } from 'msw'
 import {
+  mockAuthSession,
+  mockAuthUser,
   mockCategories,
   mockCategoryWithTopicCount,
   mockTopics,
@@ -28,6 +30,55 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
 export const handlers = [
+  // --- Auth endpoints ---
+
+  // GET /api/auth/login
+  http.get(`${API_URL}/api/auth/login`, ({ request }) => {
+    const url = new URL(request.url)
+    const handle = url.searchParams.get('handle')
+    if (!handle) {
+      return HttpResponse.json({ error: 'handle is required' }, { status: 400 })
+    }
+    return HttpResponse.json({
+      redirectUrl: `https://bsky.social/oauth/authorize?handle=${encodeURIComponent(handle)}&state=mock-state-123`,
+    })
+  }),
+
+  // GET /api/auth/callback
+  http.get(`${API_URL}/api/auth/callback`, ({ request }) => {
+    const url = new URL(request.url)
+    const code = url.searchParams.get('code')
+    const state = url.searchParams.get('state')
+    if (!code || !state) {
+      return HttpResponse.json({ error: 'code and state are required' }, { status: 400 })
+    }
+    return HttpResponse.json(mockAuthSession)
+  }),
+
+  // POST /api/auth/refresh
+  http.post(`${API_URL}/api/auth/refresh`, () => {
+    // In tests, always succeed by default; override per-test for failure cases
+    return HttpResponse.json(mockAuthSession)
+  }),
+
+  // DELETE /api/auth/session
+  http.delete(`${API_URL}/api/auth/session`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // GET /api/auth/me
+  http.get(`${API_URL}/api/auth/me`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json(mockAuthUser)
+  }),
+
   // GET /api/notifications
   http.get(`${API_URL}/api/notifications`, ({ request }) => {
     const auth = request.headers.get('Authorization')

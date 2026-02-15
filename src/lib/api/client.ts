@@ -6,6 +6,8 @@
 
 import type {
   AgeDeclarationResponse,
+  AuthSession,
+  AuthUser,
   CategoriesResponse,
   CategoryTreeNode,
   CategoryWithTopicCount,
@@ -83,6 +85,47 @@ function buildQuery(params: Record<string, string | number | undefined>): string
   )
   if (entries.length === 0) return ''
   return '?' + new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()
+}
+
+// --- Auth endpoints ---
+
+export function initiateLogin(handle: string): Promise<{ redirectUrl: string }> {
+  const query = buildQuery({ handle })
+  return apiFetch<{ redirectUrl: string }>(`/api/auth/login${query}`)
+}
+
+export function handleCallback(code: string, state: string): Promise<AuthSession> {
+  const query = buildQuery({ code, state })
+  return apiFetch<AuthSession>(`/api/auth/callback${query}`)
+}
+
+export async function refreshSession(): Promise<AuthSession> {
+  const url = `${API_URL}/api/auth/refresh`
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+
+  return response.json() as Promise<AuthSession>
+}
+
+export function logout(accessToken: string): Promise<void> {
+  return apiFetch<void>('/api/auth/session', {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getCurrentUser(accessToken: string): Promise<AuthUser> {
+  return apiFetch<AuthUser>('/api/auth/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
 }
 
 // --- Category endpoints ---
