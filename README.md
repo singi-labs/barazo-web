@@ -170,7 +170,7 @@ pnpm typecheck
 
 ## Development
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for full guidelines.
+See [CONTRIBUTING.md](https://github.com/barazo-forum/.github/blob/main/CONTRIBUTING.md) for full guidelines.
 
 **Key standards:**
 
