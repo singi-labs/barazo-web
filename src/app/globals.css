@@ -221,6 +221,13 @@
   --color-card-hover: var(--slate-dark-3);
   --color-popover: var(--slate-dark-1);
   --color-popover-foreground: var(--slate-dark-12);
+
+  /* Destructive needs higher contrast in dark mode for AA compliance.
+     #ff6369 (red-dark-11) gives ~5.7:1 against dark backgrounds. */
+  --color-destructive: #ff6369;
+  --color-destructive-foreground: #1c2024;
+  --color-destructive-hover: #f2555a;
+  --color-destructive-muted: var(--red-dark-3);
 }
 
 /* Container -- Tailwind v4 no longer includes mx-auto/padding by default */
