@@ -33,12 +33,16 @@ RUN corepack enable && corepack prepare pnpm@10.29.2 --activate
 # Copy installed dependencies
 COPY --from=deps /workspace/ ./
 
+# Copy lexicons source (workspace dependency)
+COPY barazo-lexicons/ ./barazo-lexicons/
+
 # Copy web source
 COPY barazo-web/ ./barazo-web/
 
-# Build Next.js (produces .next/standalone via output: 'standalone')
+# Build lexicons first (workspace dependency), then Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm --filter @barazo-forum/web build
+RUN pnpm --filter @barazo-forum/lexicons build && \
+    pnpm --filter @barazo-forum/web build
 
 # ---------------------------------------------------------------------------
 # Stage 3: Production runner
