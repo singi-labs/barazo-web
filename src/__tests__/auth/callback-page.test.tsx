@@ -1,5 +1,9 @@
 /**
  * Tests for auth callback page.
+ * The callback page receives ?success=true after API redirects from PDS OAuth.
+ * It then calls POST /api/auth/refresh (using the HTTP-only cookie set by API)
+ * to get the access token, stores it in memory via setSessionFromCallback,
+ * and redirects to the returnTo path.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -12,7 +16,7 @@ const API_URL = ''
 
 const mockSetSessionFromCallback = vi.fn()
 
-let mockSearchParams = new URLSearchParams('code=test-code&state=test-state')
+let mockSearchParams = new URLSearchParams('success=true')
 
 vi.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
@@ -55,13 +59,13 @@ Object.defineProperty(window, 'sessionStorage', {
 describe('AuthCallbackPage', () => {
   beforeEach(() => {
     mockSetSessionFromCallback.mockClear()
-    mockSearchParams = new URLSearchParams('code=test-code&state=test-state')
+    mockSearchParams = new URLSearchParams('success=true')
   })
 
   it('shows loading spinner while processing', () => {
-    // Override callback to never resolve
+    // Override refresh to never resolve so we can see the spinner
     server.use(
-      http.get(`${API_URL}/api/auth/callback`, () => {
+      http.post(`${API_URL}/api/auth/refresh`, () => {
         return new Promise(() => {})
       })
     )
@@ -76,16 +80,22 @@ describe('AuthCallbackPage', () => {
     })
   })
 
-  it('shows error when code or state is missing', () => {
+  it('shows error when success or error param is missing', () => {
     mockSearchParams = new URLSearchParams('')
     render(<CallbackPage />)
-    expect(screen.getByRole('alert')).toHaveTextContent(/missing authorization code or state/i)
+    expect(screen.getByRole('alert')).toHaveTextContent(/missing authorization parameters/i)
+  })
+
+  it('shows error from error search param', () => {
+    mockSearchParams = new URLSearchParams('error=OAuth+callback+failed')
+    render(<CallbackPage />)
+    expect(screen.getByRole('alert')).toHaveTextContent(/oauth callback failed/i)
   })
 
   it('shows error on API failure', async () => {
     server.use(
-      http.get(`${API_URL}/api/auth/callback`, () => {
-        return HttpResponse.json({ error: 'Invalid code' }, { status: 400 })
+      http.post(`${API_URL}/api/auth/refresh`, () => {
+        return HttpResponse.json({ error: 'Session expired' }, { status: 401 })
       })
     )
 
@@ -97,7 +107,7 @@ describe('AuthCallbackPage', () => {
 
   it('shows retry link on error', async () => {
     server.use(
-      http.get(`${API_URL}/api/auth/callback`, () => {
+      http.post(`${API_URL}/api/auth/refresh`, () => {
         return HttpResponse.json({ error: 'Failed' }, { status: 500 })
       })
     )
