@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+const API_URL = ''
 
 // Test component that exposes auth context values
 function AuthDisplay() {

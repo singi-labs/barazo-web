@@ -8,7 +8,7 @@ import { server } from '@/mocks/server'
 import { createAuthFetch } from '@/lib/api/auth-fetch'
 import { mockAuthSession } from '@/mocks/data'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+const API_URL = ''
 
 describe('createAuthFetch', () => {
   let getToken: ReturnType<typeof vi.fn>

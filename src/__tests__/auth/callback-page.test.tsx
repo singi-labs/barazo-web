@@ -8,7 +8,7 @@ import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 import CallbackPage from '@/app/auth/callback/page'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+const API_URL = ''
 
 const mockSetSessionFromCallback = vi.fn()
 
