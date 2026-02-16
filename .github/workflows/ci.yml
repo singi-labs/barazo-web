@@ -142,26 +142,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: .next/
-
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Build application
+        run: pnpm build
+
       - name: Prepare standalone server
         run: |
-          mkdir -p .next/standalone/.next
-          cp -r .next/static .next/standalone/.next/static
-          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/$(pwd | cut -c2-)/.next/static
+          cp -r public .next/standalone/$(pwd | cut -c2-)/public
 
-      - name: Run Playwright a11y tests
-        run: pnpm test:e2e
-
-      - name: Start standalone server for pa11y and Lighthouse
-        run: node .next/standalone/server.js &
+      - name: Start standalone server
+        run: node .next/standalone/$(pwd | cut -c2-)/server.js &
         env:
           PORT: '3000'
           HOSTNAME: '0.0.0.0'
@@ -172,6 +165,9 @@ jobs:
             curl -s http://localhost:3000 > /dev/null 2>&1 && break
             sleep 1
           done
+
+      - name: Run Playwright a11y tests
+        run: pnpm test:e2e
 
       - name: Run pa11y-ci
         run: pnpm test:a11y

@@ -37,12 +37,16 @@ export default defineConfig({
     },
   ],
 
-  /* Start the Next.js standalone server before running tests */
+  /**
+   * Start the Next.js standalone server before running tests.
+   * Locally: builds, prepares standalone, and starts.
+   * CI: server is started externally; set PLAYWRIGHT_REUSE_SERVER=1.
+   */
   webServer: {
     command:
-      'mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public && node .next/standalone/server.js',
+      'pnpm build && node .next/standalone/$(node -e "const p=process.cwd();console.log(p.slice(1))")/server.js',
     port: 3000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !!process.env.CI,
     env: {
       PORT: '3000',
       HOSTNAME: '0.0.0.0',
