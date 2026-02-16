@@ -43,8 +43,14 @@ export default defineConfig({
    * CI: server is started externally; set PLAYWRIGHT_REUSE_SERVER=1.
    */
   webServer: {
-    command:
-      'pnpm build && node .next/standalone/$(node -e "const p=process.cwd();console.log(p.slice(1))")/server.js',
+    command: [
+      'pnpm build',
+      'SERVER=$(find .next/standalone -name server.js -not -path "*/node_modules/*" | head -1)',
+      'DIR=$(dirname "$SERVER")',
+      'cp -r .next/static "$DIR/.next/static"',
+      'cp -r public "$DIR/public"',
+      'node "$SERVER"',
+    ].join(' && '),
     port: 3000,
     reuseExistingServer: !!process.env.CI,
     env: {

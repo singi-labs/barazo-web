@@ -150,11 +150,11 @@ jobs:
 
       - name: Prepare standalone server
         run: |
-          cp -r .next/static .next/standalone/$(pwd | cut -c2-)/.next/static
-          cp -r public .next/standalone/$(pwd | cut -c2-)/public
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
 
       - name: Start standalone server
-        run: node .next/standalone/$(pwd | cut -c2-)/server.js &
+        run: node .next/standalone/server.js &
         env:
           PORT: '3000'
           HOSTNAME: '0.0.0.0'
