@@ -169,11 +169,16 @@ jobs:
       - name: Run Playwright a11y tests
         run: pnpm test:e2e
 
+      - name: Install Chrome for pa11y
+        run: npx puppeteer browsers install chrome
+
       - name: Run pa11y-ci
         run: pnpm test:a11y
 
       - name: Run Lighthouse CI
         run: pnpm test:lighthouse
+        env:
+          CHROME_PATH: /usr/bin/google-chrome-stable
 
       - name: Upload Playwright report
         if: always()
