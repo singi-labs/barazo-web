@@ -183,6 +183,7 @@ export interface CommunitySettings {
 }
 
 export interface PublicSettings {
+  communityDid: string | null
   communityName: string
   maturityRating: MaturityRating
   communityDescription: string | null
