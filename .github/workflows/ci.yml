@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && npm install --ignore-scripts && npm run build
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -45,6 +50,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && npm install --ignore-scripts && npm run build
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -68,6 +78,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && npm install --ignore-scripts && npm run build
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -93,6 +108,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && npm install --ignore-scripts && npm run build
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -127,6 +147,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && npm install --ignore-scripts && npm run build
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4

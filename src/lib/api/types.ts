@@ -4,6 +4,24 @@
  * @see ~/Documents/Git/barazo-forum/barazo-api/src/routes/
  */
 
+// Re-export lexicon types for AT Protocol record validation and constants.
+// API response types below are enriched by the AppView (computed fields like
+// replyCount, indexedAt, etc.) and differ from the raw PDS record shapes.
+export type {
+  TopicPostInput,
+  TopicReplyInput,
+  ReactionInput,
+  ActorPreferencesInput,
+} from '@barazo-forum/lexicons'
+
+export {
+  LEXICON_IDS,
+  topicPostSchema,
+  topicReplySchema,
+  reactionSchema,
+  actorPreferencesSchema,
+} from '@barazo-forum/lexicons'
+
 // --- Categories ---
 
 export interface Category {

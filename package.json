@@ -26,6 +26,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@barazo-forum/lexicons": "link:../barazo-lexicons",
     "@phosphor-icons/react": "^2.1.7",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.2",
