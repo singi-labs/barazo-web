@@ -169,9 +169,6 @@ jobs:
       - name: Run Playwright a11y tests
         run: pnpm test:e2e
 
-      - name: Install Chrome for pa11y
-        run: pnpm exec puppeteer browsers install chrome
-
       - name: Run pa11y-ci
         run: pnpm test:a11y
 
