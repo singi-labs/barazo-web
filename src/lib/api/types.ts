@@ -543,6 +543,53 @@ export interface SubmitOnboardingInput {
   responses: Array<{ fieldId: string; response: unknown }>
 }
 
+// --- User Profile (public, with community resolution) ---
+
+export interface UserProfile {
+  did: string
+  handle: string
+  displayName: string | null
+  avatarUrl: string | null
+  bannerUrl: string | null
+  bio: string | null
+  role: string
+  firstSeenAt: string
+  lastActiveAt: string
+  activity: {
+    topicCount: number
+    replyCount: number
+    reactionsReceived: number
+  }
+}
+
+// --- Community Profile (own profile in a community) ---
+
+export interface CommunityProfile {
+  did: string
+  handle: string
+  displayName: string | null
+  avatarUrl: string | null
+  bannerUrl: string | null
+  bio: string | null
+  communityDid: string
+  hasOverride: boolean
+  source: {
+    displayName: string | null
+    avatarUrl: string | null
+    bannerUrl: string | null
+    bio: string | null
+  }
+}
+
+export interface UpdateCommunityProfileInput {
+  displayName?: string | null
+  bio?: string | null
+}
+
+export interface UploadResponse {
+  url: string
+}
+
 // --- Shared ---
 
 export type MaturityRating = 'safe' | 'mature' | 'adult'
