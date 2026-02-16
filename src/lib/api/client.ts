@@ -46,7 +46,9 @@ import type {
 } from './types'
 
 const API_URL =
-  typeof window !== 'undefined' ? '' : (process.env.API_INTERNAL_URL ?? 'http://localhost:3000')
+  typeof window !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_API_URL ?? '')
+    : (process.env.API_INTERNAL_URL ?? 'http://localhost:3000')
 
 interface FetchOptions {
   headers?: Record<string, string>
@@ -95,9 +97,9 @@ function buildQuery(params: Record<string, string | number | undefined>): string
 
 // --- Auth endpoints ---
 
-export function initiateLogin(handle: string): Promise<{ redirectUrl: string }> {
+export function initiateLogin(handle: string): Promise<{ url: string }> {
   const query = buildQuery({ handle })
-  return apiFetch<{ redirectUrl: string }>(`/api/auth/login${query}`)
+  return apiFetch<{ url: string }>(`/api/auth/login${query}`)
 }
 
 export function handleCallback(code: string, state: string): Promise<AuthSession> {
@@ -110,7 +112,6 @@ export async function refreshSession(): Promise<AuthSession> {
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
   })
 
   if (!response.ok) {

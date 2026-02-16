@@ -34,7 +34,8 @@ export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
               alt="Barazo"
               width={120}
               height={32}
-              className="h-8 w-auto dark:hidden"
+              className="h-8 dark:hidden"
+              style={{ width: 'auto' }}
               priority
             />
             <Image
@@ -42,7 +43,8 @@ export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
               alt="Barazo"
               width={120}
               height={32}
-              className="hidden h-8 w-auto dark:block"
+              className="hidden h-8 dark:block"
+              style={{ width: 'auto' }}
               priority
             />
           </Link>

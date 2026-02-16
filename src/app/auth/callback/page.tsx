@@ -1,7 +1,7 @@
 /**
- * OAuth callback page -- processes auth response from PDS.
- * URL: /auth/callback?code=...&state=...
- * On success: stores token in auth context (memory), redirects to returnTo or /.
+ * OAuth callback page -- completes auth after API redirect.
+ * URL: /auth/callback?success=true (redirected from API after PDS OAuth)
+ * On success: refreshes session via cookie, stores token in memory, redirects to returnTo or /.
  * On failure: shows error with retry link.
  * @see specs/prd-web.md Section M3 (Auth Flow)
  */
@@ -11,7 +11,7 @@
 import { Suspense, useEffect, useMemo, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { handleCallback } from '@/lib/api/client'
+import { refreshSession } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 
 function CallbackContent() {
@@ -19,14 +19,15 @@ function CallbackContent() {
   const { setSessionFromCallback } = useAuth()
   const processedRef = useRef(false)
 
-  const code = searchParams.get('code')
-  const state = searchParams.get('state')
+  const success = searchParams.get('success')
+  const errorParam = searchParams.get('error')
 
   // Derive missing-params error synchronously (not in effect)
-  const missingParamsError = useMemo(
-    () => (!code || !state ? 'Missing authorization code or state parameter' : null),
-    [code, state]
-  )
+  const missingParamsError = useMemo(() => {
+    if (errorParam) return errorParam
+    if (success) return null
+    return 'Missing authorization parameters'
+  }, [errorParam, success])
 
   const [error, setError] = useState<string | null>(missingParamsError)
 
@@ -36,7 +37,9 @@ function CallbackContent() {
 
     async function processCallback() {
       try {
-        const session = await handleCallback(code!, state!)
+        // API already set the HTTP-only refresh cookie during redirect.
+        // Call refresh to get the access token from the cookie.
+        const session = await refreshSession()
         setSessionFromCallback(session)
 
         const returnTo = sessionStorage.getItem('auth_returnTo') ?? '/'
@@ -48,7 +51,7 @@ function CallbackContent() {
     }
 
     void processCallback()
-  }, [code, state, missingParamsError, setSessionFromCallback])
+  }, [missingParamsError, setSessionFromCallback])
 
   if (error) {
     return (
