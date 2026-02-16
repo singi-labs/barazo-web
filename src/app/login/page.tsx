@@ -66,7 +66,8 @@ function LoginContent() {
               alt="Barazo"
               width={160}
               height={42}
-              className="h-10 w-auto dark:hidden"
+              className="h-10 dark:hidden"
+              style={{ width: 'auto' }}
               priority
             />
             <Image
@@ -74,7 +75,8 @@ function LoginContent() {
               alt="Barazo"
               width={160}
               height={42}
-              className="hidden h-10 w-auto dark:block"
+              className="hidden h-10 dark:block"
+              style={{ width: 'auto' }}
               priority
             />
           </Link>

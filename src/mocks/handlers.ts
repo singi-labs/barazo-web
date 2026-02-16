@@ -42,7 +42,7 @@ export const handlers = [
       return HttpResponse.json({ error: 'handle is required' }, { status: 400 })
     }
     return HttpResponse.json({
-      redirectUrl: `https://bsky.social/oauth/authorize?handle=${encodeURIComponent(handle)}&state=mock-state-123`,
+      url: `https://bsky.social/oauth/authorize?handle=${encodeURIComponent(handle)}&state=mock-state-123`,
     })
   }),
 

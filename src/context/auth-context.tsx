@@ -108,8 +108,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [setSession])
 
   const login = useCallback(async (handle: string) => {
-    const { redirectUrl } = await initiateLogin(handle)
-    window.location.href = redirectUrl
+    const { url } = await initiateLogin(handle)
+    window.location.href = url
   }, [])
 
   const logout = useCallback(async () => {
