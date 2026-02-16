@@ -9,6 +9,7 @@ import type {
   CategoryTreeNode,
   CategoryWithTopicCount,
   CommunityPreferenceOverride,
+  CommunityProfile,
   Topic,
   Reply,
   Notification,
@@ -22,7 +23,9 @@ import type {
   CommunitySettings,
   CommunityStats,
   Plugin,
+  PublicSettings,
   UserPreferences,
+  UserProfile,
   OnboardingField,
   MyReport,
 } from '@/lib/api/types'
@@ -987,3 +990,69 @@ export const mockMyReports: MyReport[] = [
     createdAt: LAST_WEEK,
   },
 ]
+
+// --- User Profiles (public, keyed by handle) ---
+
+export const mockUserProfiles: Record<string, UserProfile> = {
+  'alice.bsky.social': {
+    did: 'did:plc:user-alice-001',
+    handle: 'alice.bsky.social',
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+    bannerUrl: null,
+    bio: 'Community admin and AT Protocol enthusiast.',
+    role: 'admin',
+    firstSeenAt: TWO_DAYS_AGO,
+    lastActiveAt: NOW,
+    activity: {
+      topicCount: 15,
+      replyCount: 42,
+      reactionsReceived: 89,
+    },
+  },
+  'bob.bsky.social': {
+    did: 'did:plc:user-bob-002',
+    handle: 'bob.bsky.social',
+    displayName: 'Bob',
+    avatarUrl: null,
+    bannerUrl: null,
+    bio: null,
+    role: 'moderator',
+    firstSeenAt: TWO_DAYS_AGO,
+    lastActiveAt: YESTERDAY,
+    activity: {
+      topicCount: 8,
+      replyCount: 31,
+      reactionsReceived: 45,
+    },
+  },
+}
+
+// --- Public Settings ---
+
+export const mockPublicSettings: PublicSettings = {
+  communityDid: COMMUNITY_DID,
+  communityName: 'Barazo Test Community',
+  maturityRating: 'safe',
+  communityDescription: 'A test community for development',
+  communityLogoUrl: null,
+}
+
+// --- Community Profile (own profile in a community) ---
+
+export const mockCommunityProfile: CommunityProfile = {
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+  bannerUrl: null,
+  bio: 'Community admin and AT Protocol enthusiast.',
+  communityDid: COMMUNITY_DID,
+  hasOverride: false,
+  source: {
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+    bannerUrl: null,
+    bio: 'Community admin and AT Protocol enthusiast.',
+  },
+}
