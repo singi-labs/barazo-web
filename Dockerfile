@@ -11,8 +11,8 @@ WORKDIR /workspace
 # Enable pnpm via corepack
 RUN corepack enable && corepack prepare pnpm@10.29.2 --activate
 
-# Copy workspace root config
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy workspace root config (including .npmrc for inject-workspace-packages)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # Copy all workspace package.json files (needed for pnpm install)
 COPY barazo-lexicons/package.json ./barazo-lexicons/
