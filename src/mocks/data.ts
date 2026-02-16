@@ -8,6 +8,7 @@ import type {
   AuthUser,
   CategoryTreeNode,
   CategoryWithTopicCount,
+  CommunityPreferenceOverride,
   Topic,
   Reply,
   Notification,
@@ -853,6 +854,25 @@ export const mockPlugins: Plugin[] = [
     },
     settings: { webhookUrl: '' },
     installedAt: YESTERDAY,
+  },
+]
+
+// --- Per-Community Preference Overrides ---
+
+export const mockCommunityPreferences: CommunityPreferenceOverride[] = [
+  {
+    communityDid: COMMUNITY_DID,
+    communityName: 'Barazo Test Community',
+    maturityLevel: 'inherit',
+    mutedWords: [],
+    blockedDids: [],
+  },
+  {
+    communityDid: 'did:plc:other-community-456',
+    communityName: 'Gaming Forum',
+    maturityLevel: 'mature',
+    mutedWords: ['spoiler'],
+    blockedDids: ['did:plc:user-dave-004'],
   },
 ]
 

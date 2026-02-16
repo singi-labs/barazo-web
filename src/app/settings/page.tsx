@@ -1,7 +1,8 @@
 /**
  * User settings page.
  * URL: /settings
- * Content safety, cross-posting defaults, notification preferences.
+ * Content safety, cross-posting defaults, notification preferences,
+ * per-community overrides.
  * Client component (form state).
  * @see specs/prd-web.md Section M8 (Settings page)
  */
@@ -13,7 +14,13 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
 import { cn } from '@/lib/utils'
-import { getPreferences, updatePreferences } from '@/lib/api/client'
+import {
+  getPreferences,
+  updatePreferences,
+  getCommunityPreferences,
+  updateCommunityPreference,
+} from '@/lib/api/client'
+import type { CommunityPreferenceOverride } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 
 type MaturityLevel = 'sfw' | 'sfw-mature'
@@ -28,6 +35,14 @@ interface SettingsValues {
   notifyReactions: boolean
 }
 
+interface CommunityOverrideValues {
+  communityDid: string
+  communityName: string
+  maturityLevel: 'inherit' | 'sfw' | 'mature'
+  mutedWords: string
+  blockedDids: string
+}
+
 export default function SettingsPage() {
   const { getAccessToken } = useAuth()
   const [values, setValues] = useState<SettingsValues>({
@@ -39,6 +54,7 @@ export default function SettingsPage() {
     notifyMentions: true,
     notifyReactions: false,
   })
+  const [communityOverrides, setCommunityOverrides] = useState<CommunityOverrideValues[]>([])
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -54,8 +70,8 @@ export default function SettingsPage() {
       return
     }
 
-    getPreferences(token)
-      .then((prefs) => {
+    Promise.all([getPreferences(token), getCommunityPreferences(token)])
+      .then(([prefs, communityPrefs]) => {
         setValues({
           maturityLevel: prefs.maturityLevel === 'mature' ? 'sfw-mature' : 'sfw',
           mutedWords: prefs.mutedWords.join(', '),
@@ -66,10 +82,30 @@ export default function SettingsPage() {
           notifyReactions: false,
         })
         setDeclaredAge(prefs.declaredAge)
+        setCommunityOverrides(
+          communityPrefs.communities.map(
+            (c: CommunityPreferenceOverride): CommunityOverrideValues => ({
+              communityDid: c.communityDid,
+              communityName: c.communityName,
+              maturityLevel: c.maturityLevel,
+              mutedWords: c.mutedWords.join(', '),
+              blockedDids: c.blockedDids.join(', '),
+            })
+          )
+        )
       })
       .catch(() => setError('Failed to load preferences'))
       .finally(() => setLoading(false))
   }, [getAccessToken])
+
+  const handleCommunityChange = useCallback(
+    (communityDid: string, field: keyof CommunityOverrideValues, value: string) => {
+      setCommunityOverrides((prev) =>
+        prev.map((c) => (c.communityDid === communityDid ? { ...c, [field]: value } : c))
+      )
+    },
+    []
+  )
 
   const handleSave = useCallback(
     async (e: React.FormEvent) => {
@@ -98,6 +134,7 @@ export default function SettingsPage() {
           .map((w) => w.trim())
           .filter(Boolean)
 
+        // Save global preferences
         await updatePreferences(
           {
             maturityLevel: values.maturityLevel === 'sfw-mature' ? 'mature' : 'sfw',
@@ -107,6 +144,28 @@ export default function SettingsPage() {
           },
           token
         )
+
+        // Save per-community overrides
+        await Promise.all(
+          communityOverrides.map((c) =>
+            updateCommunityPreference(
+              c.communityDid,
+              {
+                maturityLevel: c.maturityLevel,
+                mutedWords: c.mutedWords
+                  .split(',')
+                  .map((w) => w.trim())
+                  .filter(Boolean),
+                blockedDids: c.blockedDids
+                  .split(',')
+                  .map((d) => d.trim())
+                  .filter(Boolean),
+              },
+              token
+            )
+          )
+        )
+
         setSuccess(true)
       } catch {
         setError('Failed to save preferences')
@@ -114,7 +173,7 @@ export default function SettingsPage() {
         setSaving(false)
       }
     },
-    [values, declaredAge, getAccessToken]
+    [values, communityOverrides, declaredAge, getAccessToken]
   )
 
   return (
@@ -199,6 +258,121 @@ export default function SettingsPage() {
                   Posts containing these words will be collapsed. Comma-separated.
                 </p>
               </div>
+            </fieldset>
+
+            {/* Per-Community Overrides */}
+            <fieldset className="space-y-4 rounded-lg border border-border p-4">
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                Per-Community Overrides
+              </legend>
+
+              {communityOverrides.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No community memberships found. Join a community to configure per-community
+                  settings.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {communityOverrides.map((community) => (
+                    <details
+                      key={community.communityDid}
+                      className="rounded-md border border-border"
+                    >
+                      <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50">
+                        {community.communityName}
+                      </summary>
+
+                      <div className="space-y-3 border-t border-border px-3 py-3">
+                        <div className="space-y-1">
+                          <label
+                            htmlFor={`maturity-${community.communityDid}`}
+                            className="block text-xs font-medium text-foreground"
+                          >
+                            Maturity override
+                          </label>
+                          <select
+                            id={`maturity-${community.communityDid}`}
+                            value={community.maturityLevel}
+                            onChange={(e) =>
+                              handleCommunityChange(
+                                community.communityDid,
+                                'maturityLevel',
+                                e.target.value
+                              )
+                            }
+                            className={cn(
+                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground',
+                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                            )}
+                          >
+                            <option value="inherit">Inherit global setting</option>
+                            <option value="sfw">SFW only</option>
+                            <option value="mature">SFW + Mature</option>
+                          </select>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label
+                            htmlFor={`muted-words-${community.communityDid}`}
+                            className="block text-xs font-medium text-foreground"
+                          >
+                            Community muted words
+                          </label>
+                          <textarea
+                            id={`muted-words-${community.communityDid}`}
+                            value={community.mutedWords}
+                            onChange={(e) =>
+                              handleCommunityChange(
+                                community.communityDid,
+                                'mutedWords',
+                                e.target.value
+                              )
+                            }
+                            placeholder="Additional muted words for this community"
+                            rows={2}
+                            className={cn(
+                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground',
+                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                            )}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            These are in addition to your global muted words. Comma-separated.
+                          </p>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label
+                            htmlFor={`blocked-${community.communityDid}`}
+                            className="block text-xs font-medium text-foreground"
+                          >
+                            Community blocked users
+                          </label>
+                          <textarea
+                            id={`blocked-${community.communityDid}`}
+                            value={community.blockedDids}
+                            onChange={(e) =>
+                              handleCommunityChange(
+                                community.communityDid,
+                                'blockedDids',
+                                e.target.value
+                              )
+                            }
+                            placeholder="DIDs of users to block in this community"
+                            rows={2}
+                            className={cn(
+                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground',
+                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                            )}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Block specific users only in this community. Comma-separated DIDs.
+                          </p>
+                        </div>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              )}
             </fieldset>
 
             {/* Cross-Posting */}

@@ -24,6 +24,7 @@ import {
   mockAdminUsers,
   mockPlugins,
   mockUserPreferences,
+  mockCommunityPreferences,
   mockOnboardingFields,
 } from './data'
 
@@ -511,6 +512,33 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>
     return HttpResponse.json({ ...mockUserPreferences, ...body })
   }),
+
+  // GET /api/users/me/preferences/communities
+  http.get(`${API_URL}/api/users/me/preferences/communities`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ communities: mockCommunityPreferences })
+  }),
+
+  // PUT /api/users/me/preferences/communities/:communityDid
+  http.put(
+    `${API_URL}/api/users/me/preferences/communities/:communityDid`,
+    async ({ request, params }) => {
+      const auth = request.headers.get('Authorization')
+      if (!auth?.startsWith('Bearer ')) {
+        return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      const communityDid = decodeURIComponent(params['communityDid'] as string)
+      const existing = mockCommunityPreferences.find((c) => c.communityDid === communityDid)
+      if (!existing) {
+        return HttpResponse.json({ error: 'Not found' }, { status: 404 })
+      }
+      const body = (await request.json()) as Record<string, unknown>
+      return HttpResponse.json({ ...existing, ...body })
+    }
+  ),
 
   // POST /api/users/me/age-declaration
   http.post(`${API_URL}/api/users/me/age-declaration`, async ({ request }) => {
