@@ -45,7 +45,8 @@ import type {
   MyReportsResponse,
 } from './types'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+const API_URL =
+  typeof window !== 'undefined' ? '' : (process.env.API_INTERNAL_URL ?? 'http://localhost:3000')
 
 interface FetchOptions {
   headers?: Record<string, string>
