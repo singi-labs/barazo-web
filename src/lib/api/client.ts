@@ -41,6 +41,8 @@ import type {
   UpdateOnboardingFieldInput,
   OnboardingStatus,
   SubmitOnboardingInput,
+  MyReport,
+  MyReportsResponse,
 } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
@@ -759,6 +761,37 @@ export function submitOnboarding(
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: input,
   })
+}
+
+// --- My Reports + Appeals endpoints ---
+
+export function getMyReports(
+  accessToken: string,
+  params: PaginationParams = {},
+  options?: FetchOptions
+): Promise<MyReportsResponse> {
+  const query = buildQuery({ limit: params.limit, cursor: params.cursor })
+  return apiFetch<MyReportsResponse>(`/api/moderation/my-reports${query}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function submitAppeal(
+  reportId: number,
+  reason: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<MyReport> {
+  return apiFetch<MyReport>(
+    `/api/moderation/reports/${encodeURIComponent(String(reportId))}/appeal`,
+    {
+      ...options,
+      method: 'POST',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+      body: { reason },
+    }
+  )
 }
 
 export { ApiError }

@@ -279,6 +279,32 @@ export interface ModerationReportsResponse {
   total: number
 }
 
+// --- User's own reports (my-reports) ---
+
+export type AppealStatus = 'none' | 'pending' | 'rejected'
+
+export interface MyReport {
+  id: number
+  reporterDid: string
+  targetUri: string
+  targetDid: string
+  reasonType: ReportReasonType
+  description: string | null
+  status: 'pending' | 'resolved'
+  resolutionType: ReportResolution | null
+  resolvedBy: string | null
+  resolvedAt: string | null
+  appealReason: string | null
+  appealedAt: string | null
+  appealStatus: AppealStatus
+  createdAt: string
+}
+
+export interface MyReportsResponse {
+  reports: MyReport[]
+  cursor: string | null
+}
+
 export interface FirstPostQueueItem {
   id: string
   authorDid: string

@@ -26,6 +26,7 @@ import {
   mockUserPreferences,
   mockCommunityPreferences,
   mockOnboardingFields,
+  mockMyReports,
 } from './data'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
@@ -678,5 +679,40 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     return HttpResponse.json({ success: true })
+  }),
+
+  // --- My Reports + Appeals endpoints ---
+
+  // GET /api/moderation/my-reports
+  http.get(`${API_URL}/api/moderation/my-reports`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({
+      reports: mockMyReports,
+      cursor: null,
+    })
+  }),
+
+  // POST /api/moderation/reports/:id/appeal
+  http.post(`${API_URL}/api/moderation/reports/:id/appeal`, async ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = Number(params['id'])
+    const report = mockMyReports.find((r) => r.id === id)
+    if (!report) {
+      return HttpResponse.json({ error: 'Report not found' }, { status: 404 })
+    }
+    const body = (await request.json()) as { reason?: string }
+    return HttpResponse.json({
+      ...report,
+      appealReason: body.reason ?? null,
+      appealedAt: new Date().toISOString(),
+      appealStatus: 'pending',
+      status: 'pending',
+    })
   }),
 ]
