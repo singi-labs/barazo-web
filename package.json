@@ -90,7 +90,7 @@
     "eslint-config-next": "16.1.6",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "husky": "catalog:",
-    "jsdom": "^25.0.1",
+    "jsdom": "^28.1.0",
     "lint-staged": "^16.2.7",
     "msw": "^2.7.0",
     "pa11y-ci": "^4.0.1",
