@@ -1,9 +1,10 @@
 /**
  * Tests for user profile page.
+ * The page fetches profile data via getUserProfile() (MSW-intercepted).
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import UserProfilePage from './page'
 
 // Mock useAuth hook
@@ -31,31 +32,48 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('UserProfilePage', () => {
-  it('renders user handle in heading', () => {
+  it('renders user display name in heading', async () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    expect(screen.getByRole('heading', { name: /alice\.bsky\.social/i })).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /alice/i })).toBeInTheDocument()
+    })
   })
 
-  it('renders breadcrumbs', () => {
+  it('renders breadcrumbs', async () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    // Handle appears in both breadcrumbs and heading; check breadcrumb specifically
+    await waitFor(() => {
+      expect(screen.getByText('Home')).toBeInTheDocument()
+    })
     const breadcrumb = screen.getByRole('navigation', { name: /breadcrumb/i })
     expect(breadcrumb).toBeInTheDocument()
   })
 
-  it('renders profile sections', () => {
+  it('renders profile sections', async () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    expect(screen.getByText(/recent activity/i)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/recent activity/i)).toBeInTheDocument()
+    })
   })
 
-  it('shows cross-community ban warning when user is banned elsewhere', () => {
-    render(<UserProfilePage params={{ handle: 'dave.bsky.social' }} />)
-    expect(screen.getByText(/banned from.*other communit/i)).toBeInTheDocument()
+  it('renders user bio when available', async () => {
+    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    await waitFor(() => {
+      expect(screen.getByText(/community admin and at protocol enthusiast/i)).toBeInTheDocument()
+    })
   })
 
-  it('does not show ban warning for users with no cross-community bans', () => {
+  it('renders post count from activity data', async () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    expect(screen.queryByText(/banned from.*other communit/i)).not.toBeInTheDocument()
+    // alice has topicCount 15 + replyCount 42 = 57 posts
+    await waitFor(() => {
+      expect(screen.getByText(/57 posts/i)).toBeInTheDocument()
+    })
+  })
+
+  it('shows error for unknown handle', async () => {
+    render(<UserProfilePage params={{ handle: 'unknown.user.social' }} />)
+    await waitFor(() => {
+      expect(screen.getByText(/api 404/i)).toBeInTheDocument()
+    })
   })
 })

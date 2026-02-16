@@ -16,6 +16,7 @@ interface UserProfileData {
   did: string
   handle: string
   displayName?: string
+  avatarUrl?: string | null
   reputation: number
   postCount: number
   joinedAt: string
@@ -90,8 +91,13 @@ export function UserProfileCard({ user, className }: UserProfileCardProps) {
           role="tooltip"
         >
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-              <User size={20} className="text-muted-foreground" aria-hidden="true" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
+              {user.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <User size={20} className="text-muted-foreground" aria-hidden="true" />
+              )}
             </div>
             <div className="min-w-0 flex-1">
               {user.displayName && (

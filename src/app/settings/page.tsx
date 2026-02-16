@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
+import { CommunityProfileSettings } from '@/components/community-profile-settings'
 import { cn } from '@/lib/utils'
 import {
   getPreferences,
@@ -209,6 +210,9 @@ export default function SettingsPage() {
                 Settings saved successfully.
               </p>
             )}
+
+            {/* Community Profile (separate save, independent section) */}
+            <CommunityProfileSettings />
 
             {/* Content Safety */}
             <fieldset className="space-y-4 rounded-lg border border-border p-4">

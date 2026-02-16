@@ -43,6 +43,10 @@ import type {
   SubmitOnboardingInput,
   MyReport,
   MyReportsResponse,
+  UserProfile,
+  CommunityProfile,
+  UpdateCommunityProfileInput,
+  UploadResponse,
 } from './types'
 
 const API_URL =
@@ -794,6 +798,101 @@ export function submitAppeal(
       body: { reason },
     }
   )
+}
+
+// --- User Profile endpoints ---
+
+export function getUserProfile(
+  handle: string,
+  communityDid?: string,
+  options?: FetchOptions
+): Promise<UserProfile> {
+  const query = buildQuery({ communityDid })
+  return apiFetch<UserProfile>(`/api/users/${encodeURIComponent(handle)}${query}`, options)
+}
+
+// --- Community Profile endpoints ---
+
+export function getCommunityProfile(
+  communityDid: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunityProfile> {
+  return apiFetch<CommunityProfile>(
+    `/api/communities/${encodeURIComponent(communityDid)}/profile`,
+    { ...options, headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` } }
+  )
+}
+
+export function updateCommunityProfile(
+  communityDid: string,
+  input: UpdateCommunityProfileInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(
+    `/api/communities/${encodeURIComponent(communityDid)}/profile`,
+    {
+      ...options,
+      method: 'PUT',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+      body: input,
+    }
+  )
+}
+
+export function resetCommunityProfile(
+  communityDid: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  return apiFetch<void>(`/api/communities/${encodeURIComponent(communityDid)}/profile`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+// --- Upload endpoints (use FormData, not JSON) ---
+
+export async function uploadCommunityAvatar(
+  communityDid: string,
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/communities/${encodeURIComponent(communityDid)}/profile/avatar`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
+}
+
+export async function uploadCommunityBanner(
+  communityDid: string,
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/communities/${encodeURIComponent(communityDid)}/profile/banner`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
 }
 
 export { ApiError }

@@ -27,6 +27,9 @@ import {
   mockCommunityPreferences,
   mockOnboardingFields,
   mockMyReports,
+  mockUserProfiles,
+  mockPublicSettings,
+  mockCommunityProfile,
 } from './data'
 
 const API_URL = ''
@@ -693,6 +696,76 @@ export const handlers = [
       reports: mockMyReports,
       cursor: null,
     })
+  }),
+
+  // --- User Profile endpoints ---
+
+  // GET /api/users/:handle (public profile)
+  http.get(`${API_URL}/api/users/:handle`, ({ params }) => {
+    const handle = decodeURIComponent(params['handle'] as string)
+    // Skip /api/users/me/* paths (handled by specific handlers above)
+    if (handle === 'me') {
+      return
+    }
+    const profile = mockUserProfiles[handle]
+    if (!profile) {
+      return HttpResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+    return HttpResponse.json(profile)
+  }),
+
+  // --- Public Settings endpoint ---
+
+  // GET /api/settings/public
+  http.get(`${API_URL}/api/settings/public`, () => {
+    return HttpResponse.json(mockPublicSettings)
+  }),
+
+  // --- Community Profile endpoints ---
+
+  // GET /api/communities/:communityDid/profile
+  http.get(`${API_URL}/api/communities/:communityDid/profile`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json(mockCommunityProfile)
+  }),
+
+  // PUT /api/communities/:communityDid/profile
+  http.put(`${API_URL}/api/communities/:communityDid/profile`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ success: true })
+  }),
+
+  // DELETE /api/communities/:communityDid/profile
+  http.delete(`${API_URL}/api/communities/:communityDid/profile`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // POST /api/communities/:communityDid/profile/avatar
+  http.post(`${API_URL}/api/communities/:communityDid/profile/avatar`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'https://cdn.example.com/avatar/uploaded.jpg' })
+  }),
+
+  // POST /api/communities/:communityDid/profile/banner
+  http.post(`${API_URL}/api/communities/:communityDid/profile/banner`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'https://cdn.example.com/banner/uploaded.jpg' })
   }),
 
   // POST /api/moderation/reports/:id/appeal
