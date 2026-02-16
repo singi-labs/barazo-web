@@ -3,17 +3,19 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { Mock } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 import { createAuthFetch } from '@/lib/api/auth-fetch'
 import { mockAuthSession } from '@/mocks/data'
+import type { AuthSession } from '@/lib/api/types'
 
 const API_URL = ''
 
 describe('createAuthFetch', () => {
-  let getToken: ReturnType<typeof vi.fn>
-  let setToken: ReturnType<typeof vi.fn>
-  let onAuthFailure: ReturnType<typeof vi.fn>
+  let getToken: Mock<() => string | null>
+  let setToken: Mock<(session: AuthSession) => void>
+  let onAuthFailure: Mock<() => void>
   let authFetch: ReturnType<typeof createAuthFetch>
 
   beforeEach(() => {
