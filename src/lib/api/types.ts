@@ -210,6 +210,7 @@ export interface AuthSession {
   handle: string
   displayName: string | null
   avatarUrl: string | null
+  crossPostScopesGranted?: boolean
 }
 
 export interface AuthUser {

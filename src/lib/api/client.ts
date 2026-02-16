@@ -106,6 +106,12 @@ export function initiateLogin(handle: string): Promise<{ url: string }> {
   return apiFetch<{ url: string }>(`/api/auth/login${query}`)
 }
 
+export function initiateCrossPostAuth(token: string): Promise<{ url: string }> {
+  return apiFetch<{ url: string }>('/api/auth/crosspost-authorize', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
 export function handleCallback(code: string, state: string): Promise<AuthSession> {
   const query = buildQuery({ code, state })
   return apiFetch<AuthSession>(`/api/auth/callback${query}`)

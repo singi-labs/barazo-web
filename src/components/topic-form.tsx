@@ -12,6 +12,8 @@ import type { CreateTopicInput } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { MarkdownEditor } from './markdown-editor'
 import { MarkdownPreview } from './markdown-preview'
+import { CrossPostAuthDialog } from './crosspost-auth-dialog'
+import { useAuth } from '@/hooks/use-auth'
 
 interface TopicFormValues {
   title: string
@@ -88,6 +90,8 @@ export function TopicForm({
   )
   const [errors, setErrors] = useState<FormErrors>({})
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write')
+  const [showCrossPostAuthDialog, setShowCrossPostAuthDialog] = useState(false)
+  const { crossPostScopesGranted, requestCrossPostAuth } = useAuth()
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -272,28 +276,56 @@ export function TopicForm({
       {mode === 'create' && (
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium text-foreground">Cross-post</legend>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={crossPostBluesky}
-                onChange={(e) => setCrossPostBluesky(e.target.checked)}
-                className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-              />
-              <span className="text-sm text-foreground">Share on Bluesky</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={crossPostFrontpage}
-                onChange={(e) => setCrossPostFrontpage(e.target.checked)}
-                className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-              />
-              <span className="text-sm text-foreground">Share on Frontpage</span>
-            </label>
-          </div>
+          {crossPostScopesGranted ? (
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={crossPostBluesky}
+                  onChange={(e) => setCrossPostBluesky(e.target.checked)}
+                  className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
+                />
+                <span className="text-sm text-foreground">Share on Bluesky</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={crossPostFrontpage}
+                  onChange={(e) => setCrossPostFrontpage(e.target.checked)}
+                  className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
+                />
+                <span className="text-sm text-foreground">Share on Frontpage</span>
+              </label>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Cross-posting requires additional permissions.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowCrossPostAuthDialog(true)}
+                className={cn(
+                  'text-sm font-medium text-primary transition-colors',
+                  'hover:text-primary-hover underline underline-offset-4',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                )}
+              >
+                Authorize cross-posting
+              </button>
+            </div>
+          )}
         </fieldset>
       )}
+
+      <CrossPostAuthDialog
+        open={showCrossPostAuthDialog}
+        onAuthorize={() => {
+          setShowCrossPostAuthDialog(false)
+          void requestCrossPostAuth()
+        }}
+        onCancel={() => setShowCrossPostAuthDialog(false)}
+      />
 
       {/* Submit */}
       <div className="flex justify-end">
