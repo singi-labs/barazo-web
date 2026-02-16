@@ -69,40 +69,35 @@
     "shiki": "^1.24.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.49.1",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^22",
+    "@types/node": "catalog:",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^9",
+    "eslint": "catalog:",
     "eslint-config-next": "16.1.6",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "husky": "^9.1.7",
+    "husky": "catalog:",
     "jsdom": "^25.0.1",
     "lint-staged": "^16.2.7",
     "msw": "^2.7.0",
     "pa11y-ci": "^4.0.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5",
-    "vitest": "^3.0.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
     "vitest-axe": "^0.1.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
   }
 }
