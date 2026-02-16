@@ -10,6 +10,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
@@ -437,6 +438,23 @@ export default function SettingsPage() {
                 </label>
               </div>
             </fieldset>
+
+            {/* My Reports link */}
+            <div className="rounded-lg border border-border p-4">
+              <Link
+                href="/settings/reports"
+                className={cn(
+                  'text-sm font-medium text-primary transition-colors',
+                  'hover:text-primary-hover underline underline-offset-4',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                )}
+              >
+                View my reports and appeals
+              </Link>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Track the status of reports you have submitted and appeal dismissed reports.
+              </p>
+            </div>
 
             {/* Save */}
             <div className="flex justify-end">
