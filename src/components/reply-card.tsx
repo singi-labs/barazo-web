@@ -5,6 +5,7 @@
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
 
+import Link from 'next/link'
 import { Heart, Clock, Link as LinkIcon } from '@phosphor-icons/react/dist/ssr'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
@@ -61,9 +62,29 @@ export function ReplyCard({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-2">
           <div className="flex items-center gap-2 text-sm">
-            <h3 id={headingId} className="font-medium text-foreground">
-              {reply.authorDid}
-            </h3>
+            <Link
+              href={`/u/${reply.author?.handle ?? reply.authorDid}`}
+              className="flex items-center gap-2 hover:text-foreground"
+            >
+              {reply.author?.avatarUrl ? (
+                <img
+                  src={reply.author.avatarUrl}
+                  alt=""
+                  className="h-6 w-6 rounded-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <span
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium"
+                  aria-hidden="true"
+                >
+                  {(reply.author?.displayName ?? reply.author?.handle ?? '?')[0]?.toUpperCase()}
+                </span>
+              )}
+              <h3 id={headingId} className="font-medium text-foreground">
+                {reply.author?.displayName ?? reply.author?.handle ?? reply.authorDid}
+              </h3>
+            </Link>
             <span className="text-muted-foreground" aria-hidden="true">
               ·
             </span>
