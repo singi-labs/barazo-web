@@ -10,7 +10,12 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { AuthSession, AuthUser } from '@/lib/api/types'
-import { initiateLogin, refreshSession, logout as apiLogout } from '@/lib/api/client'
+import {
+  initiateLogin,
+  initiateCrossPostAuth,
+  refreshSession,
+  logout as apiLogout,
+} from '@/lib/api/client'
 import { createAuthFetch } from '@/lib/api/auth-fetch'
 
 export interface AuthContextValue {
@@ -20,6 +25,8 @@ export interface AuthContextValue {
   isAuthenticated: boolean
   /** Whether auth state is still loading (initial refresh) */
   isLoading: boolean
+  /** Whether the user has authorized cross-post scopes */
+  crossPostScopesGranted: boolean
   /** Get the current access token (stable function ref) */
   getAccessToken: () => string | null
   /** Initiate login flow -- redirects to PDS OAuth */
@@ -28,6 +35,8 @@ export interface AuthContextValue {
   logout: () => Promise<void>
   /** Set session from OAuth callback (stores token in memory) */
   setSessionFromCallback: (session: AuthSession) => void
+  /** Initiate cross-post authorization flow (redirects to PDS OAuth with expanded scopes) */
+  requestCrossPostAuth: () => Promise<void>
   /** Auth-aware fetch that auto-refreshes on 401 */
   authFetch: <T>(
     path: string,
@@ -49,6 +58,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [crossPostScopesGranted, setCrossPostScopesGranted] = useState(false)
   const tokenRef = useRef<string | null>(null)
 
   const getAccessToken = useCallback(() => tokenRef.current, [])
@@ -61,11 +71,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       displayName: session.displayName,
       avatarUrl: session.avatarUrl,
     })
+    setCrossPostScopesGranted(session.crossPostScopesGranted ?? false)
   }, [])
 
   const clearSession = useCallback(() => {
     tokenRef.current = null
     setUser(null)
+    setCrossPostScopesGranted(false)
   }, [])
 
   const handleAuthFailure = useCallback(() => {
@@ -124,18 +136,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearSession()
   }, [clearSession])
 
+  const requestCrossPostAuth = useCallback(async () => {
+    const token = tokenRef.current
+    if (!token) return
+    sessionStorage.setItem('auth_returnTo', window.location.href)
+    const { url } = await initiateCrossPostAuth(token)
+    window.location.href = url
+  }, [])
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isAuthenticated: user !== null,
       isLoading,
+      crossPostScopesGranted,
       getAccessToken,
       login,
       logout,
       setSessionFromCallback: setSession,
+      requestCrossPostAuth,
       authFetch,
     }),
-    [user, isLoading, getAccessToken, login, logout, setSession, authFetch]
+    [
+      user,
+      isLoading,
+      crossPostScopesGranted,
+      getAccessToken,
+      login,
+      logout,
+      setSession,
+      requestCrossPostAuth,
+      authFetch,
+    ]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -10,6 +10,13 @@ import { setupServer } from 'msw/node'
 import { handlers } from '@/mocks/handlers'
 import { TopicForm } from './topic-form'
 
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    crossPostScopesGranted: true,
+    requestCrossPostAuth: vi.fn(),
+  }),
+}))
+
 const server = setupServer(...handlers)
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))

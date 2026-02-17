@@ -27,10 +27,12 @@ vi.mock('@/hooks/use-auth', () => ({
     },
     isAuthenticated: true,
     isLoading: false,
+    crossPostScopesGranted: true,
     getAccessToken: () => 'mock-access-token',
     login: vi.fn(),
     logout: vi.fn(),
     setSessionFromCallback: vi.fn(),
+    requestCrossPostAuth: vi.fn(),
     authFetch: vi.fn(),
   }),
 }))
@@ -90,7 +92,7 @@ describe('SettingsPage', () => {
   it('renders cross-posting section', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
-      expect(screen.getByText(/cross-posting/i)).toBeInTheDocument()
+      expect(screen.getByText('Cross-Posting')).toBeInTheDocument()
     })
     expect(screen.getByLabelText(/bluesky/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/frontpage/i)).toBeInTheDocument()

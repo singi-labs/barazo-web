@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
+import { CrossPostAuthDialog } from '@/components/crosspost-auth-dialog'
 import { CommunityProfileSettings } from '@/components/community-profile-settings'
 import { cn } from '@/lib/utils'
 import {
@@ -46,7 +47,8 @@ interface CommunityOverrideValues {
 }
 
 export default function SettingsPage() {
-  const { getAccessToken } = useAuth()
+  const { getAccessToken, crossPostScopesGranted, requestCrossPostAuth } = useAuth()
+  const [showCrossPostAuthDialog, setShowCrossPostAuthDialog] = useState(false)
   const [values, setValues] = useState<SettingsValues>({
     maturityLevel: 'sfw',
     mutedWords: '',
@@ -383,30 +385,54 @@ export default function SettingsPage() {
             {/* Cross-Posting */}
             <fieldset className="space-y-4 rounded-lg border border-border p-4">
               <legend className="px-2 text-sm font-semibold text-foreground">Cross-Posting</legend>
-              <div className="space-y-3">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.crossPostBluesky}
-                    onChange={(e) => setValues({ ...values, crossPostBluesky: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                  <span className="text-sm text-foreground">
-                    Share new topics on Bluesky by default
-                  </span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.crossPostFrontpage}
-                    onChange={(e) => setValues({ ...values, crossPostFrontpage: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                  <span className="text-sm text-foreground">
-                    Share new topics on Frontpage by default
-                  </span>
-                </label>
-              </div>
+              {crossPostScopesGranted ? (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Cross-posting authorized. You can share topics on Bluesky and Frontpage.
+                  </p>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={values.crossPostBluesky}
+                      onChange={(e) => setValues({ ...values, crossPostBluesky: e.target.checked })}
+                      className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
+                    />
+                    <span className="text-sm text-foreground">
+                      Share new topics on Bluesky by default
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={values.crossPostFrontpage}
+                      onChange={(e) =>
+                        setValues({ ...values, crossPostFrontpage: e.target.checked })
+                      }
+                      className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
+                    />
+                    <span className="text-sm text-foreground">
+                      Share new topics on Frontpage by default
+                    </span>
+                  </label>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    To share topics on Bluesky and Frontpage, Barazo needs permission to create
+                    posts on your behalf.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowCrossPostAuthDialog(true)}
+                    className={cn(
+                      'rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors',
+                      'hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                    )}
+                  >
+                    Authorize cross-posting
+                  </button>
+                </div>
+              )}
             </fieldset>
 
             {/* Notifications */}
@@ -477,6 +503,15 @@ export default function SettingsPage() {
           </form>
         )}
       </div>
+
+      <CrossPostAuthDialog
+        open={showCrossPostAuthDialog}
+        onAuthorize={() => {
+          setShowCrossPostAuthDialog(false)
+          void requestCrossPostAuth()
+        }}
+        onCancel={() => setShowCrossPostAuthDialog(false)}
+      />
 
       <AgeGateDialog
         open={showAgeGate}
