@@ -41,7 +41,27 @@ export function TopicCard({ topic, className }: TopicCardProps) {
         {/* Metadata */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
           {/* Author */}
-          <span>{topic.authorDid}</span>
+          <Link
+            href={`/u/${topic.author?.handle ?? topic.authorDid}`}
+            className="flex items-center gap-1.5 hover:text-foreground"
+          >
+            {topic.author?.avatarUrl ? (
+              <img
+                src={topic.author.avatarUrl}
+                alt=""
+                className="h-5 w-5 rounded-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <span
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-medium"
+                aria-hidden="true"
+              >
+                {(topic.author?.displayName ?? topic.author?.handle ?? '?')[0]?.toUpperCase()}
+              </span>
+            )}
+            <span>{topic.author?.displayName ?? topic.author?.handle ?? topic.authorDid}</span>
+          </Link>
 
           {/* Category */}
           <Link
