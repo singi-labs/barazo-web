@@ -13,9 +13,10 @@ describe('TopicCard', () => {
     expect(link).toBeInTheDocument()
   })
 
-  it('renders author handle', () => {
+  it('renders author display name', () => {
     render(<TopicCard topic={topic} />)
-    expect(screen.getByText(topic.authorDid)).toBeInTheDocument()
+    const expectedName = topic.author?.displayName ?? topic.author?.handle ?? topic.authorDid
+    expect(screen.getByText(expectedName)).toBeInTheDocument()
   })
 
   it('renders category', () => {

@@ -20,9 +20,10 @@ describe('ReplyCard', () => {
     expect(screen.getByText(reply.content)).toBeInTheDocument()
   })
 
-  it('renders author handle', () => {
+  it('renders author display name', () => {
     render(<ReplyCard reply={reply} postNumber={2} />)
-    expect(screen.getByText(reply.authorDid)).toBeInTheDocument()
+    const expectedName = reply.author?.displayName ?? reply.author?.handle ?? reply.authorDid
+    expect(screen.getByText(expectedName)).toBeInTheDocument()
   })
 
   it('renders as article with aria-labelledby', () => {
