@@ -237,6 +237,12 @@ export const handlers = [
       uri: `at://did:plc:mock-user/forum.barazo.topic.post/${rkey}`,
       rkey,
       authorDid: 'did:plc:mock-user',
+      author: {
+        did: 'did:plc:mock-user',
+        handle: 'mock-user.bsky.social',
+        displayName: 'Mock User',
+        avatarUrl: null,
+      },
       title: body.title,
       content: body.content,
       contentFormat: null,

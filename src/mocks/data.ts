@@ -6,6 +6,7 @@
 import type {
   AuthSession,
   AuthUser,
+  AuthorProfile,
   CategoryTreeNode,
   CategoryWithTopicCount,
   CommunityPreferenceOverride,
@@ -45,6 +46,21 @@ export const mockUsers = [
   { did: 'did:plc:user-dave-004', handle: 'dave.bsky.social' },
   { did: 'did:plc:user-eve-005', handle: 'eve.forum.example' },
 ] as const
+
+// --- Author Profiles (for enriched Topic/Reply responses) ---
+
+export const mockAuthorProfiles: AuthorProfile[] = [
+  {
+    did: mockUsers[0]!.did,
+    handle: mockUsers[0]!.handle,
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+  },
+  { did: mockUsers[1]!.did, handle: mockUsers[1]!.handle, displayName: 'Bob', avatarUrl: null },
+  { did: mockUsers[2]!.did, handle: mockUsers[2]!.handle, displayName: 'Carol', avatarUrl: null },
+  { did: mockUsers[3]!.did, handle: mockUsers[3]!.handle, displayName: 'Dave', avatarUrl: null },
+  { did: mockUsers[4]!.did, handle: mockUsers[4]!.handle, displayName: 'Eve', avatarUrl: null },
+]
 
 // --- Auth ---
 
@@ -160,6 +176,7 @@ export const mockTopics: Topic[] = [
     uri: `at://${mockUsers[0]!.did}/forum.barazo.topic.post/3kf1abc`,
     rkey: '3kf1abc',
     authorDid: mockUsers[0]!.did,
+    author: mockAuthorProfiles[0]!,
     title: 'Welcome to Barazo Forums',
     content: 'This is the first topic on our new federated forum platform.',
     contentFormat: null,
@@ -178,6 +195,7 @@ export const mockTopics: Topic[] = [
     uri: `at://${mockUsers[1]!.did}/forum.barazo.topic.post/3kf2def`,
     rkey: '3kf2def',
     authorDid: mockUsers[1]!.did,
+    author: mockAuthorProfiles[1]!,
     title: 'Building with the AT Protocol',
     content: 'A deep dive into building applications on the AT Protocol.',
     contentFormat: null,
@@ -196,6 +214,7 @@ export const mockTopics: Topic[] = [
     uri: `at://${mockUsers[2]!.did}/forum.barazo.topic.post/3kf3ghi`,
     rkey: '3kf3ghi',
     authorDid: mockUsers[2]!.did,
+    author: mockAuthorProfiles[2]!,
     title: 'Feature Request: Dark Mode Improvements',
     content: 'I would love to see more theme customization options.',
     contentFormat: null,
@@ -214,6 +233,7 @@ export const mockTopics: Topic[] = [
     uri: `at://${mockUsers[3]!.did}/forum.barazo.topic.post/3kf4jkl`,
     rkey: '3kf4jkl',
     authorDid: mockUsers[3]!.did,
+    author: mockAuthorProfiles[3]!,
     title: 'Understanding Portable Identity',
     content: 'How does identity work across federated services?',
     contentFormat: null,
@@ -232,6 +252,7 @@ export const mockTopics: Topic[] = [
     uri: `at://${mockUsers[4]!.did}/forum.barazo.topic.post/3kf5mno`,
     rkey: '3kf5mno',
     authorDid: mockUsers[4]!.did,
+    author: mockAuthorProfiles[4]!,
     title: 'Self-Hosting Guide',
     content: 'Step-by-step guide to running your own Barazo instance.',
     contentFormat: null,
@@ -366,6 +387,7 @@ export const mockReplies: Reply[] = [
     uri: `at://${mockUsers[1]!.did}/forum.barazo.reply.post/3kf6aaa`,
     rkey: '3kf6aaa',
     authorDid: mockUsers[1]!.did,
+    author: mockAuthorProfiles[1]!,
     content: 'Welcome! Excited to see this forum take shape.',
     contentFormat: null,
     rootUri: TOPIC_URI,
@@ -383,6 +405,7 @@ export const mockReplies: Reply[] = [
     uri: `at://${mockUsers[2]!.did}/forum.barazo.reply.post/3kf6bbb`,
     rkey: '3kf6bbb',
     authorDid: mockUsers[2]!.did,
+    author: mockAuthorProfiles[2]!,
     content:
       'Thanks for starting this community! The AT Protocol integration is really interesting.',
     contentFormat: null,
@@ -401,6 +424,7 @@ export const mockReplies: Reply[] = [
     uri: `at://${mockUsers[0]!.did}/forum.barazo.reply.post/3kf6ccc`,
     rkey: '3kf6ccc',
     authorDid: mockUsers[0]!.did,
+    author: mockAuthorProfiles[0]!,
     content: 'Agreed! Portable identity changes everything.',
     contentFormat: null,
     rootUri: TOPIC_URI,
@@ -418,6 +442,7 @@ export const mockReplies: Reply[] = [
     uri: `at://${mockUsers[3]!.did}/forum.barazo.reply.post/3kf6ddd`,
     rkey: '3kf6ddd',
     authorDid: mockUsers[3]!.did,
+    author: mockAuthorProfiles[3]!,
     content: 'One question: how does content moderation work across federated instances?',
     contentFormat: null,
     rootUri: TOPIC_URI,
@@ -435,6 +460,7 @@ export const mockReplies: Reply[] = [
     uri: `at://${mockUsers[4]!.did}/forum.barazo.reply.post/3kf6eee`,
     rkey: '3kf6eee',
     authorDid: mockUsers[4]!.did,
+    author: mockAuthorProfiles[4]!,
     content:
       'Great question! Each community has its own moderation policies, but the AT Protocol labeling system allows cross-community signals.',
     contentFormat: null,
