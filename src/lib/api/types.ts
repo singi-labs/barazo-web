@@ -49,12 +49,22 @@ export interface CategoriesResponse {
   categories: CategoryTreeNode[]
 }
 
+// --- Author Profile (enriched by AppView) ---
+
+export interface AuthorProfile {
+  did: string
+  handle: string
+  displayName: string | null
+  avatarUrl: string | null
+}
+
 // --- Topics ---
 
 export interface Topic {
   uri: string
   rkey: string
   authorDid: string
+  author?: AuthorProfile
   title: string
   content: string
   contentFormat: string | null
@@ -97,6 +107,7 @@ export interface Reply {
   uri: string
   rkey: string
   authorDid: string
+  author?: AuthorProfile
   content: string
   contentFormat: string | null
   rootUri: string
