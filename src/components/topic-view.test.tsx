@@ -48,12 +48,12 @@ describe('TopicView', () => {
 
   it('renders reply count', () => {
     render(<TopicView topic={topic} />)
-    expect(screen.getByText(`${topic.replyCount}`, { exact: false })).toBeInTheDocument()
+    expect(screen.getByLabelText(`${topic.replyCount} replies`)).toBeInTheDocument()
   })
 
   it('renders reaction count', () => {
     render(<TopicView topic={topic} />)
-    expect(screen.getByText(`${topic.reactionCount}`, { exact: false })).toBeInTheDocument()
+    expect(screen.getByLabelText(`${topic.reactionCount} reactions`)).toBeInTheDocument()
   })
 
   it('uses article element with aria-labelledby', () => {
