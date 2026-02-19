@@ -47,6 +47,17 @@ import type {
   CommunityProfile,
   UpdateCommunityProfileInput,
   UploadResponse,
+  SybilClustersResponse,
+  SybilClusterDetail,
+  SybilCluster,
+  TrustSeedsResponse,
+  TrustSeed,
+  CreateTrustSeedInput,
+  PdsTrustFactorsResponse,
+  PdsTrustFactor,
+  TrustGraphStatus,
+  BehavioralFlagsResponse,
+  BehavioralFlag,
 } from './types'
 
 const API_URL =
@@ -899,6 +910,149 @@ export async function uploadCommunityBanner(
     throw new ApiError(response.status, `API ${response.status}: ${body}`)
   }
   return response.json() as Promise<UploadResponse>
+}
+
+// --- Sybil Detection endpoints ---
+
+export function getSybilClusters(
+  accessToken: string,
+  params: { status?: string } = {},
+  options?: FetchOptions
+): Promise<SybilClustersResponse> {
+  const query = buildQuery({ status: params.status })
+  return apiFetch<SybilClustersResponse>(`/api/admin/sybil-clusters${query}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getSybilClusterDetail(
+  id: number,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<SybilClusterDetail> {
+  return apiFetch<SybilClusterDetail>(`/api/admin/sybil-clusters/${id}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function updateSybilClusterStatus(
+  id: number,
+  status: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<SybilCluster> {
+  return apiFetch<SybilCluster>(`/api/admin/sybil-clusters/${id}`, {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { status },
+  })
+}
+
+export function getTrustSeeds(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<TrustSeedsResponse> {
+  return apiFetch<TrustSeedsResponse>('/api/admin/trust-seeds', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function createTrustSeed(
+  input: CreateTrustSeedInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<TrustSeed> {
+  return apiFetch<TrustSeed>('/api/admin/trust-seeds', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function deleteTrustSeed(
+  id: number,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  return apiFetch<void>(`/api/admin/trust-seeds/${id}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getPdsTrustFactors(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<PdsTrustFactorsResponse> {
+  return apiFetch<PdsTrustFactorsResponse>('/api/admin/pds-trust', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function updatePdsTrustFactor(
+  pdsHost: string,
+  trustFactor: number,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<PdsTrustFactor> {
+  return apiFetch<PdsTrustFactor>('/api/admin/pds-trust', {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { pdsHost, trustFactor },
+  })
+}
+
+export function getTrustGraphStatus(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<TrustGraphStatus> {
+  return apiFetch<TrustGraphStatus>('/api/admin/trust-graph/status', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function recomputeTrustGraph(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>('/api/admin/trust-graph/recompute', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getBehavioralFlags(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<BehavioralFlagsResponse> {
+  return apiFetch<BehavioralFlagsResponse>('/api/admin/behavioral-flags', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function updateBehavioralFlag(
+  id: number,
+  status: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<BehavioralFlag> {
+  return apiFetch<BehavioralFlag>(`/api/admin/behavioral-flags/${id}`, {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { status },
+  })
 }
 
 export { ApiError }
