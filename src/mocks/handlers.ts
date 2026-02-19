@@ -30,6 +30,12 @@ import {
   mockUserProfiles,
   mockPublicSettings,
   mockCommunityProfile,
+  mockSybilClusters,
+  mockSybilClusterDetail,
+  mockTrustSeeds,
+  mockPdsTrustFactors,
+  mockTrustGraphStatus,
+  mockBehavioralFlags,
 } from './data'
 
 const API_URL = ''
@@ -793,5 +799,168 @@ export const handlers = [
       appealStatus: 'pending',
       status: 'pending',
     })
+  }),
+
+  // --- Sybil Detection endpoints ---
+
+  // GET /api/admin/sybil-clusters
+  http.get(`${API_URL}/api/admin/sybil-clusters`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const url = new URL(request.url)
+    const status = url.searchParams.get('status')
+    const clusters = status
+      ? mockSybilClusters.filter((c) => c.status === status)
+      : mockSybilClusters
+    return HttpResponse.json({ clusters })
+  }),
+
+  // GET /api/admin/sybil-clusters/:id
+  http.get(`${API_URL}/api/admin/sybil-clusters/:id`, ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = Number(params['id'])
+    if (id === mockSybilClusterDetail.id) {
+      return HttpResponse.json(mockSybilClusterDetail)
+    }
+    const cluster = mockSybilClusters.find((c) => c.id === id)
+    if (!cluster) {
+      return HttpResponse.json({ error: 'Cluster not found' }, { status: 404 })
+    }
+    return HttpResponse.json({ ...cluster, members: [] })
+  }),
+
+  // PUT /api/admin/sybil-clusters/:id
+  http.put(`${API_URL}/api/admin/sybil-clusters/:id`, async ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = Number(params['id'])
+    const cluster = mockSybilClusters.find((c) => c.id === id)
+    if (!cluster) {
+      return HttpResponse.json({ error: 'Cluster not found' }, { status: 404 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    return HttpResponse.json({
+      ...cluster,
+      ...body,
+      reviewedBy: 'did:plc:user-alice-001',
+      reviewedAt: new Date().toISOString(),
+    })
+  }),
+
+  // GET /api/admin/trust-seeds
+  http.get(`${API_URL}/api/admin/trust-seeds`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ seeds: mockTrustSeeds })
+  }),
+
+  // POST /api/admin/trust-seeds
+  http.post(`${API_URL}/api/admin/trust-seeds`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const body = (await request.json()) as {
+      handle?: string
+      communityId?: string
+      reason?: string
+    }
+    const newSeed = {
+      id: Date.now(),
+      did: `did:plc:new-seed-${Date.now()}`,
+      handle: body.handle ?? 'unknown.bsky.social',
+      displayName: body.handle ?? 'Unknown',
+      communityId: body.communityId ?? null,
+      reason: body.reason ?? null,
+      implicit: false,
+      createdAt: new Date().toISOString(),
+    }
+    return HttpResponse.json(newSeed, { status: 201 })
+  }),
+
+  // DELETE /api/admin/trust-seeds/:id
+  http.delete(`${API_URL}/api/admin/trust-seeds/:id`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // GET /api/admin/pds-trust
+  http.get(`${API_URL}/api/admin/pds-trust`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ providers: mockPdsTrustFactors })
+  }),
+
+  // PUT /api/admin/pds-trust
+  http.put(`${API_URL}/api/admin/pds-trust`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const body = (await request.json()) as { pdsHost?: string; trustFactor?: number }
+    const pdsHost = body.pdsHost ?? ''
+    const existing = mockPdsTrustFactors.find((p) => p.pdsHost === pdsHost)
+    return HttpResponse.json({
+      pdsHost,
+      trustFactor: body.trustFactor ?? existing?.trustFactor ?? 1.0,
+      isDefault: false,
+      updatedAt: new Date().toISOString(),
+    })
+  }),
+
+  // GET /api/admin/trust-graph/status
+  http.get(`${API_URL}/api/admin/trust-graph/status`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json(mockTrustGraphStatus)
+  }),
+
+  // POST /api/admin/trust-graph/recompute
+  http.post(`${API_URL}/api/admin/trust-graph/recompute`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ message: 'Trust graph recomputation started' })
+  }),
+
+  // GET /api/admin/behavioral-flags
+  http.get(`${API_URL}/api/admin/behavioral-flags`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ flags: mockBehavioralFlags })
+  }),
+
+  // PUT /api/admin/behavioral-flags/:id
+  http.put(`${API_URL}/api/admin/behavioral-flags/:id`, async ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = Number(params['id'])
+    const flag = mockBehavioralFlags.find((f) => f.id === id)
+    if (!flag) {
+      return HttpResponse.json({ error: 'Flag not found' }, { status: 404 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    return HttpResponse.json({ ...flag, ...body })
   }),
 ]

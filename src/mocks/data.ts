@@ -29,6 +29,12 @@ import type {
   UserProfile,
   OnboardingField,
   MyReport,
+  SybilCluster,
+  SybilClusterDetail,
+  TrustSeed,
+  PdsTrustFactor,
+  TrustGraphStatus,
+  BehavioralFlag,
 } from '@/lib/api/types'
 
 const COMMUNITY_DID = 'did:plc:test-community-123'
@@ -1082,3 +1088,235 @@ export const mockCommunityProfile: CommunityProfile = {
     bio: 'Community admin and AT Protocol enthusiast.',
   },
 }
+
+// --- Sybil Detection ---
+
+const TWO_HOURS_AGO = '2026-02-14T10:00:00.000Z'
+
+export const mockSybilClusters: SybilCluster[] = [
+  {
+    id: 1,
+    clusterHash: 'abc123def456',
+    memberCount: 8,
+    internalEdgeCount: 24,
+    externalEdgeCount: 3,
+    suspicionRatio: 0.89,
+    status: 'flagged',
+    detectedAt: TWO_HOURS_AGO,
+    reviewedBy: null,
+    reviewedAt: null,
+  },
+  {
+    id: 2,
+    clusterHash: 'ghi789jkl012',
+    memberCount: 5,
+    internalEdgeCount: 12,
+    externalEdgeCount: 7,
+    suspicionRatio: 0.62,
+    status: 'monitoring',
+    detectedAt: YESTERDAY,
+    reviewedBy: 'did:plc:user-alice-001',
+    reviewedAt: NOW,
+  },
+  {
+    id: 3,
+    clusterHash: 'mno345pqr678',
+    memberCount: 3,
+    internalEdgeCount: 4,
+    externalEdgeCount: 8,
+    suspicionRatio: 0.33,
+    status: 'dismissed',
+    detectedAt: LAST_WEEK,
+    reviewedBy: 'did:plc:user-alice-001',
+    reviewedAt: YESTERDAY,
+  },
+]
+
+export const mockSybilClusterDetail: SybilClusterDetail = {
+  ...mockSybilClusters[0]!,
+  members: [
+    {
+      did: 'did:plc:sybil-001',
+      handle: 'sybil1.bsky.social',
+      displayName: 'Sybil Account 1',
+      roleInCluster: 'core',
+      trustScore: 0.12,
+      reputationScore: 0.15,
+      accountAge: '3 days',
+      communitiesActiveIn: 1,
+    },
+    {
+      did: 'did:plc:sybil-002',
+      handle: 'sybil2.bsky.social',
+      displayName: 'Sybil Account 2',
+      roleInCluster: 'core',
+      trustScore: 0.14,
+      reputationScore: 0.18,
+      accountAge: '3 days',
+      communitiesActiveIn: 1,
+    },
+    {
+      did: 'did:plc:sybil-003',
+      handle: 'sybil3.example.com',
+      displayName: 'Sybil Account 3',
+      roleInCluster: 'peripheral',
+      trustScore: 0.31,
+      reputationScore: 0.28,
+      accountAge: '7 days',
+      communitiesActiveIn: 2,
+    },
+    {
+      did: 'did:plc:sybil-004',
+      handle: 'sybil4.bsky.social',
+      displayName: 'Sybil Account 4',
+      roleInCluster: 'core',
+      trustScore: 0.1,
+      reputationScore: 0.12,
+      accountAge: '2 days',
+      communitiesActiveIn: 1,
+    },
+    {
+      did: 'did:plc:sybil-005',
+      handle: 'sybil5.bsky.social',
+      displayName: 'Sybil Account 5',
+      roleInCluster: 'peripheral',
+      trustScore: 0.25,
+      reputationScore: 0.22,
+      accountAge: '5 days',
+      communitiesActiveIn: 1,
+    },
+    {
+      did: 'did:plc:sybil-006',
+      handle: 'sybil6.example.com',
+      displayName: 'Sybil Account 6',
+      roleInCluster: 'core',
+      trustScore: 0.11,
+      reputationScore: 0.14,
+      accountAge: '3 days',
+      communitiesActiveIn: 1,
+    },
+    {
+      did: 'did:plc:sybil-007',
+      handle: 'sybil7.bsky.social',
+      displayName: 'Sybil Account 7',
+      roleInCluster: 'peripheral',
+      trustScore: 0.29,
+      reputationScore: 0.26,
+      accountAge: '6 days',
+      communitiesActiveIn: 2,
+    },
+    {
+      did: 'did:plc:sybil-008',
+      handle: 'sybil8.bsky.social',
+      displayName: 'Sybil Account 8',
+      roleInCluster: 'core',
+      trustScore: 0.13,
+      reputationScore: 0.16,
+      accountAge: '3 days',
+      communitiesActiveIn: 1,
+    },
+  ],
+}
+
+export const mockTrustSeeds: TrustSeed[] = [
+  {
+    id: 1,
+    did: 'did:plc:seed-001',
+    handle: 'trusted-mod.bsky.social',
+    displayName: 'Trusted Moderator',
+    communityId: null,
+    reason: 'Founding community moderator',
+    implicit: false,
+    createdAt: LAST_WEEK,
+  },
+  {
+    id: 2,
+    did: 'did:plc:seed-002',
+    handle: 'verified-expert.bsky.social',
+    displayName: 'Verified Expert',
+    communityId: COMMUNITY_DID,
+    reason: 'Subject matter expert with verified credentials',
+    implicit: false,
+    createdAt: TWO_DAYS_AGO,
+  },
+  {
+    id: 3,
+    did: 'did:plc:user-alice-001',
+    handle: 'alice.bsky.social',
+    displayName: 'Alice',
+    communityId: null,
+    reason: null,
+    implicit: true,
+    createdAt: LAST_WEEK,
+  },
+  {
+    id: 4,
+    did: 'did:plc:user-bob-002',
+    handle: 'bob.bsky.social',
+    displayName: 'Bob',
+    communityId: null,
+    reason: null,
+    implicit: true,
+    createdAt: LAST_WEEK,
+  },
+  {
+    id: 5,
+    did: 'did:plc:user-carol-003',
+    handle: 'carol.example.com',
+    displayName: 'Carol',
+    communityId: COMMUNITY_DID,
+    reason: null,
+    implicit: true,
+    createdAt: TWO_DAYS_AGO,
+  },
+]
+
+export const mockPdsTrustFactors: PdsTrustFactor[] = [
+  {
+    pdsHost: 'bsky.social',
+    trustFactor: 1.0,
+    isDefault: true,
+    updatedAt: LAST_WEEK,
+  },
+  {
+    pdsHost: 'northsky.app',
+    trustFactor: 1.0,
+    isDefault: true,
+    updatedAt: LAST_WEEK,
+  },
+  {
+    pdsHost: 'custom-pds.example',
+    trustFactor: 0.7,
+    isDefault: false,
+    updatedAt: TWO_DAYS_AGO,
+  },
+]
+
+export const mockTrustGraphStatus: TrustGraphStatus = {
+  lastComputedAt: TWO_HOURS_AGO,
+  totalNodes: 1500,
+  totalEdges: 4200,
+  computationDurationMs: 3200,
+  clustersFlagged: 2,
+  nextScheduledAt: '2026-02-14T16:00:00.000Z',
+}
+
+export const mockBehavioralFlags: BehavioralFlag[] = [
+  {
+    id: 1,
+    flagType: 'burst_voting',
+    affectedDids: ['did:plc:sybil-001', 'did:plc:sybil-002', 'did:plc:sybil-004'],
+    details: '3 accounts cast 47 votes within a 2-minute window on the same set of 5 topics.',
+    detectedAt: TWO_HOURS_AGO,
+    status: 'pending',
+  },
+  {
+    id: 2,
+    flagType: 'content_similarity',
+    affectedDids: ['did:plc:sybil-005', 'did:plc:sybil-006'],
+    details:
+      '2 accounts posted near-identical replies across 3 different topics with 94% text similarity.',
+    detectedAt: YESTERDAY,
+    status: 'pending',
+  },
+]

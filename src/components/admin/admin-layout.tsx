@@ -18,6 +18,8 @@ import {
   PuzzlePiece,
   ClipboardText,
   ArrowLeft,
+  ShieldWarning,
+  SealCheck,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
@@ -29,6 +31,8 @@ const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: ChartBar },
   { href: '/admin/categories', label: 'Categories', icon: FolderSimple },
   { href: '/admin/moderation', label: 'Moderation', icon: ShieldCheck },
+  { href: '/admin/sybil-detection', label: 'Sybil Detection', icon: ShieldWarning },
+  { href: '/admin/trust-seeds', label: 'Trust Seeds', icon: SealCheck },
   { href: '/admin/settings', label: 'Settings', icon: Gear },
   { href: '/admin/content-ratings', label: 'Content Ratings', icon: Tag },
   { href: '/admin/onboarding', label: 'Onboarding', icon: ClipboardText },

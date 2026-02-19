@@ -603,6 +603,100 @@ export interface UploadResponse {
   url: string
 }
 
+// --- Sybil Detection ---
+
+export type SybilClusterStatus = 'flagged' | 'dismissed' | 'monitoring' | 'banned'
+
+export interface SybilCluster {
+  id: number
+  clusterHash: string
+  memberCount: number
+  internalEdgeCount: number
+  externalEdgeCount: number
+  suspicionRatio: number
+  status: SybilClusterStatus
+  detectedAt: string
+  reviewedBy: string | null
+  reviewedAt: string | null
+}
+
+export interface ClusterMember {
+  did: string
+  handle: string
+  displayName: string
+  roleInCluster: 'core' | 'peripheral'
+  trustScore: number
+  reputationScore: number
+  accountAge: string
+  communitiesActiveIn: number
+}
+
+export interface SybilClusterDetail extends SybilCluster {
+  members: ClusterMember[]
+}
+
+export interface SybilClustersResponse {
+  clusters: SybilCluster[]
+}
+
+export interface TrustSeed {
+  id: number
+  did: string
+  handle: string
+  displayName: string
+  communityId: string | null
+  reason: string | null
+  implicit: boolean
+  createdAt: string
+}
+
+export interface TrustSeedsResponse {
+  seeds: TrustSeed[]
+}
+
+/** The API accepts a handle and resolves it to a DID server-side. */
+export interface CreateTrustSeedInput {
+  handle: string
+  communityId?: string
+  reason?: string
+}
+
+export interface PdsTrustFactor {
+  pdsHost: string
+  trustFactor: number
+  isDefault: boolean
+  updatedAt: string
+}
+
+export interface PdsTrustFactorsResponse {
+  providers: PdsTrustFactor[]
+}
+
+export interface TrustGraphStatus {
+  lastComputedAt: string | null
+  totalNodes: number
+  totalEdges: number
+  computationDurationMs: number
+  clustersFlagged: number
+  nextScheduledAt: string
+}
+
+export type BehavioralFlagType = 'burst_voting' | 'content_similarity' | 'low_diversity'
+export type BehavioralFlagStatus = 'pending' | 'dismissed' | 'action_taken'
+
+export interface BehavioralFlag {
+  id: number
+  flagType: BehavioralFlagType
+  affectedDids: string[]
+  details: string
+  detectedAt: string
+  status: BehavioralFlagStatus
+}
+
+export interface BehavioralFlagsResponse {
+  flags: BehavioralFlag[]
+}
+
 // --- Shared ---
 
 export type MaturityRating = 'safe' | 'mature' | 'adult'
