@@ -161,7 +161,7 @@ describe('sitemap', () => {
     const result = await sitemap()
     // Should still return at least the homepage
     expect(result.length).toBeGreaterThanOrEqual(1)
-    expect(result[0].url).toBe('https://barazo.forum')
+    expect(result[0]!.url).toBe('https://barazo.forum')
   })
 
   it('excludes adult-rated categories from sitemap', async () => {

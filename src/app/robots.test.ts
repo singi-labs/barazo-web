@@ -22,7 +22,7 @@ describe('robots.txt', () => {
 
   it('disallows admin, auth, API, and non-public pages', () => {
     const rules = getRules()
-    expect(rules[0].disallow).toEqual(
+    expect(rules[0]!.disallow).toEqual(
       expect.arrayContaining([
         '/admin/',
         '/auth/',
@@ -36,18 +36,18 @@ describe('robots.txt', () => {
 
   it('blocks SEO bots', () => {
     const rules = getRules()
-    expect(rules[1].userAgent).toEqual(
+    expect(rules[1]!.userAgent).toEqual(
       expect.arrayContaining(['SemrushBot', 'AhrefsBot', 'MJ12bot'])
     )
-    expect(rules[1].disallow).toBe('/')
+    expect(rules[1]!.disallow).toBe('/')
   })
 
   it('blocks AI crawlers', () => {
     const rules = getRules()
-    expect(rules[2].userAgent).toEqual(
+    expect(rules[2]!.userAgent).toEqual(
       expect.arrayContaining(['GPTBot', 'ClaudeBot', 'CCBot', 'Google-Extended'])
     )
-    expect(rules[2].disallow).toBe('/')
+    expect(rules[2]!.disallow).toBe('/')
   })
 
   it('includes sitemap directive', () => {
