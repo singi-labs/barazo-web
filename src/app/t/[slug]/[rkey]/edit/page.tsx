@@ -68,7 +68,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
     setError(null)
 
     try {
-      // TODO: Get access token from auth context when auth is implemented
+      // TODO: Get access token from auth context when auth is implemented (#39)
       const accessToken = ''
       const updated = await updateTopic(
         rkey,

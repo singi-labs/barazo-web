@@ -9,6 +9,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { User, CalendarBlank, ChatCircle } from '@phosphor-icons/react'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -139,7 +140,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           {/* Banner */}
           {profile.bannerUrl && (
             <div className="relative h-48 overflow-hidden">
-              <img src={profile.bannerUrl} alt="" className="h-full w-full object-cover" />
+              <Image src={profile.bannerUrl} alt="" fill className="object-cover" />
             </div>
           )}
 
@@ -147,10 +148,12 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
             <div className="flex items-start gap-4">
               {/* Avatar */}
               {profile.avatarUrl ? (
-                <img
+                <Image
                   src={profile.avatarUrl}
                   alt={`${profile.displayName ?? profile.handle}'s avatar`}
-                  className="h-16 w-16 rounded-full object-cover"
+                  width={64}
+                  height={64}
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">

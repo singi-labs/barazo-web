@@ -5,6 +5,7 @@
  */
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChatCircle, Heart, Clock } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
@@ -46,11 +47,12 @@ export function TopicCard({ topic, className }: TopicCardProps) {
             className="flex items-center gap-1.5 hover:text-foreground"
           >
             {topic.author?.avatarUrl ? (
-              <img
+              <Image
                 src={topic.author.avatarUrl}
                 alt=""
-                className="h-5 w-5 rounded-full object-cover"
-                loading="lazy"
+                width={20}
+                height={20}
+                className="rounded-full object-cover"
               />
             ) : (
               <span

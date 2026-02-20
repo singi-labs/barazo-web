@@ -9,16 +9,13 @@ const nextConfig: NextConfig = {
   // Standalone output for Docker (includes Node.js server)
   output: 'standalone',
 
-  // Image optimization
+  // Image optimization — allow any HTTPS source for AT Protocol PDS avatars/banners.
+  // Self-hosted PDS instances can use arbitrary domains, so a wildcard is necessary.
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.bsky.social',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.bsky.app',
+        hostname: '**',
       },
     ],
   },
