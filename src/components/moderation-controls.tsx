@@ -22,7 +22,7 @@ interface ModerationControlsProps {
   className?: string
 }
 
-const ACTION_CONFIRMATIONS: Record<string, { title: string; description: string }> = {
+const ACTION_CONFIRMATIONS: Record<ModerationAction, { title: string; description: string }> = {
   delete: {
     title: 'Delete Topic',
     description:
