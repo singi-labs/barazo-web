@@ -6,6 +6,7 @@
  */
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, Clock, Link as LinkIcon } from '@phosphor-icons/react/dist/ssr'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
@@ -67,11 +68,12 @@ export function ReplyCard({
               className="flex items-center gap-2 hover:text-foreground"
             >
               {reply.author?.avatarUrl ? (
-                <img
+                <Image
                   src={reply.author.avatarUrl}
                   alt=""
-                  className="h-6 w-6 rounded-full object-cover"
-                  loading="lazy"
+                  width={24}
+                  height={24}
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <span
