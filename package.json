@@ -99,10 +99,5 @@
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vitest-axe": "^0.1.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "minimatch": ">=10.2.1"
-    }
   }
 }
