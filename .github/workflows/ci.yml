@@ -245,7 +245,7 @@ jobs:
           cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Security audit with retry
         run: |
