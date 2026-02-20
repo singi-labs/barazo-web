@@ -220,3 +220,43 @@ jobs:
           name: lighthouse-report
           path: .lighthouseci/
           retention-days: 7
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Clone and build barazo-lexicons
+        run: |
+          git clone --depth 1 https://github.com/barazo-forum/barazo-lexicons.git ../barazo-lexicons
+          cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Security audit with retry
+        run: |
+          for attempt in 1 2 3; do
+            output=$(pnpm audit --audit-level=high 2>&1) && { echo "$output"; exit 0; }
+            if echo "$output" | grep -q "ERR_PNPM_AUDIT_BAD_RESPONSE\|ECONNREFUSED\|ETIMEDOUT\|EAI_AGAIN"; then
+              echo "::warning::Audit registry unavailable (attempt $attempt/3), retrying in 15s..."
+              sleep 15
+            else
+              echo "$output"
+              exit 1
+            fi
+          done
+          echo "::warning::Audit registry unavailable after 3 attempts, skipping"
