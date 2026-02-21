@@ -45,7 +45,7 @@ The default frontend for Barazo forums. Communicates with the AppView backend ex
 
 ### About Barazo
 
-Federated forum built on the [AT Protocol](https://atproto.com/). Portable identity, user-owned data, cross-community reputation.
+Open-source forum software built on the [AT Protocol](https://atproto.com/). Portable identity, member-owned data, no lock-in.
 
 - **Organization:** [github.com/barazo-forum](https://github.com/barazo-forum)
 - **License:** AGPL-3.0 (backend) / MIT (frontend, lexicons, deploy, website)
