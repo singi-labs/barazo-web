@@ -14,8 +14,8 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/admin/plugins',
 }))
 
-vi.mock('@/hooks/use-auth', () => ({
-  useAuth: () => ({
+vi.mock('@/hooks/use-auth', () => {
+  const mockAuth = {
     user: {
       did: 'did:plc:user-alice-001',
       handle: 'alice.bsky.social',
@@ -29,8 +29,9 @@ vi.mock('@/hooks/use-auth', () => ({
     logout: vi.fn(),
     setSessionFromCallback: vi.fn(),
     authFetch: vi.fn(),
-  }),
-}))
+  }
+  return { useAuth: () => mockAuth }
+})
 
 describe('AdminPluginsPage', () => {
   it('renders page heading', async () => {
