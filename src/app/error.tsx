@@ -30,7 +30,7 @@ export default function RootError({
       : 'An unexpected error occurred. Please try again.'
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
+    <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
       <main className="w-full max-w-md text-center">
         <div role="alert" aria-live="assertive">
           <WarningCircle size={48} className="mx-auto mb-4 text-destructive" aria-hidden="true" />

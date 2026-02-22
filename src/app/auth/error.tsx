@@ -28,7 +28,7 @@ export default function AuthError({
       : 'There was a problem with authentication. This can happen when a session expires or the identity provider is unavailable.'
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
+    <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
       <div role="alert" aria-live="assertive" className="w-full max-w-md text-center">
         <WarningCircle size={48} className="mx-auto mb-4 text-destructive" aria-hidden="true" />
         <h1 className="mb-2 text-xl font-bold text-foreground">Authentication error</h1>

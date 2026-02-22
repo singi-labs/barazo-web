@@ -31,7 +31,7 @@ export default function ProfileError({
       : 'This profile could not be loaded. The user may not exist or their identity server may be unavailable.'
 
   return (
-    <div className="flex min-h-[40vh] items-center justify-center px-4">
+    <div className="flex min-h-[40vh] items-center justify-center bg-background px-4">
       <div role="alert" aria-live="assertive" className="w-full max-w-md text-center">
         <WarningCircle size={48} className="mx-auto mb-4 text-destructive" aria-hidden="true" />
         <h1 className="mb-2 text-xl font-bold text-foreground">Could not load profile</h1>
