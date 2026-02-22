@@ -22,6 +22,7 @@ export default function ProfileError({
   const pathname = usePathname()
 
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'profile', path: pathname })
   }, [error, pathname])
 

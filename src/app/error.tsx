@@ -21,6 +21,7 @@ export default function RootError({
   reset: () => void
 }) {
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'root' })
   }, [error])
 

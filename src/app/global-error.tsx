@@ -19,6 +19,7 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'global' })
   }, [error])
 

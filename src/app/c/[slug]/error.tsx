@@ -22,6 +22,7 @@ export default function CategoryError({
   const pathname = usePathname()
 
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'category', path: pathname })
   }, [error, pathname])
 

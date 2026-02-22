@@ -22,6 +22,7 @@ export default function ThreadError({
   const pathname = usePathname()
 
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'thread', path: pathname })
   }, [error, pathname])
 

@@ -22,6 +22,7 @@ export default function AdminError({
   const pathname = usePathname()
 
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'admin', page: pathname })
   }, [error, pathname])
 

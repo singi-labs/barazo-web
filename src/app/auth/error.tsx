@@ -19,6 +19,7 @@ export default function AuthError({
   reset: () => void
 }) {
   useEffect(() => {
+    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'auth' })
   }, [error])
 
