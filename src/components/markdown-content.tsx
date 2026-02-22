@@ -4,7 +4,7 @@
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
 
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitize } from 'isomorphic-dompurify'
 import { marked } from 'marked'
 import { cn } from '@/lib/utils'
 
@@ -34,7 +34,7 @@ marked.use({ renderer })
 export function MarkdownContent({ content, className }: MarkdownContentProps) {
   const rawHtml = marked.parse(content, { async: false }) as string
 
-  const cleanHtml = DOMPurify.sanitize(rawHtml, {
+  const cleanHtml = sanitize(rawHtml, {
     ALLOWED_TAGS: [
       'p',
       'br',
