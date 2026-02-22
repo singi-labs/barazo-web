@@ -33,8 +33,8 @@ vi.mock('next/image', () => ({
   },
 }))
 
-vi.mock('@/hooks/use-auth', () => ({
-  useAuth: () => ({
+vi.mock('@/hooks/use-auth', () => {
+  const mockAuth = {
     user: {
       did: 'did:plc:user-alice-001',
       handle: 'alice.bsky.social',
@@ -48,8 +48,9 @@ vi.mock('@/hooks/use-auth', () => ({
     logout: vi.fn(),
     setSessionFromCallback: vi.fn(),
     authFetch: vi.fn(),
-  }),
-}))
+  }
+  return { useAuth: () => mockAuth }
+})
 
 describe('AdminSybilDetectionPage', () => {
   it('renders heading and explanation text', async () => {
