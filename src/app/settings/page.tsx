@@ -16,6 +16,10 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
 import { CrossPostAuthDialog } from '@/components/crosspost-auth-dialog'
 import { CommunityProfileSettings } from '@/components/community-profile-settings'
+import { ContentSafetySection } from '@/components/settings/content-safety-section'
+import { CommunityOverridesSection } from '@/components/settings/community-overrides-section'
+import { CrossPostingSection } from '@/components/settings/cross-posting-section'
+import { NotificationsSection } from '@/components/settings/notifications-section'
 import { cn } from '@/lib/utils'
 import {
   getPreferences,
@@ -66,7 +70,6 @@ export default function SettingsPage() {
   const [declaredAge, setDeclaredAge] = useState<number | null>(null)
   const [showAgeGate, setShowAgeGate] = useState(false)
 
-  // Load preferences on mount
   useEffect(() => {
     const token = getAccessToken()
     if (!token) {
@@ -125,7 +128,6 @@ export default function SettingsPage() {
         return
       }
 
-      // If switching to mature and no age declaration, show age gate
       if (values.maturityLevel === 'sfw-mature' && !declaredAge) {
         setShowAgeGate(true)
         setSaving(false)
@@ -138,7 +140,6 @@ export default function SettingsPage() {
           .map((w) => w.trim())
           .filter(Boolean)
 
-        // Save global preferences
         await updatePreferences(
           {
             maturityLevel: values.maturityLevel === 'sfw-mature' ? 'mature' : 'sfw',
@@ -149,7 +150,6 @@ export default function SettingsPage() {
           token
         )
 
-        // Save per-community overrides
         await Promise.all(
           communityOverrides.map((c) =>
             updateCommunityPreference(
@@ -213,261 +213,37 @@ export default function SettingsPage() {
               </p>
             )}
 
-            {/* Community Profile (separate save, independent section) */}
             <CommunityProfileSettings />
 
-            {/* Content Safety */}
-            <fieldset className="space-y-4 rounded-lg border border-border p-4">
-              <legend className="px-2 text-sm font-semibold text-foreground">Content Safety</legend>
+            <ContentSafetySection
+              maturityLevel={values.maturityLevel}
+              mutedWords={values.mutedWords}
+              onMaturityChange={(level) => setValues({ ...values, maturityLevel: level })}
+              onMutedWordsChange={(words) => setValues({ ...values, mutedWords: words })}
+            />
 
-              <div className="space-y-1">
-                <label
-                  htmlFor="maturity-level"
-                  className="block text-sm font-medium text-foreground"
-                >
-                  Maturity level
-                </label>
-                <select
-                  id="maturity-level"
-                  value={values.maturityLevel}
-                  onChange={(e) =>
-                    setValues({ ...values, maturityLevel: e.target.value as MaturityLevel })
-                  }
-                  className={cn(
-                    'block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-                  )}
-                >
-                  <option value="sfw">SFW only</option>
-                  <option value="sfw-mature">SFW + Mature</option>
-                </select>
-                <p className="text-xs text-muted-foreground">
-                  Controls which content you can see. Mature content requires age confirmation.
-                </p>
-              </div>
+            <CommunityOverridesSection
+              overrides={communityOverrides}
+              onChange={handleCommunityChange}
+            />
 
-              <div className="space-y-1">
-                <label htmlFor="muted-words" className="block text-sm font-medium text-foreground">
-                  Muted words
-                </label>
-                <textarea
-                  id="muted-words"
-                  value={values.mutedWords}
-                  onChange={(e) => setValues({ ...values, mutedWords: e.target.value })}
-                  placeholder="Enter words separated by commas"
-                  rows={3}
-                  className={cn(
-                    'block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-                  )}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Posts containing these words will be collapsed. Comma-separated.
-                </p>
-              </div>
-            </fieldset>
+            <CrossPostingSection
+              authorized={crossPostScopesGranted}
+              crossPostBluesky={values.crossPostBluesky}
+              crossPostFrontpage={values.crossPostFrontpage}
+              onBlueskyChange={(v) => setValues({ ...values, crossPostBluesky: v })}
+              onFrontpageChange={(v) => setValues({ ...values, crossPostFrontpage: v })}
+              onAuthorize={() => setShowCrossPostAuthDialog(true)}
+            />
 
-            {/* Per-Community Overrides */}
-            <fieldset className="space-y-4 rounded-lg border border-border p-4">
-              <legend className="px-2 text-sm font-semibold text-foreground">
-                Per-Community Overrides
-              </legend>
-
-              {communityOverrides.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No community memberships found. Join a community to configure per-community
-                  settings.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {communityOverrides.map((community) => (
-                    <details
-                      key={community.communityDid}
-                      className="rounded-md border border-border"
-                    >
-                      <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50">
-                        {community.communityName}
-                      </summary>
-
-                      <div className="space-y-3 border-t border-border px-3 py-3">
-                        <div className="space-y-1">
-                          <label
-                            htmlFor={`maturity-${community.communityDid}`}
-                            className="block text-xs font-medium text-foreground"
-                          >
-                            Maturity override
-                          </label>
-                          <select
-                            id={`maturity-${community.communityDid}`}
-                            value={community.maturityLevel}
-                            onChange={(e) =>
-                              handleCommunityChange(
-                                community.communityDid,
-                                'maturityLevel',
-                                e.target.value
-                              )
-                            }
-                            className={cn(
-                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground',
-                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-                            )}
-                          >
-                            <option value="inherit">Inherit global setting</option>
-                            <option value="sfw">SFW only</option>
-                            <option value="mature">SFW + Mature</option>
-                          </select>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label
-                            htmlFor={`muted-words-${community.communityDid}`}
-                            className="block text-xs font-medium text-foreground"
-                          >
-                            Community muted words
-                          </label>
-                          <textarea
-                            id={`muted-words-${community.communityDid}`}
-                            value={community.mutedWords}
-                            onChange={(e) =>
-                              handleCommunityChange(
-                                community.communityDid,
-                                'mutedWords',
-                                e.target.value
-                              )
-                            }
-                            placeholder="Additional muted words for this community"
-                            rows={2}
-                            className={cn(
-                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground',
-                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-                            )}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            These are in addition to your global muted words. Comma-separated.
-                          </p>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label
-                            htmlFor={`blocked-${community.communityDid}`}
-                            className="block text-xs font-medium text-foreground"
-                          >
-                            Community blocked users
-                          </label>
-                          <textarea
-                            id={`blocked-${community.communityDid}`}
-                            value={community.blockedDids}
-                            onChange={(e) =>
-                              handleCommunityChange(
-                                community.communityDid,
-                                'blockedDids',
-                                e.target.value
-                              )
-                            }
-                            placeholder="DIDs of users to block in this community"
-                            rows={2}
-                            className={cn(
-                              'block w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground',
-                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-                            )}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            Block specific users only in this community. Comma-separated DIDs.
-                          </p>
-                        </div>
-                      </div>
-                    </details>
-                  ))}
-                </div>
-              )}
-            </fieldset>
-
-            {/* Cross-Posting */}
-            <fieldset className="space-y-4 rounded-lg border border-border p-4">
-              <legend className="px-2 text-sm font-semibold text-foreground">Cross-Posting</legend>
-              {crossPostScopesGranted ? (
-                <div className="space-y-3">
-                  <p className="text-xs text-muted-foreground">
-                    Cross-posting authorized. You can share topics on Bluesky and Frontpage.
-                  </p>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={values.crossPostBluesky}
-                      onChange={(e) => setValues({ ...values, crossPostBluesky: e.target.checked })}
-                      className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                    <span className="text-sm text-foreground">
-                      Share new topics on Bluesky by default
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={values.crossPostFrontpage}
-                      onChange={(e) =>
-                        setValues({ ...values, crossPostFrontpage: e.target.checked })
-                      }
-                      className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                    <span className="text-sm text-foreground">
-                      Share new topics on Frontpage by default
-                    </span>
-                  </label>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    To share topics on Bluesky and Frontpage, Barazo needs permission to create
-                    posts on your behalf.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowCrossPostAuthDialog(true)}
-                    className={cn(
-                      'rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors',
-                      'hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                    )}
-                  >
-                    Authorize cross-posting
-                  </button>
-                </div>
-              )}
-            </fieldset>
-
-            {/* Notifications */}
-            <fieldset className="space-y-4 rounded-lg border border-border p-4">
-              <legend className="px-2 text-sm font-semibold text-foreground">Notifications</legend>
-              <div className="space-y-3">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.notifyReplies}
-                    onChange={(e) => setValues({ ...values, notifyReplies: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                  <span className="text-sm text-foreground">Replies to my posts</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.notifyMentions}
-                    onChange={(e) => setValues({ ...values, notifyMentions: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                  <span className="text-sm text-foreground">Mentions of my handle</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.notifyReactions}
-                    onChange={(e) => setValues({ ...values, notifyReactions: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                  <span className="text-sm text-foreground">Reactions on my posts</span>
-                </label>
-              </div>
-            </fieldset>
+            <NotificationsSection
+              notifyReplies={values.notifyReplies}
+              notifyMentions={values.notifyMentions}
+              notifyReactions={values.notifyReactions}
+              onRepliesChange={(v) => setValues({ ...values, notifyReplies: v })}
+              onMentionsChange={(v) => setValues({ ...values, notifyMentions: v })}
+              onReactionsChange={(v) => setValues({ ...values, notifyReactions: v })}
+            />
 
             {/* My Reports link */}
             <div className="rounded-lg border border-border p-4">
@@ -486,7 +262,6 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            {/* Save */}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -518,7 +293,6 @@ export default function SettingsPage() {
         onConfirm={(age) => {
           setDeclaredAge(age)
           setShowAgeGate(false)
-          // Re-trigger save now that age is declared
           void handleSave({ preventDefault: () => {} } as React.FormEvent)
         }}
         onCancel={() => {

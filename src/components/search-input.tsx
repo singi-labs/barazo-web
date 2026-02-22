@@ -1,6 +1,5 @@
 /**
- * SearchInput - WAI-ARIA Combobox pattern with typeahead suggestions.
- * Result count announced via role="status".
+ * SearchInput - WAI-ARIA Combobox with typeahead suggestions.
  * @see specs/prd-web.md Section M9 (Search)
  */
 
@@ -10,6 +9,7 @@ import { useState, useRef, useCallback, useEffect, useId } from 'react'
 import { useRouter } from 'next/navigation'
 import { MagnifyingGlass, X } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import { SearchSuggestionList } from '@/components/search-suggestion-list'
 
 export interface SearchSuggestion {
   type: 'topic' | 'reply'
@@ -57,9 +57,7 @@ export function SearchInput({
     (value: string) => {
       setQuery(value)
       setActiveIndex(-1)
-
       if (debounceRef.current) clearTimeout(debounceRef.current)
-
       if (value.length > 0) {
         debounceRef.current = setTimeout(() => {
           setIsOpen(true)
@@ -89,15 +87,11 @@ export function SearchInput({
           break
         case 'ArrowDown':
           e.preventDefault()
-          if (showListbox) {
-            setActiveIndex((prev) => Math.min(prev + 1, suggestions.length - 1))
-          }
+          if (showListbox) setActiveIndex((prev) => Math.min(prev + 1, suggestions.length - 1))
           break
         case 'ArrowUp':
           e.preventDefault()
-          if (showListbox) {
-            setActiveIndex((prev) => Math.max(prev - 1, 0))
-          }
+          if (showListbox) setActiveIndex((prev) => Math.max(prev - 1, 0))
           break
       }
     },
@@ -132,7 +126,6 @@ export function SearchInput({
             if (hasQuery && hasSuggestions) setIsOpen(true)
           }}
           onBlur={() => {
-            // Delay to allow click on suggestion
             setTimeout(() => setIsOpen(false), 150)
           }}
           placeholder={placeholder}
@@ -156,38 +149,16 @@ export function SearchInput({
       </div>
 
       {showListbox && (
-        <div
+        <SearchSuggestionList
           id={listboxId}
-          role="listbox"
-          aria-label="Search suggestions"
-          className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-auto rounded-md border border-border bg-card py-1 shadow-lg"
-        >
-          {suggestions.map((suggestion, index) => (
-            <div
-              key={suggestion.rkey}
-              id={`${id}-option-${index}`}
-              role="option"
-              tabIndex={-1}
-              aria-selected={index === activeIndex}
-              className={cn(
-                'cursor-pointer px-3 py-2 text-sm',
-                index === activeIndex
-                  ? 'bg-primary/10 text-foreground'
-                  : 'text-foreground hover:bg-muted'
-              )}
-              onMouseDown={(e) => {
-                e.preventDefault()
-                router.push(`/t/-/${suggestion.rkey}`)
-                setIsOpen(false)
-              }}
-            >
-              <span className="font-medium">{suggestion.title}</span>
-              <span className="ml-2 text-xs text-muted-foreground capitalize">
-                {suggestion.type}
-              </span>
-            </div>
-          ))}
-        </div>
+          baseId={id}
+          suggestions={suggestions}
+          activeIndex={activeIndex}
+          onSelect={(rkey) => {
+            router.push(`/t/-/${rkey}`)
+            setIsOpen(false)
+          }}
+        />
       )}
 
       <div id={statusId} role="status" aria-live="polite" className="sr-only">

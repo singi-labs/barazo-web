@@ -8,6 +8,7 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { OnboardingFieldInput } from '@/components/onboarding-field-input'
 import type { OnboardingField } from '@/lib/api/types'
 
 interface OnboardingModalProps {
@@ -16,16 +17,6 @@ interface OnboardingModalProps {
   onSubmit: (responses: Array<{ fieldId: string; response: unknown }>) => Promise<boolean>
   onCancel: () => void
 }
-
-/** Valid age bracket options for age_confirmation fields */
-const AGE_OPTIONS = [
-  { value: 0, label: 'Rather not say' },
-  { value: 13, label: '13+' },
-  { value: 14, label: '14+' },
-  { value: 15, label: '15+' },
-  { value: 16, label: '16+' },
-  { value: 18, label: '18+' },
-] as const
 
 export function OnboardingModal({ open, fields, onSubmit, onCancel }: OnboardingModalProps) {
   const [responses, setResponses] = useState<Record<string, unknown>>({})
@@ -120,162 +111,4 @@ export function OnboardingModal({ open, fields, onSubmit, onCancel }: Onboarding
       </div>
     </div>
   )
-}
-
-/** Render the appropriate input for a field type */
-function OnboardingFieldInput({
-  field,
-  value,
-  onChange,
-}: {
-  field: OnboardingField
-  value: unknown
-  onChange: (value: unknown) => void
-}) {
-  const labelId = `onboarding-${field.id}`
-  const required = field.isMandatory
-
-  switch (field.fieldType) {
-    case 'age_confirmation':
-      return (
-        <div>
-          <label htmlFor={labelId} className="block text-sm font-medium text-foreground">
-            {field.label}
-            {required && <span className="ml-1 text-destructive">*</span>}
-          </label>
-          {field.description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-          )}
-          <select
-            id={labelId}
-            value={value !== undefined ? String(value) : ''}
-            onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Select age bracket...</option>
-            {AGE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      )
-
-    case 'tos_acceptance':
-      return (
-        <div className="flex items-start gap-2">
-          <input
-            id={labelId}
-            type="checkbox"
-            checked={value === true}
-            onChange={(e) => onChange(e.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-border"
-          />
-          <div>
-            <label htmlFor={labelId} className="text-sm font-medium text-foreground">
-              {field.label}
-              {required && <span className="ml-1 text-destructive">*</span>}
-            </label>
-            {field.description && (
-              <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-            )}
-          </div>
-        </div>
-      )
-
-    case 'newsletter_email':
-      return (
-        <div>
-          <label htmlFor={labelId} className="block text-sm font-medium text-foreground">
-            {field.label}
-            {required && <span className="ml-1 text-destructive">*</span>}
-          </label>
-          {field.description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-          )}
-          <input
-            id={labelId}
-            type="email"
-            value={typeof value === 'string' ? value : ''}
-            onChange={(e) => onChange(e.target.value || undefined)}
-            placeholder="your@email.com"
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          />
-        </div>
-      )
-
-    case 'custom_text':
-      return (
-        <div>
-          <label htmlFor={labelId} className="block text-sm font-medium text-foreground">
-            {field.label}
-            {required && <span className="ml-1 text-destructive">*</span>}
-          </label>
-          {field.description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-          )}
-          <textarea
-            id={labelId}
-            value={typeof value === 'string' ? value : ''}
-            onChange={(e) => onChange(e.target.value || undefined)}
-            rows={3}
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          />
-        </div>
-      )
-
-    case 'custom_select': {
-      const options = (field.config?.options ?? []) as string[]
-      return (
-        <div>
-          <label htmlFor={labelId} className="block text-sm font-medium text-foreground">
-            {field.label}
-            {required && <span className="ml-1 text-destructive">*</span>}
-          </label>
-          {field.description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-          )}
-          <select
-            id={labelId}
-            value={typeof value === 'string' ? value : ''}
-            onChange={(e) => onChange(e.target.value || undefined)}
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Select...</option>
-            {options.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        </div>
-      )
-    }
-
-    case 'custom_checkbox':
-      return (
-        <div className="flex items-start gap-2">
-          <input
-            id={labelId}
-            type="checkbox"
-            checked={value === true}
-            onChange={(e) => onChange(e.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-border"
-          />
-          <div>
-            <label htmlFor={labelId} className="text-sm font-medium text-foreground">
-              {field.label}
-              {required && <span className="ml-1 text-destructive">*</span>}
-            </label>
-            {field.description && (
-              <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
-            )}
-          </div>
-        </div>
-      )
-
-    default:
-      return null
-  }
 }

@@ -30,6 +30,36 @@ export function formatRelativeTime(isoDate: string): string {
 }
 
 /**
+ * Formats an ISO date string as a short date/time (e.g., "Jan 15, 3:42 PM").
+ */
+export function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
+/**
+ * Formats an ISO date string as a short date without time (e.g., "Jan 15, 2026").
+ */
+export function formatDateShort(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+/**
+ * Formats a number with locale-aware separators (e.g., 1,234).
+ */
+export function formatNumber(n: number): string {
+  return n.toLocaleString('en-US')
+}
+
+/**
  * Formats a number with compact notation (e.g., 1.2k, 3.4M).
  */
 export function formatCompactNumber(n: number): string {
