@@ -21,7 +21,6 @@ export default function RootError({
   reset: () => void
 }) {
   useEffect(() => {
-    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'root' })
   }, [error])
 
@@ -31,31 +30,34 @@ export default function RootError({
       : 'An unexpected error occurred. Please try again.'
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
-      <main className="w-full max-w-md text-center">
-        <div role="alert" aria-live="assertive">
-          <WarningCircle size={48} className="mx-auto mb-4 text-destructive" aria-hidden="true" />
-          <h1 className="mb-2 text-xl font-bold text-foreground">Something went wrong</h1>
-          <p className="mb-6 text-sm text-muted-foreground">{message}</p>
-        </div>
-        <div className="flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={reset}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-          >
-            <ArrowClockwise size={16} aria-hidden="true" />
-            Try again
-          </button>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
-          >
-            <House size={16} aria-hidden="true" />
-            Go home
-          </Link>
-        </div>
-      </main>
-    </div>
+    <>
+      <title>Error | Barazo</title>
+      <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
+        <main className="w-full max-w-md text-center">
+          <div role="alert" aria-live="assertive">
+            <WarningCircle size={48} className="mx-auto mb-4 text-destructive" aria-hidden="true" />
+            <h1 className="mb-2 text-xl font-bold text-foreground">Something went wrong</h1>
+            <p className="mb-6 text-sm text-muted-foreground">{message}</p>
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={reset}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              <ArrowClockwise size={16} aria-hidden="true" />
+              Try again
+            </button>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            >
+              <House size={16} aria-hidden="true" />
+              Go home
+            </Link>
+          </div>
+        </main>
+      </div>
+    </>
   )
 }

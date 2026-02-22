@@ -19,12 +19,14 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    document.title = 'Error | Barazo'
     reportError(error, { boundary: 'global' })
   }, [error])
 
   return (
     <html lang="en">
+      <head>
+        <title>Error | Barazo</title>
+      </head>
       <body
         style={{
           margin: 0,
