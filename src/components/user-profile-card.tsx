@@ -8,6 +8,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { User, CalendarBlank, ChatCircle } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { ReputationBadge } from './reputation-badge'
@@ -91,10 +92,9 @@ export function UserProfileCard({ user, className }: UserProfileCardProps) {
           role="tooltip"
         >
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
               {user.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
+                <Image src={user.avatarUrl} alt="" fill className="object-cover" />
               ) : (
                 <User size={20} className="text-muted-foreground" aria-hidden="true" />
               )}

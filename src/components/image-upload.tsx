@@ -8,6 +8,7 @@
 'use client'
 
 import { useRef, useState, useCallback } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { UploadSimple, TrashSimple, User, Image as ImageIcon } from '@phosphor-icons/react'
 
@@ -99,8 +100,7 @@ export function ImageUpload({
         style={{ aspectRatio }}
       >
         {currentUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={currentUrl} alt={label} className="h-full w-full object-cover" />
+          <Image src={currentUrl} alt={label} fill className="object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
             {isAvatar ? (
