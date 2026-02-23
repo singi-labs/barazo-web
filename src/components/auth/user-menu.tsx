@@ -7,6 +7,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { User, SignOut, GearSix } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
 import {
@@ -48,12 +49,11 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-muted text-muted-foreground ring-offset-background transition-colors hover:bg-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-muted text-muted-foreground ring-offset-background transition-colors hover:bg-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="User menu"
         >
           {user.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
+            <Image src={user.avatarUrl} alt="" fill className="object-cover" />
           ) : (
             <User size={16} weight="bold" aria-hidden="true" />
           )}
