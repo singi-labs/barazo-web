@@ -9,18 +9,18 @@ The default frontend for Barazo forums. Communicates with the AppView backend ex
 
 ## Tech Stack
 
-| Component           | Technology                                                       |
-| ------------------- | ---------------------------------------------------------------- |
-| Framework           | Next.js 16 / React 19 / TypeScript (strict)                      |
-| Styling             | TailwindCSS                                                      |
-| Components          | shadcn/ui (Radix primitives) for admin; custom forum components  |
-| Colors              | Radix Colors (12-step system) + Flexoki accent hues              |
-| Icons               | Phosphor Icons (6 weights)                                       |
-| Typography          | Source Sans 3 / Source Code Pro (self-hosted, zero external DNS) |
-| Syntax highlighting | Shiki + Flexoki theme (SSR, dual light/dark)                     |
-| Testing             | Vitest + vitest-axe + @axe-core/playwright                       |
-| Accessibility       | WCAG 2.2 AA from first commit                                    |
-| SEO                 | JSON-LD, OpenGraph, sitemaps, SSR                                |
+| Component | Technology |
+|-----------|-----------|
+| Framework | Next.js 16 / React 19 / TypeScript (strict) |
+| Styling | TailwindCSS |
+| Components | shadcn/ui (Radix primitives) for admin; custom forum components |
+| Colors | Radix Colors (12-step system) + Flexoki accent hues |
+| Icons | Phosphor Icons (6 weights) |
+| Typography | Source Sans 3 / Source Code Pro (self-hosted, zero external DNS) |
+| Syntax highlighting | Shiki + Flexoki theme (SSR, dual light/dark) |
+| Testing | Vitest + vitest-axe + @axe-core/playwright |
+| Accessibility | WCAG 2.2 AA from first commit |
+| SEO | JSON-LD, OpenGraph, sitemaps, SSR |
 
 ## What This Repo Does
 
