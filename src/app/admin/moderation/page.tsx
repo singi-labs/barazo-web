@@ -7,7 +7,6 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { ErrorAlert } from '@/components/error-alert'
 import { ModerationReportsTab } from '@/components/admin/moderation/reports-tab'
@@ -15,116 +14,28 @@ import { ModerationFirstPostTab } from '@/components/admin/moderation/first-post
 import { ModerationActionLogTab } from '@/components/admin/moderation/action-log-tab'
 import { ModerationReportedUsersTab } from '@/components/admin/moderation/reported-users-tab'
 import { ModerationThresholdsTab } from '@/components/admin/moderation/thresholds-tab'
-import {
-  getModerationReports,
-  resolveReport,
-  getFirstPostQueue,
-  resolveFirstPost,
-  getModerationLog,
-  getReportedUsers,
-  getModerationThresholds,
-  updateModerationThresholds,
-} from '@/lib/api/client'
 import { cn } from '@/lib/utils'
-import type {
-  ModerationReport,
-  FirstPostQueueItem,
-  ModerationLogEntry,
-  ReportedUser,
-  ModerationThresholds,
-  ReportResolution,
-} from '@/lib/api/types'
-import { useAuth } from '@/hooks/use-auth'
-
-type TabId = 'reports' | 'first-post' | 'action-log' | 'reported-users' | 'thresholds'
-
-const TABS: { id: TabId; label: string }[] = [
-  { id: 'reports', label: 'Reports' },
-  { id: 'first-post', label: 'First Post Queue' },
-  { id: 'action-log', label: 'Action Log' },
-  { id: 'reported-users', label: 'Reported Users' },
-  { id: 'thresholds', label: 'Thresholds' },
-]
+import { useModerationData, MODERATION_TABS } from '@/hooks/admin/use-moderation-data'
 
 export default function AdminModerationPage() {
-  const { getAccessToken } = useAuth()
-  const [activeTab, setActiveTab] = useState<TabId>('reports')
-  const [reports, setReports] = useState<ModerationReport[]>([])
-  const [firstPostQueue, setFirstPostQueue] = useState<FirstPostQueueItem[]>([])
-  const [moderationLog, setModerationLog] = useState<ModerationLogEntry[]>([])
-  const [reportedUsers, setReportedUsers] = useState<ReportedUser[]>([])
-  const [thresholds, setThresholds] = useState<ModerationThresholds | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
-
-  const fetchData = useCallback(async () => {
-    setLoadError(null)
-    try {
-      const [reportsRes, queueRes, logRes, usersRes, thresholdsRes] = await Promise.all([
-        getModerationReports(getAccessToken() ?? ''),
-        getFirstPostQueue(getAccessToken() ?? ''),
-        getModerationLog(getAccessToken() ?? ''),
-        getReportedUsers(getAccessToken() ?? ''),
-        getModerationThresholds(getAccessToken() ?? ''),
-      ])
-      setReports(reportsRes.reports)
-      setFirstPostQueue(queueRes.items)
-      setModerationLog(logRes.entries)
-      setReportedUsers(usersRes.users)
-      setThresholds(thresholdsRes)
-    } catch {
-      setLoadError('Failed to load moderation data. The API may be unreachable.')
-    } finally {
-      setLoading(false)
-    }
-  }, [getAccessToken])
-
-  useEffect(() => {
-    void fetchData()
-  }, [fetchData])
-
-  const handleResolveReport = async (id: string, resolution: ReportResolution) => {
-    setActionError(null)
-    try {
-      await resolveReport(id, resolution, getAccessToken() ?? '')
-      setReports((prev) => prev.filter((r) => r.id !== id))
-    } catch {
-      setActionError('Failed to resolve report. Please try again.')
-    }
-  }
-
-  const handleResolveFirstPost = async (id: string, action: 'approved' | 'rejected') => {
-    setActionError(null)
-    try {
-      await resolveFirstPost(id, action, getAccessToken() ?? '')
-      setFirstPostQueue((prev) => prev.filter((item) => item.id !== id))
-    } catch {
-      setActionError(
-        `Failed to ${action === 'approved' ? 'approve' : 'reject'} post. Please try again.`
-      )
-    }
-  }
-
-  const handleBatchResolveFirstPost = async (ids: string[], action: 'approved' | 'rejected') => {
-    setActionError(null)
-    try {
-      await Promise.all(ids.map((id) => resolveFirstPost(id, action, getAccessToken() ?? '')))
-      setFirstPostQueue((prev) => prev.filter((item) => !ids.includes(item.id)))
-    } catch {
-      setActionError('Failed to process batch action. Some items may not have been updated.')
-    }
-  }
-
-  const handleSaveThresholds = async (updated: Partial<ModerationThresholds>) => {
-    setActionError(null)
-    try {
-      const result = await updateModerationThresholds(updated, getAccessToken() ?? '')
-      setThresholds(result)
-    } catch {
-      setActionError('Failed to save thresholds. Please try again.')
-    }
-  }
+  const {
+    activeTab,
+    setActiveTab,
+    reports,
+    firstPostQueue,
+    moderationLog,
+    reportedUsers,
+    thresholds,
+    loading,
+    loadError,
+    actionError,
+    setActionError,
+    fetchData,
+    handleResolveReport,
+    handleResolveFirstPost,
+    handleBatchResolveFirstPost,
+    handleSaveThresholds,
+  } = useModerationData()
 
   return (
     <AdminLayout>
@@ -137,7 +48,7 @@ export default function AdminModerationPage() {
           aria-label="Moderation sections"
           className="flex gap-1 border-b border-border"
         >
-          {TABS.map((tab) => (
+          {MODERATION_TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"

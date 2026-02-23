@@ -9,12 +9,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { User, CalendarBlank, ChatCircle } from '@phosphor-icons/react'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
-import { ReputationBadge } from '@/components/reputation-badge'
-import { BlockMuteButton } from '@/components/block-mute-button'
+import { ProfileHeader } from '@/components/profile/profile-header'
+import { ProfileSkeleton } from '@/components/profile/profile-skeleton'
 import { getUserProfile } from '@/lib/api/client'
 import type { UserProfile } from '@/lib/api/types'
 
@@ -85,16 +83,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   if (!handle || loading) {
     return (
       <ForumLayout>
-        <div className="animate-pulse space-y-4 py-8">
-          <div className="h-48 rounded-t-lg bg-muted" />
-          <div className="flex items-start gap-4 p-6">
-            <div className="h-16 w-16 rounded-full bg-muted" />
-            <div className="space-y-2">
-              <div className="h-6 w-32 rounded bg-muted" />
-              <div className="h-4 w-48 rounded bg-muted" />
-            </div>
-          </div>
-        </div>
+        <ProfileSkeleton />
       </ForumLayout>
     )
   }
@@ -135,72 +124,17 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: handle }]} />
 
-        {/* Profile header */}
-        <div className="overflow-hidden rounded-lg border border-border bg-card">
-          {/* Banner */}
-          {profile.bannerUrl && (
-            <div className="relative h-48 overflow-hidden">
-              <Image src={profile.bannerUrl} alt="" fill className="object-cover" />
-            </div>
-          )}
-
-          <div className="p-6">
-            <div className="flex items-start gap-4">
-              {/* Avatar */}
-              {profile.avatarUrl ? (
-                <Image
-                  src={profile.avatarUrl}
-                  alt={`${profile.displayName ?? profile.handle}'s avatar`}
-                  width={64}
-                  height={64}
-                  className="rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <User size={32} className="text-muted-foreground" aria-hidden="true" />
-                </div>
-              )}
-
-              <div className="min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-foreground">
-                  {profile.displayName ?? handle}
-                </h1>
-                {profile.displayName && <p className="text-lg text-muted-foreground">@{handle}</p>}
-
-                {/* Bio */}
-                {profile.bio && <p className="mt-2 text-sm text-muted-foreground">{profile.bio}</p>}
-
-                <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  <ReputationBadge score={reputationScore} />
-                  <span className="flex items-center gap-1">
-                    <ChatCircle size={16} aria-hidden="true" />
-                    {postCount} {postCount === 1 ? 'post' : 'posts'}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <CalendarBlank size={16} aria-hidden="true" />
-                    Joined {joinDate}
-                  </span>
-                </div>
-
-                {/* Block/Mute actions */}
-                <div className="mt-3 flex gap-2">
-                  <BlockMuteButton
-                    targetDid={profile.did}
-                    action="block"
-                    isActive={isBlocked}
-                    onToggle={setIsBlocked}
-                  />
-                  <BlockMuteButton
-                    targetDid={profile.did}
-                    action="mute"
-                    isActive={isMuted}
-                    onToggle={setIsMuted}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProfileHeader
+          profile={profile}
+          handle={handle}
+          reputationScore={reputationScore}
+          postCount={postCount}
+          joinDate={joinDate}
+          isBlocked={isBlocked}
+          isMuted={isMuted}
+          onBlockToggle={setIsBlocked}
+          onMuteToggle={setIsMuted}
+        />
 
         {/* Recent activity */}
         <section>
