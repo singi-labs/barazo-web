@@ -166,7 +166,7 @@ See [CONTRIBUTING.md](https://github.com/barazo-forum/.github/blob/main/CONTRIBU
 
 ## License
 
-**MIT** -- Encourages customization and theming. Forum admins can build entirely custom frontends.
+**MIT**
 
 See [LICENSE](LICENSE) for full terms.
 
