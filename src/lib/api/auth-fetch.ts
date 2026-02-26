@@ -7,10 +7,9 @@
 import { refreshSession } from './client'
 import type { AuthSession } from './types'
 
+/** Client: relative URLs (empty string). Server: internal Docker network URL. */
 const API_URL =
-  typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL ?? '')
-    : (process.env.API_INTERNAL_URL ?? 'http://localhost:3000')
+  typeof window === 'undefined' ? (process.env.API_INTERNAL_URL ?? 'http://localhost:3000') : ''
 
 interface AuthFetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
