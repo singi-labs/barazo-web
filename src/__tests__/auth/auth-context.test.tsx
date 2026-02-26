@@ -104,6 +104,73 @@ describe('AuthProvider', () => {
   })
 })
 
+describe('AuthProvider login flow', () => {
+  it('redirects to OAuth URL from API response', async () => {
+    const oauthUrl = 'https://bsky.social/oauth/authorize?client_id=test&request_uri=urn:test'
+
+    server.use(
+      http.get(`${API_URL}/api/auth/login`, ({ request }) => {
+        const url = new URL(request.url)
+        expect(url.searchParams.get('handle')).toBe('test.bsky.social')
+        return HttpResponse.json({ url: oauthUrl })
+      }),
+      // Silent refresh fails (user not logged in)
+      http.post(`${API_URL}/api/auth/refresh`, () => {
+        return HttpResponse.json({ error: 'No session' }, { status: 401 })
+      })
+    )
+
+    // Spy on window.location.href assignment
+    const locationSpy = vi.spyOn(window, 'location', 'get').mockReturnValue({
+      ...window.location,
+      href: 'http://localhost:3000/login',
+    })
+    const hrefSetter = vi.fn()
+    Object.defineProperty(window, 'location', {
+      value: { ...window.location, href: 'http://localhost:3000/login' },
+      writable: true,
+      configurable: true,
+    })
+    Object.defineProperty(window.location, 'href', {
+      set: hrefSetter,
+      get: () => 'http://localhost:3000/login',
+      configurable: true,
+    })
+
+    function LoginTrigger() {
+      const { login, isLoading } = useAuth()
+      return (
+        <button disabled={isLoading} onClick={() => void login('test.bsky.social')}>
+          Login
+        </button>
+      )
+    }
+
+    render(
+      <AuthProvider>
+        <LoginTrigger />
+      </AuthProvider>
+    )
+
+    // Wait for loading to finish
+    await waitFor(() => {
+      expect(screen.getByRole('button')).not.toBeDisabled()
+    })
+
+    // Click login
+    await act(async () => {
+      screen.getByRole('button').click()
+    })
+
+    // Verify redirect to the OAuth URL from the API (not undefined, not redirectUrl)
+    await waitFor(() => {
+      expect(hrefSetter).toHaveBeenCalledWith(oauthUrl)
+    })
+
+    locationSpy.mockRestore()
+  })
+})
+
 describe('useAuth', () => {
   it('throws when used outside AuthProvider', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
