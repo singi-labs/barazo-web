@@ -21,8 +21,7 @@
  */
 
 @theme inline {
-  /* Typography */
-  --font-sans: var(--font-source-sans);
+  /* Typography -- system font stack for body, Source Code Pro for code */
   --font-mono: var(--font-source-code);
 
   /* Radix Color Tokens - mapped to semantic roles */

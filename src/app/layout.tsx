@@ -1,15 +1,8 @@
 import type { Metadata } from 'next'
-import { Source_Sans_3, Source_Code_Pro } from 'next/font/google'
+import { Source_Code_Pro } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/auth-context'
-
-const sourceSans = Source_Sans_3({
-  subsets: ['latin'],
-  variable: '--font-source-sans',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-})
 
 const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
@@ -50,11 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${sourceSans.variable} ${sourceCodePro.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={sourceCodePro.variable} suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased">
         <ThemeProvider
           attribute="class"
