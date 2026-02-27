@@ -142,11 +142,18 @@ export async function refreshSession(): Promise<AuthSession> {
   return response.json() as Promise<AuthSession>
 }
 
-export function logout(accessToken: string): Promise<void> {
-  return apiFetch<void>('/api/auth/session', {
+export async function logout(accessToken: string): Promise<void> {
+  const url = `${API_URL}/api/auth/session`
+  const response = await fetch(url, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: 'include',
   })
+
+  if (!response.ok && response.status !== 204) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
 }
 
 export function getCurrentUser(accessToken: string): Promise<AuthUser> {
