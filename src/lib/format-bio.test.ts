@@ -41,4 +41,26 @@ describe('formatBio', () => {
     const result = formatBio('Not a link: example.com')
     expect(result).not.toContain('<a')
   })
+
+  it('strips https:// from display text of autolinked URLs', () => {
+    const result = formatBio('Visit https://example.com/path/')
+    expect(result).toContain('<a href="https://example.com/path/"')
+    expect(result).toContain('>example.com/path</a>')
+  })
+
+  it('strips trailing slash from display text', () => {
+    const result = formatBio('Visit https://example.com/')
+    expect(result).toContain('>example.com</a>')
+  })
+
+  it('keeps full URL in href', () => {
+    const result = formatBio('Visit https://example.com/path/')
+    expect(result).toContain('href="https://example.com/path/"')
+  })
+
+  it('strips http:// from display text', () => {
+    const result = formatBio('Visit http://example.com/page')
+    expect(result).toContain('<a href="http://example.com/page"')
+    expect(result).toContain('>example.com/page</a>')
+  })
 })

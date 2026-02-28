@@ -87,7 +87,7 @@ describe('ProfileHeader', () => {
     expect(screen.getByRole('heading', { name: /test user/i })).toBeInTheDocument()
   })
 
-  it('renders handle', () => {
+  it('renders handle inline with display name', () => {
     render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
     expect(screen.getByText(/@test\.bsky\.social/)).toBeInTheDocument()
   })
@@ -96,19 +96,18 @@ describe('ProfileHeader', () => {
     const { container } = render(
       <ProfileHeader profile={createProfile({ bio: 'Line 1\nLine 2' })} {...defaultProps} />
     )
-    // The bio div uses dangerouslySetInnerHTML, select by div.mt-2.text-muted-foreground
-    const bioDiv = container.querySelector('div.mt-2.text-sm.text-muted-foreground')
+    const bioDiv = container.querySelector('div.prose-barazo')
     expect(bioDiv?.innerHTML).toContain('<br>')
   })
 
-  it('renders bio with autolinked URLs', () => {
+  it('renders bio with autolinked URLs (stripped display text)', () => {
     render(
       <ProfileHeader
         profile={createProfile({ bio: 'Visit https://example.com' })}
         {...defaultProps}
       />
     )
-    const link = screen.getByRole('link', { name: /https:\/\/example\.com/i })
+    const link = screen.getByRole('link', { name: /example\.com/i })
     expect(link).toHaveAttribute('href', 'https://example.com')
   })
 
@@ -133,44 +132,23 @@ describe('ProfileHeader', () => {
     expect(screen.queryByAltText("Test User's avatar")).not.toBeInTheDocument()
   })
 
-  it('renders followers and following counts', () => {
-    render(
-      <ProfileHeader
-        profile={createProfile({ followersCount: 150, followsCount: 75 })}
-        {...defaultProps}
-      />
-    )
-    expect(screen.getByText(/150 followers/i)).toBeInTheDocument()
-    expect(screen.getByText(/75 following/i)).toBeInTheDocument()
+  it('renders an hr separator', () => {
+    const { container } = render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
+    expect(container.querySelector('hr')).toBeInTheDocument()
   })
 
-  it('renders Bluesky link when hasBlueskyProfile is true', () => {
-    render(<ProfileHeader profile={createProfile({ hasBlueskyProfile: true })} {...defaultProps} />)
-    const link = screen.getByRole('link', { name: /view on bluesky/i })
-    expect(link).toHaveAttribute('href', 'https://bsky.app/profile/test.bsky.social')
+  // Section label tests
+  it('renders "This forum" section label', () => {
+    render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
+    expect(screen.getByText('This forum')).toBeInTheDocument()
   })
 
-  it('does not render Bluesky link when hasBlueskyProfile is false', () => {
-    render(
-      <ProfileHeader profile={createProfile({ hasBlueskyProfile: false })} {...defaultProps} />
-    )
-    expect(screen.queryByRole('link', { name: /view on bluesky/i })).not.toBeInTheDocument()
+  it('renders "AT Protocol" section label', () => {
+    render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
+    expect(screen.getByText('AT Protocol')).toBeInTheDocument()
   })
 
-  it('renders votesReceived in stats', () => {
-    render(
-      <ProfileHeader
-        profile={createProfile({
-          activity: { topicCount: 5, replyCount: 10, reactionsReceived: 20, votesReceived: 15 },
-        })}
-        {...defaultProps}
-        postCount={15}
-      />
-    )
-    expect(screen.getByText(/15 votes/i)).toBeInTheDocument()
-  })
-
-  it('renders globalActivity section when present', () => {
+  it('renders "Barazo-wide" section label when globalActivity present', () => {
     render(
       <ProfileHeader
         profile={createProfile({
@@ -184,13 +162,92 @@ describe('ProfileHeader', () => {
         {...defaultProps}
       />
     )
-    expect(screen.getByText(/activity across all communities/i)).toBeInTheDocument()
-    expect(screen.getByText(/25 topics/i)).toBeInTheDocument()
+    expect(screen.getByText('Barazo-wide')).toBeInTheDocument()
   })
 
-  it('does not render globalActivity section when absent', () => {
+  it('does not render "Barazo-wide" section label when globalActivity absent', () => {
     render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
-    expect(screen.queryByText(/activity across all communities/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('Barazo-wide')).not.toBeInTheDocument()
+  })
+
+  // Stats value tests
+  it('renders followers and following counts', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({ followersCount: 150, followsCount: 75 })}
+        {...defaultProps}
+      />
+    )
+    expect(screen.getByText(/150 followers/i)).toBeInTheDocument()
+    expect(screen.getByText(/75 following/i)).toBeInTheDocument()
+  })
+
+  it('renders Bluesky link with stripped URL display when hasBlueskyProfile is true', () => {
+    render(<ProfileHeader profile={createProfile({ hasBlueskyProfile: true })} {...defaultProps} />)
+    const link = screen.getByRole('link', { name: /bsky\.app\/profile\/test\.bsky\.social/i })
+    expect(link).toHaveAttribute('href', 'https://bsky.app/profile/test.bsky.social')
+  })
+
+  it('does not render Bluesky link when hasBlueskyProfile is false', () => {
+    render(
+      <ProfileHeader profile={createProfile({ hasBlueskyProfile: false })} {...defaultProps} />
+    )
+    expect(screen.queryByRole('link', { name: /bsky\.app\/profile/i })).not.toBeInTheDocument()
+  })
+
+  it('renders votesReceived in "This forum" stats', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({
+          activity: { topicCount: 5, replyCount: 10, reactionsReceived: 20, votesReceived: 15 },
+        })}
+        {...defaultProps}
+        postCount={15}
+      />
+    )
+    expect(screen.getByText(/15 votes/i)).toBeInTheDocument()
+  })
+
+  it('renders globalActivity stats when present', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({
+          globalActivity: {
+            topicCount: 25,
+            replyCount: 60,
+            reactionsReceived: 120,
+            votesReceived: 55,
+          },
+        })}
+        {...defaultProps}
+      />
+    )
+    expect(screen.getByText(/25 topics/i)).toBeInTheDocument()
+    expect(screen.getByText(/60 replies/i)).toBeInTheDocument()
+  })
+
+  it('shows full number in title attribute for large counts', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({ followersCount: 14100, followsCount: 2300 })}
+        {...defaultProps}
+        postCount={1500}
+      />
+    )
+    expect(screen.getByTitle('14,100')).toBeInTheDocument()
+    expect(screen.getByTitle('1,500')).toBeInTheDocument()
+  })
+
+  it('abbreviates large numbers with formatCount', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({ followersCount: 14100 })}
+        {...defaultProps}
+        postCount={1500}
+      />
+    )
+    expect(screen.getByText(/14\.1K followers/i)).toBeInTheDocument()
+    expect(screen.getByText(/1\.5K posts/i)).toBeInTheDocument()
   })
 
   describe('edit profile button', () => {
