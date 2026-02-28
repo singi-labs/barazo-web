@@ -3,6 +3,7 @@ import { Source_Code_Pro } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/auth-context'
+import { AppToastProvider } from '@/context/toast-context'
 
 const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
@@ -51,7 +52,9 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <AppToastProvider>{children}</AppToastProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

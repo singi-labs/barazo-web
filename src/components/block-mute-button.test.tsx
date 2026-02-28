@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event'
 import { BlockMuteButton } from './block-mute-button'
 
 const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
+const mockToast = vi.fn()
 
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
@@ -24,6 +25,13 @@ vi.mock('@/hooks/use-auth', () => ({
     logout: vi.fn(),
     setSessionFromCallback: vi.fn(),
     authFetch: vi.fn(),
+  }),
+}))
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: mockToast,
+    dismiss: vi.fn(),
   }),
 }))
 

@@ -21,6 +21,14 @@ vi.mock('@/hooks/use-auth', () => ({
   }),
 }))
 
+// Mock useToast hook (used by BlockMuteButton via useRequireAuth)
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: vi.fn(),
+    dismiss: vi.fn(),
+  }),
+}))
+
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: () => ({

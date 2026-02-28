@@ -1,6 +1,7 @@
 /**
  * Block/mute toggle button for user actions.
  * Used in user profiles and post context menus.
+ * Shows a login prompt toast for unauthenticated users.
  * @see specs/prd-web.md Section M8
  */
 
@@ -11,6 +12,7 @@ import { Prohibit, SpeakerSimpleSlash, WarningCircle } from '@phosphor-icons/rea
 import { cn } from '@/lib/utils'
 import { blockUser, unblockUser, muteUser, unmuteUser } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
+import { useRequireAuth } from '@/hooks/use-require-auth'
 
 interface BlockMuteButtonProps {
   targetDid: string
@@ -28,39 +30,42 @@ export function BlockMuteButton({
   className,
 }: BlockMuteButtonProps) {
   const { getAccessToken } = useAuth()
+  const { requireAuth } = useRequireAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
-  const handleClick = async () => {
-    setLoading(true)
-    setError(false)
+  const handleClick = () => {
+    requireAuth(async () => {
+      setLoading(true)
+      setError(false)
 
-    const token = getAccessToken()
-    if (!token) {
-      setLoading(false)
-      return
-    }
-
-    try {
-      if (action === 'block') {
-        if (isActive) {
-          await unblockUser(targetDid, token)
-        } else {
-          await blockUser(targetDid, token)
-        }
-      } else {
-        if (isActive) {
-          await unmuteUser(targetDid, token)
-        } else {
-          await muteUser(targetDid, token)
-        }
+      const token = getAccessToken()
+      if (!token) {
+        setLoading(false)
+        return
       }
-      onToggle(!isActive)
-    } catch {
-      setError(true)
-    } finally {
-      setLoading(false)
-    }
+
+      try {
+        if (action === 'block') {
+          if (isActive) {
+            await unblockUser(targetDid, token)
+          } else {
+            await blockUser(targetDid, token)
+          }
+        } else {
+          if (isActive) {
+            await unmuteUser(targetDid, token)
+          } else {
+            await muteUser(targetDid, token)
+          }
+        }
+        onToggle(!isActive)
+      } catch {
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    })
   }
 
   const Icon = action === 'block' ? Prohibit : SpeakerSimpleSlash
