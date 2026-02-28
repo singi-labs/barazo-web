@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { User, CalendarBlank, ChatCircle } from '@phosphor-icons/react'
 import { ReputationBadge } from '@/components/reputation-badge'
 import { BlockMuteButton } from '@/components/block-mute-button'
+import { formatBio } from '@/lib/format-bio'
 import type { UserProfile } from '@/lib/api/types'
 
 interface ProfileHeaderProps {
@@ -71,7 +72,12 @@ export function ProfileHeader({
             {profile.displayName && <p className="text-lg text-muted-foreground">@{handle}</p>}
 
             {/* Bio */}
-            {profile.bio && <p className="mt-2 text-sm text-muted-foreground">{profile.bio}</p>}
+            {profile.bio && (
+              <div
+                className="mt-2 text-sm text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: formatBio(profile.bio) }}
+              />
+            )}
 
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <ReputationBadge score={reputationScore} />
