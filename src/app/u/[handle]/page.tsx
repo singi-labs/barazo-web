@@ -14,6 +14,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { ProfileSkeleton } from '@/components/profile/profile-skeleton'
 import { getUserProfile } from '@/lib/api/client'
+import { useAuth } from '@/hooks/use-auth'
 import type { UserProfile } from '@/lib/api/types'
 
 interface UserProfilePageProps {
@@ -32,6 +33,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const [error, setError] = useState<string | null>(null)
   const [isBlocked, setIsBlocked] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const { user } = useAuth()
 
   // Resolve Next.js async params
   useEffect(() => {
@@ -134,6 +136,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           isMuted={isMuted}
           onBlockToggle={setIsBlocked}
           onMuteToggle={setIsMuted}
+          viewerDid={user?.did ?? null}
         />
 
         {/* Recent activity */}

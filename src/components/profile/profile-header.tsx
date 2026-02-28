@@ -1,5 +1,6 @@
 /**
  * ProfileHeader - Displays user profile card with banner, avatar, bio, stats, and actions.
+ * Hides block/mute buttons when viewing own profile.
  * @see specs/prd-web.md Section M8
  */
 
@@ -21,6 +22,8 @@ interface ProfileHeaderProps {
   isMuted: boolean
   onBlockToggle: (blocked: boolean) => void
   onMuteToggle: (muted: boolean) => void
+  /** DID of the currently authenticated viewer (null if logged out) */
+  viewerDid: string | null
 }
 
 export function ProfileHeader({
@@ -33,7 +36,10 @@ export function ProfileHeader({
   isMuted,
   onBlockToggle,
   onMuteToggle,
+  viewerDid,
 }: ProfileHeaderProps) {
+  const isOwnProfile = viewerDid !== null && viewerDid === profile.did
+
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
       {/* Banner */}
@@ -79,21 +85,23 @@ export function ProfileHeader({
               </span>
             </div>
 
-            {/* Block/Mute actions */}
-            <div className="mt-3 flex gap-2">
-              <BlockMuteButton
-                targetDid={profile.did}
-                action="block"
-                isActive={isBlocked}
-                onToggle={onBlockToggle}
-              />
-              <BlockMuteButton
-                targetDid={profile.did}
-                action="mute"
-                isActive={isMuted}
-                onToggle={onMuteToggle}
-              />
-            </div>
+            {/* Block/Mute actions (hidden on own profile) */}
+            {!isOwnProfile && (
+              <div className="mt-3 flex gap-2">
+                <BlockMuteButton
+                  targetDid={profile.did}
+                  action="block"
+                  isActive={isBlocked}
+                  onToggle={onBlockToggle}
+                />
+                <BlockMuteButton
+                  targetDid={profile.did}
+                  action="mute"
+                  isActive={isMuted}
+                  onToggle={onMuteToggle}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
