@@ -83,10 +83,19 @@ describe('LoginPage', () => {
     expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
   })
 
-  it('has link to create account', () => {
+  it('has links to create accounts on PDS hosts', () => {
     render(<LoginPage />)
-    const link = screen.getByRole('link', { name: /create one on bluesky/i })
-    expect(link).toHaveAttribute('href', 'https://bsky.app')
-    expect(link).toHaveAttribute('target', '_blank')
+
+    const blueskyLink = screen.getByRole('link', { name: /bluesky/i })
+    expect(blueskyLink).toHaveAttribute('href', 'https://bsky.app')
+    expect(blueskyLink).toHaveAttribute('target', '_blank')
+
+    const blackskyLink = screen.getByRole('link', { name: /blacksky/i })
+    expect(blackskyLink).toHaveAttribute('href', 'https://blacksky.community')
+    expect(blackskyLink).toHaveAttribute('target', '_blank')
+
+    const euroskyLink = screen.getByRole('link', { name: /eurosky/i })
+    expect(euroskyLink).toHaveAttribute('href', 'https://www.eurosky.tech/register')
+    expect(euroskyLink).toHaveAttribute('target', '_blank')
   })
 })
