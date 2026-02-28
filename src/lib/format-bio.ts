@@ -16,10 +16,11 @@ export function formatBio(bio: string): string {
     .replace(/'/g, '&#39;')
 
   // Step 2: Autolink URLs (only http:// and https://)
-  result = result.replace(
-    /https?:\/\/[^\s<]+/g,
-    (url) => `<a href="${url}" rel="noopener noreferrer">${url}</a>`
-  )
+  // Display text strips protocol prefix and trailing slash for cleaner appearance.
+  result = result.replace(/https?:\/\/[^\s<]+/g, (url) => {
+    const display = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+    return `<a href="${url}" rel="noopener noreferrer">${display}</a>`
+  })
 
   // Step 3: Convert newlines to <br>
   result = result.replace(/\n/g, '<br>')

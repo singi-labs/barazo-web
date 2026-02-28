@@ -89,7 +89,7 @@ describe('UserProfilePage', () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
     // Alice's mock data has globalActivity (communityCount: 2)
     await waitFor(() => {
-      expect(screen.getByText(/activity across all communities/i)).toBeInTheDocument()
+      expect(screen.getByText('Barazo-wide')).toBeInTheDocument()
     })
   })
 
@@ -103,7 +103,7 @@ describe('UserProfilePage', () => {
   it('renders Bluesky link', async () => {
     render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /view on bluesky/i })
+      const link = screen.getByRole('link', { name: /bsky\.app\/profile\/alice\.bsky\.social/i })
       expect(link).toHaveAttribute('href', 'https://bsky.app/profile/alice.bsky.social')
     })
   })
