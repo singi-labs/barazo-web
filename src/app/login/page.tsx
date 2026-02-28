@@ -133,17 +133,52 @@ function LoginContent() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground">
-          Don&rsquo;t have an account?{' '}
-          <a
-            href="https://bsky.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
-          >
-            Create one on Bluesky
-          </a>
-        </p>
+        <div className="space-y-2 text-center">
+          <p className="text-sm text-muted-foreground">
+            Don&rsquo;t have an account? Create one at
+          </p>
+          <div className="flex items-center justify-center gap-3 text-sm">
+            <a
+              href="https://bsky.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
+            >
+              <svg
+                viewBox="0 0 568 501"
+                className="h-3.5 w-3.5 shrink-0"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M123.121 33.664C188.241 82.553 258.281 181.681 284 234.873c25.719-53.192 95.759-152.32 160.879-201.209C491.866-1.612 568-28.906 568 57.947c0 17.345-9.945 131.876-14.624 151.903C537.322 275.855 478.267 293.601 425.672 282.587c-78.544-17.106-101.047 21.172-101.047 21.172s0 37.277 81.625 20.452c78-17.451 106.625 30.5 106.625 30.5s-61.25 111.25-173.625 67.375C298.125 406.711 284 364.711 284 334.211s-14.125 72.5-55.25 87.875c-112.375 43.875-173.625-67.375-173.625-67.375s28.625-47.951 106.625-30.5c81.625 16.825 81.625-20.452 81.625-20.452s-22.503-38.278-101.047-21.172c-52.595 11.014-111.65-6.732-127.704-72.738C9.945 189.823 0 75.292 0 57.947 0-28.906 76.134-1.612 123.121 33.664Z" />
+              </svg>
+              Bluesky
+            </a>
+            <span className="text-muted-foreground/50" aria-hidden="true">
+              &middot;
+            </span>
+            <a
+              href="https://blacksky.community"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
+            >
+              Blacksky
+            </a>
+            <span className="text-muted-foreground/50" aria-hidden="true">
+              &middot;
+            </span>
+            <a
+              href="https://www.eurosky.tech/register"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
+            >
+              Eurosky
+            </a>
+          </div>
+          <p className="text-xs text-muted-foreground">or any other AT Protocol PDS host</p>
+        </div>
       </div>
     </div>
   )
