@@ -84,4 +84,27 @@ describe('UserProfilePage', () => {
       expect(screen.getByText(/api 404/i)).toBeInTheDocument()
     })
   })
+
+  it('renders community-scoped profile with globalActivity', async () => {
+    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    // Alice's mock data has globalActivity (communityCount: 2)
+    await waitFor(() => {
+      expect(screen.getByText(/activity across all communities/i)).toBeInTheDocument()
+    })
+  })
+
+  it('renders AT Protocol stats', async () => {
+    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    await waitFor(() => {
+      expect(screen.getByText(/150 followers/i)).toBeInTheDocument()
+    })
+  })
+
+  it('renders Bluesky link', async () => {
+    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    await waitFor(() => {
+      const link = screen.getByRole('link', { name: /view on bluesky/i })
+      expect(link).toHaveAttribute('href', 'https://bsky.app/profile/alice.bsky.social')
+    })
+  })
 })

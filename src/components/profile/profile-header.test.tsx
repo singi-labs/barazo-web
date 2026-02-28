@@ -132,4 +132,64 @@ describe('ProfileHeader', () => {
     render(<ProfileHeader profile={createProfile({ avatarUrl: null })} {...defaultProps} />)
     expect(screen.queryByAltText("Test User's avatar")).not.toBeInTheDocument()
   })
+
+  it('renders followers and following counts', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({ followersCount: 150, followsCount: 75 })}
+        {...defaultProps}
+      />
+    )
+    expect(screen.getByText(/150 followers/i)).toBeInTheDocument()
+    expect(screen.getByText(/75 following/i)).toBeInTheDocument()
+  })
+
+  it('renders Bluesky link when hasBlueskyProfile is true', () => {
+    render(<ProfileHeader profile={createProfile({ hasBlueskyProfile: true })} {...defaultProps} />)
+    const link = screen.getByRole('link', { name: /view on bluesky/i })
+    expect(link).toHaveAttribute('href', 'https://bsky.app/profile/test.bsky.social')
+  })
+
+  it('does not render Bluesky link when hasBlueskyProfile is false', () => {
+    render(
+      <ProfileHeader profile={createProfile({ hasBlueskyProfile: false })} {...defaultProps} />
+    )
+    expect(screen.queryByRole('link', { name: /view on bluesky/i })).not.toBeInTheDocument()
+  })
+
+  it('renders votesReceived in stats', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({
+          activity: { topicCount: 5, replyCount: 10, reactionsReceived: 20, votesReceived: 15 },
+        })}
+        {...defaultProps}
+        postCount={15}
+      />
+    )
+    expect(screen.getByText(/15 votes/i)).toBeInTheDocument()
+  })
+
+  it('renders globalActivity section when present', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({
+          globalActivity: {
+            topicCount: 25,
+            replyCount: 60,
+            reactionsReceived: 120,
+            votesReceived: 55,
+          },
+        })}
+        {...defaultProps}
+      />
+    )
+    expect(screen.getByText(/activity across all communities/i)).toBeInTheDocument()
+    expect(screen.getByText(/25 topics/i)).toBeInTheDocument()
+  })
+
+  it('does not render globalActivity section when absent', () => {
+    render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
+    expect(screen.queryByText(/activity across all communities/i)).not.toBeInTheDocument()
+  })
 })

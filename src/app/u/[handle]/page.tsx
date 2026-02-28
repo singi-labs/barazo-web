@@ -13,7 +13,7 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { ProfileSkeleton } from '@/components/profile/profile-skeleton'
-import { getUserProfile } from '@/lib/api/client'
+import { getUserProfile, getPublicSettings } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 import type { UserProfile } from '@/lib/api/types'
 
@@ -55,7 +55,11 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
       setLoading(true)
       setError(null)
       try {
-        const data = await getUserProfile(handle!, undefined, {
+        const publicSettings = await getPublicSettings({
+          signal: controller.signal,
+        }).catch(() => null)
+        const communityDid = publicSettings?.communityDid ?? undefined
+        const data = await getUserProfile(handle!, communityDid, {
           signal: controller.signal,
         })
         if (!cancelled) {
