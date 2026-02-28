@@ -270,3 +270,16 @@ body {
   background-color: var(--color-primary-muted);
   color: var(--color-primary);
 }
+
+/* Component classes */
+@layer components {
+  .prose-barazo a {
+    color: var(--cyan-11);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--cyan-11) 40%, transparent);
+    text-underline-offset: 2px;
+  }
+  .prose-barazo a:hover {
+    text-decoration-color: var(--cyan-11);
+  }
+}
