@@ -111,15 +111,23 @@ function buildQuery(params: Record<string, string | number | undefined>): string
 
 // --- Auth endpoints ---
 
-export function initiateLogin(handle: string): Promise<{ url: string }> {
+export async function initiateLogin(handle: string): Promise<{ url: string }> {
   const query = buildQuery({ handle })
-  return apiFetch<{ url: string }>(`/api/auth/login${query}`)
+  const result = await apiFetch<{ url: string }>(`/api/auth/login${query}`)
+  if (!result?.url) {
+    throw new ApiError(502, 'Login endpoint did not return a redirect URL')
+  }
+  return result
 }
 
-export function initiateCrossPostAuth(token: string): Promise<{ url: string }> {
-  return apiFetch<{ url: string }>('/api/auth/crosspost-authorize', {
+export async function initiateCrossPostAuth(token: string): Promise<{ url: string }> {
+  const result = await apiFetch<{ url: string }>('/api/auth/crosspost-authorize', {
     headers: { Authorization: `Bearer ${token}` },
   })
+  if (!result?.url) {
+    throw new ApiError(502, 'Cross-post auth endpoint did not return a redirect URL')
+  }
+  return result
 }
 
 export function handleCallback(code: string, state: string): Promise<AuthSession> {
