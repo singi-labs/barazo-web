@@ -23,6 +23,7 @@ import { ReputationBadge } from '@/components/reputation-badge'
 import { BlockMuteButton } from '@/components/block-mute-button'
 import { ProfileStats } from '@/components/profile/profile-stats'
 import { formatBio } from '@/lib/format-bio'
+import { ProfileLabels } from '@/components/profile/profile-labels'
 import { formatCount } from '@/lib/format-count'
 import type { UserProfile } from '@/lib/api/types'
 
@@ -99,6 +100,9 @@ export function ProfileHeader({
                 </Link>
               )}
             </div>
+
+            {/* AT Protocol labels */}
+            {profile.labels.length > 0 && <ProfileLabels labels={profile.labels} />}
 
             {/* Bio */}
             {profile.bio && (

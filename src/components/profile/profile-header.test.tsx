@@ -59,6 +59,7 @@ function createProfile(overrides?: Partial<UserProfile>): UserProfile {
     atprotoPostsCount: 0,
     hasBlueskyProfile: false,
     communityCount: 1,
+    labels: [],
     activity: {
       topicCount: 0,
       replyCount: 0,
@@ -285,5 +286,22 @@ describe('ProfileHeader', () => {
       )
       expect(screen.queryByRole('link', { name: /edit profile/i })).not.toBeInTheDocument()
     })
+  })
+
+  it('renders labels section when labels are present', () => {
+    render(
+      <ProfileHeader
+        profile={createProfile({
+          labels: [{ val: 'adult-content', src: 'did:plc:test-user', isSelfLabel: true }],
+        })}
+        {...defaultProps}
+      />
+    )
+    expect(screen.getByText('adult-content')).toBeInTheDocument()
+  })
+
+  it('does not render labels section when labels are empty', () => {
+    render(<ProfileHeader profile={createProfile({ labels: [] })} {...defaultProps} />)
+    expect(screen.queryByText('adult-content')).not.toBeInTheDocument()
   })
 })
