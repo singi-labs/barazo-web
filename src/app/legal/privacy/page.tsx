@@ -55,7 +55,8 @@ export default function PrivacyPolicyPage() {
               indexed from the AT Protocol firehose.
             </li>
             <li>
-              <strong>IP addresses</strong> -- collected for API rate limiting and security purposes.
+              <strong>IP addresses</strong> -- collected for API rate limiting and security
+              purposes.
             </li>
             <li>
               <strong>Authentication cookie</strong> -- a single HTTP-only, Secure, SameSite=Strict
@@ -143,7 +144,8 @@ export default function PrivacyPolicyPage() {
               author&quot; notice.
             </li>
             <li>
-              Your personal data (DID, handle, AT Protocol URI) is stripped from the database record.
+              Your personal data (DID, handle, AT Protocol URI) is stripped from the database
+              record.
             </li>
             <li>
               The anonymized content (with no link to your identity) may be retained to preserve

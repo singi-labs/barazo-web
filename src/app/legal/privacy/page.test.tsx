@@ -66,7 +66,9 @@ describe('PrivacyPolicyPage', () => {
 
   it('describes anonymize-on-deletion approach', () => {
     render(<PrivacyPolicyPage />)
-    expect(screen.getByRole('heading', { name: /data retention and deletion/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: /data retention and deletion/i })
+    ).toBeInTheDocument()
     expect(screen.getByText(/deleted by author/i)).toBeInTheDocument()
     expect(screen.getByText(/personal data.*is stripped/i)).toBeInTheDocument()
     expect(screen.getByText(/anonymized content.*may be retained/i)).toBeInTheDocument()
