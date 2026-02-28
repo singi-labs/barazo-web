@@ -36,7 +36,8 @@ const Toast = React.forwardRef<
       'data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none',
       'data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full',
       variant === 'default' && 'border-border bg-card text-foreground',
-      variant === 'destructive' && 'border-destructive/50 bg-destructive text-destructive-foreground',
+      variant === 'destructive' &&
+        'border-destructive/50 bg-destructive text-destructive-foreground',
       className
     )}
     {...props}
@@ -66,11 +67,7 @@ const ToastTitle = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn('text-sm font-semibold', className)}
-    {...props}
-  />
+  <ToastPrimitives.Title ref={ref} className={cn('text-sm font-semibold', className)} {...props} />
 ))
 ToastTitle.displayName = ToastPrimitives.Title.displayName
 
