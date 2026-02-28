@@ -568,10 +568,22 @@ export interface UserProfile {
   role: string
   firstSeenAt: string
   lastActiveAt: string
+  followersCount: number
+  followsCount: number
+  atprotoPostsCount: number
+  hasBlueskyProfile: boolean
+  communityCount: number
   activity: {
     topicCount: number
     replyCount: number
     reactionsReceived: number
+    votesReceived: number
+  }
+  globalActivity?: {
+    topicCount: number
+    replyCount: number
+    reactionsReceived: number
+    votesReceived: number
   }
 }
 
