@@ -59,6 +59,7 @@ function createProfile(overrides?: Partial<UserProfile>): UserProfile {
     atprotoPostsCount: 0,
     hasBlueskyProfile: false,
     communityCount: 1,
+    labels: [],
     activity: {
       topicCount: 0,
       replyCount: 0,

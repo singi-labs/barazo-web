@@ -573,6 +573,11 @@ export interface UserProfile {
   atprotoPostsCount: number
   hasBlueskyProfile: boolean
   communityCount: number
+  labels: Array<{
+    val: string
+    src: string
+    isSelfLabel: boolean
+  }>
   activity: {
     topicCount: number
     replyCount: number

@@ -1041,6 +1041,7 @@ export const mockUserProfiles: Record<string, UserProfile> = {
     atprotoPostsCount: 230,
     hasBlueskyProfile: true,
     communityCount: 2,
+    labels: [{ val: 'adult-content', src: 'did:plc:user-alice-001', isSelfLabel: true }],
     activity: {
       topicCount: 15,
       replyCount: 42,
@@ -1069,6 +1070,7 @@ export const mockUserProfiles: Record<string, UserProfile> = {
     atprotoPostsCount: 45,
     hasBlueskyProfile: true,
     communityCount: 1,
+    labels: [],
     activity: {
       topicCount: 8,
       replyCount: 31,
