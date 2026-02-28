@@ -6,8 +6,9 @@
 
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
-import { User, CalendarBlank, ChatCircle, ArrowUp } from '@phosphor-icons/react'
+import { User, CalendarBlank, ChatCircle, ArrowUp, PencilSimple } from '@phosphor-icons/react'
 import { ReputationBadge } from '@/components/reputation-badge'
 import { BlockMuteButton } from '@/components/block-mute-button'
 import { ProfileStats } from '@/components/profile/profile-stats'
@@ -69,7 +70,20 @@ export function ProfileHeader({
           )}
 
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-foreground">{profile.displayName ?? handle}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-foreground">
+                {profile.displayName ?? handle}
+              </h1>
+              {isOwnProfile && (
+                <Link
+                  href={`/u/${handle}/edit`}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <PencilSimple size={16} aria-hidden="true" />
+                  Edit profile
+                </Link>
+              )}
+            </div>
             {profile.displayName && <p className="text-lg text-muted-foreground">@{handle}</p>}
 
             {/* Bio */}

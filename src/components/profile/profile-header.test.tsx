@@ -192,4 +192,41 @@ describe('ProfileHeader', () => {
     render(<ProfileHeader profile={createProfile()} {...defaultProps} />)
     expect(screen.queryByText(/activity across all communities/i)).not.toBeInTheDocument()
   })
+
+  describe('edit profile button', () => {
+    it('shows "Edit profile" link when viewing own profile', () => {
+      render(
+        <ProfileHeader
+          profile={createProfile({ did: 'did:plc:test-user' })}
+          {...defaultProps}
+          viewerDid="did:plc:test-user"
+        />
+      )
+      const link = screen.getByRole('link', { name: /edit profile/i })
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute('href', '/u/test.bsky.social/edit')
+    })
+
+    it('hides "Edit profile" link when viewing another user profile', () => {
+      render(
+        <ProfileHeader
+          profile={createProfile({ did: 'did:plc:test-user' })}
+          {...defaultProps}
+          viewerDid="did:plc:other-user"
+        />
+      )
+      expect(screen.queryByRole('link', { name: /edit profile/i })).not.toBeInTheDocument()
+    })
+
+    it('hides "Edit profile" link when not authenticated', () => {
+      render(
+        <ProfileHeader
+          profile={createProfile({ did: 'did:plc:test-user' })}
+          {...defaultProps}
+          viewerDid={null}
+        />
+      )
+      expect(screen.queryByRole('link', { name: /edit profile/i })).not.toBeInTheDocument()
+    })
+  })
 })
