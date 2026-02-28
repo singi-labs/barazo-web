@@ -59,11 +59,22 @@ export default function PrivacyPolicyPage() {
               purposes.
             </li>
             <li>
-              <strong>Session data</strong> -- OAuth tokens for authentication.
+              <strong>Authentication cookie</strong> -- a single HTTP-only, Secure, SameSite=Strict
+              refresh token cookie used to maintain your session. Access tokens are held in memory
+              only and never stored in cookies or browser storage.
             </li>
             <li>
               <strong>Moderation records</strong> -- actions taken by moderators on your content or
               account.
+            </li>
+            <li>
+              <strong>Age declaration</strong> -- stored in the forum database only (deliberately
+              kept off your PDS to avoid broadcasting age data on a public network).
+            </li>
+            <li>
+              <strong>Per-community preferences</strong> -- notification settings and content
+              maturity overrides, stored locally in the forum database (not on your PDS) to protect
+              your browsing patterns.
             </li>
           </ul>
         </section>
@@ -80,6 +91,8 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>We do not collect payment card details (processed by our payment provider).</li>
             <li>We do not use tracking cookies or analytics that profile your behavior.</li>
+            <li>We do not use device fingerprinting.</li>
+            <li>We do not load third-party trackers, pixels, or analytics scripts.</li>
           </ul>
         </section>
 
@@ -95,7 +108,8 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <strong>Legitimate interest</strong> -- indexing public AT Protocol content, spam
-              prevention, platform security, and moderation.
+              prevention, platform security, content moderation, and AI-generated discussion
+              summaries.
             </li>
           </ul>
         </section>
@@ -121,19 +135,61 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-lg font-semibold text-foreground">Data Retention and Deletion</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Your indexed data is retained while the source exists on your AT Protocol PDS. When you
-            delete content or your account via the AT Protocol, we process the deletion event and
-            remove the indexed data from our systems.
+            delete content or your account via the AT Protocol, we process the deletion event
+            immediately:
+          </p>
+          <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+            <li>
+              Your post is removed from public view and replaced with a &quot;deleted by
+              author&quot; notice.
+            </li>
+            <li>
+              Your personal data (DID, handle, AT Protocol URI) is stripped from the database
+              record.
+            </li>
+            <li>
+              The anonymized content (with no link to your identity) may be retained to preserve
+              community knowledge and enable AI-generated discussion summaries. This anonymized data
+              falls outside GDPR scope (Recital 26) because it can no longer identify you.
+            </li>
+          </ul>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            You may request full content deletion (including anonymized content) by contacting us
+            directly, independent of AT Protocol signals. We respond to deletion requests within one
+            month (GDPR Art. 12(3)).
           </p>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            You may also request deletion directly by contacting us, independent of AT Protocol
-            signals. We respond to deletion requests within one month (GDPR Art. 12(3)).
+            Barazo cannot guarantee deletion from external systems such as AT Protocol relays, other
+            AppViews, search engine caches, or web archives. Our reasonable steps include:
+            propagating AT Protocol delete events, submitting Google Search Console removal requests
+            for deleted content URLs, and documenting which systems confirmed deletion.
           </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold text-foreground">AI Features</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Please note that Barazo cannot guarantee deletion from external systems such as AT
-            Protocol relays, other AppViews, search engine caches, or web archives. We take
-            reasonable steps including propagating AT Protocol delete events and requesting removal
-            from search engines.
+            Barazo offers optional AI features including thread summaries, semantic search, and
+            content moderation assistance. Here is how they work:
           </p>
+          <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+            <li>
+              <strong>No training on your content.</strong> We do not use member posts to train AI
+              models, and we do not provide member content to others for training.
+            </li>
+            <li>
+              <strong>Local-first processing.</strong> The default AI configuration uses local
+              inference (Ollama) -- your content never leaves the server. Your forum administrator
+              may choose a different AI provider; in that case, content is sent to that provider for
+              processing.
+            </li>
+            <li>
+              <strong>Anonymized summaries.</strong> AI-generated thread summaries are designed to
+              exclude usernames, handles, and verbatim quotes. Summaries capture the
+              discussion&apos;s substance, not who said what. Summaries may persist after individual
+              content deletion because they contain no personal data.
+            </li>
+          </ul>
         </section>
 
         <section className="space-y-3">
@@ -165,7 +221,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">
             To exercise these rights, contact us through our{' '}
             <a
-              href="https://github.com/barazo-forum/barazo-web/issues"
+              href="https://github.com/barazo-forum/barazo-workspace/issues"
               className="text-primary underline hover:text-primary/80"
               target="_blank"
               rel="noopener noreferrer"
