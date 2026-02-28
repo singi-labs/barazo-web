@@ -12,6 +12,7 @@ import { ReputationBadge } from '@/components/reputation-badge'
 import { BlockMuteButton } from '@/components/block-mute-button'
 import { ProfileStats } from '@/components/profile/profile-stats'
 import { formatBio } from '@/lib/format-bio'
+import { ProfileLabels } from '@/components/profile/profile-labels'
 import type { UserProfile } from '@/lib/api/types'
 
 interface ProfileHeaderProps {
@@ -71,6 +72,9 @@ export function ProfileHeader({
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-foreground">{profile.displayName ?? handle}</h1>
             {profile.displayName && <p className="text-lg text-muted-foreground">@{handle}</p>}
+
+            {/* AT Protocol labels */}
+            {profile.labels.length > 0 && <ProfileLabels labels={profile.labels} />}
 
             {/* Bio */}
             {profile.bio && (
