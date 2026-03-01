@@ -83,6 +83,61 @@ describe('LoginPage', () => {
     expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
   })
 
+  it('strips leading @ from handle before login', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), '@test.bsky.social')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
+  })
+
+  it('extracts handle from bsky.app profile URL', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'https://bsky.app/profile/test.bsky.social')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
+  })
+
+  it('lowercases handle before login', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'Alice.Bsky.Social')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('alice.bsky.social')
+  })
+
+  it('strips trailing dot from handle', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'test.bsky.social.')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
+  })
+
+  it('shows user-friendly error for unknown handle (502)', async () => {
+    const { ApiError } = await import('@/lib/api/client')
+    mockLogin.mockRejectedValueOnce(new ApiError(502, 'API 502: Bad Gateway'))
+
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'nonexistent.bsky.social')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent(/couldn't find an account/i)
+    expect(alert).toHaveTextContent('nonexistent.bsky.social')
+  })
+
   it('has links to create accounts on PDS hosts', () => {
     render(<LoginPage />)
 

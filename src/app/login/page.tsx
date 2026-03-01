@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/hooks/use-auth'
+import { ApiError } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 
 function LoginContent() {
@@ -36,7 +37,12 @@ function LoginContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const trimmed = handle.trim()
+    const trimmed = handle
+      .trim()
+      .replace(/^https?:\/\/bsky\.app\/profile\//i, '')
+      .replace(/^@/, '')
+      .replace(/\.$/, '')
+      .toLowerCase()
     if (!trimmed) {
       setError('Please enter your handle')
       return
@@ -50,7 +56,13 @@ function LoginContent() {
       sessionStorage.setItem('auth_returnTo', returnTo)
       await login(trimmed)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start login')
+      if (err instanceof ApiError && err.status === 502) {
+        setError(
+          `We couldn't find an account for "${trimmed}". Please check for typos and try again.`
+        )
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to start login')
+      }
       setSubmitting(false)
     }
   }
