@@ -46,11 +46,11 @@ const LAST_WEEK = '2026-02-07T12:00:00.000Z'
 // --- Users ---
 
 export const mockUsers = [
-  { did: 'did:plc:user-jay-001', handle: 'jay.bsky.team' },
-  { did: 'did:plc:user-alex-002', handle: 'alex.bsky.team' },
-  { did: 'did:plc:user-sam-003', handle: 'sam.example.com' },
-  { did: 'did:plc:user-robin-004', handle: 'robin.bsky.team' },
-  { did: 'did:plc:user-morgan-005', handle: 'morgan.forum.example' },
+  { did: 'did:plc:user-alice-001', handle: 'alice.bsky.social' },
+  { did: 'did:plc:user-bob-002', handle: 'bob.bsky.social' },
+  { did: 'did:plc:user-carol-003', handle: 'carol.example.com' },
+  { did: 'did:plc:user-dave-004', handle: 'dave.bsky.social' },
+  { did: 'did:plc:user-eve-005', handle: 'eve.forum.example' },
 ] as const
 
 // --- Author Profiles (for enriched Topic/Reply responses) ---
@@ -59,13 +59,13 @@ export const mockAuthorProfiles: AuthorProfile[] = [
   {
     did: mockUsers[0]!.did,
     handle: mockUsers[0]!.handle,
-    displayName: 'Jay',
-    avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
   },
-  { did: mockUsers[1]!.did, handle: mockUsers[1]!.handle, displayName: 'Alex', avatarUrl: null },
-  { did: mockUsers[2]!.did, handle: mockUsers[2]!.handle, displayName: 'Sam', avatarUrl: null },
-  { did: mockUsers[3]!.did, handle: mockUsers[3]!.handle, displayName: 'Robin', avatarUrl: null },
-  { did: mockUsers[4]!.did, handle: mockUsers[4]!.handle, displayName: 'Morgan', avatarUrl: null },
+  { did: mockUsers[1]!.did, handle: mockUsers[1]!.handle, displayName: 'Bob', avatarUrl: null },
+  { did: mockUsers[2]!.did, handle: mockUsers[2]!.handle, displayName: 'Carol', avatarUrl: null },
+  { did: mockUsers[3]!.did, handle: mockUsers[3]!.handle, displayName: 'Dave', avatarUrl: null },
+  { did: mockUsers[4]!.did, handle: mockUsers[4]!.handle, displayName: 'Eve', avatarUrl: null },
 ]
 
 // --- Auth ---
@@ -73,18 +73,18 @@ export const mockAuthorProfiles: AuthorProfile[] = [
 export const mockAuthSession: AuthSession = {
   accessToken: 'mock-access-token-xyz',
   expiresAt: '2026-02-15T13:00:00.000Z',
-  did: 'did:plc:user-jay-001',
-  handle: 'jay.bsky.team',
-  displayName: 'Jay',
-  avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
   role: 'user',
 }
 
 export const mockAuthUser: AuthUser = {
-  did: 'did:plc:user-jay-001',
-  handle: 'jay.bsky.team',
-  displayName: 'Jay',
-  avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
   role: 'user',
 }
 
@@ -346,7 +346,7 @@ export const mockNotifications: Notification[] = [
     actorHandle: mockUsers[1]!.handle,
     subjectUri: mockTopics[0]!.uri,
     subjectTitle: 'Welcome to Barazo Forums',
-    message: 'alex.bsky.team replied to your topic',
+    message: 'bob.bsky.social replied to your topic',
     read: false,
     createdAt: NOW,
   },
@@ -358,7 +358,7 @@ export const mockNotifications: Notification[] = [
     actorHandle: mockUsers[2]!.handle,
     subjectUri: mockTopics[0]!.uri,
     subjectTitle: 'Welcome to Barazo Forums',
-    message: 'sam.example.com reacted to your topic',
+    message: 'carol.example.com reacted to your topic',
     read: false,
     createdAt: YESTERDAY,
   },
@@ -370,7 +370,7 @@ export const mockNotifications: Notification[] = [
     actorHandle: mockUsers[3]!.handle,
     subjectUri: `at://${mockUsers[3]!.did}/forum.barazo.reply.post/3kf6ddd`,
     subjectTitle: null,
-    message: 'robin.bsky.team mentioned you in a reply',
+    message: 'dave.bsky.social mentioned you in a reply',
     read: true,
     createdAt: YESTERDAY,
   },
@@ -695,7 +695,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     did: mockUsers[0]!.did,
     handle: mockUsers[0]!.handle,
-    displayName: 'Jay Admin',
+    displayName: 'Alice Admin',
     avatarUrl: null,
     role: 'admin',
     isBanned: false,
@@ -711,7 +711,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     did: mockUsers[1]!.did,
     handle: mockUsers[1]!.handle,
-    displayName: 'Alex Moderator',
+    displayName: 'Bob Moderator',
     avatarUrl: null,
     role: 'moderator',
     isBanned: false,
@@ -727,7 +727,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     did: mockUsers[2]!.did,
     handle: mockUsers[2]!.handle,
-    displayName: 'Sam Member',
+    displayName: 'Carol Member',
     avatarUrl: null,
     role: 'member',
     isBanned: false,
@@ -743,7 +743,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     did: mockUsers[3]!.did,
     handle: mockUsers[3]!.handle,
-    displayName: 'Robin Troublemaker',
+    displayName: 'Dave Troublemaker',
     avatarUrl: null,
     role: 'member',
     isBanned: false,
@@ -759,7 +759,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     did: mockUsers[4]!.did,
     handle: mockUsers[4]!.handle,
-    displayName: 'Morgan Banned',
+    displayName: 'Eve Banned',
     avatarUrl: null,
     role: 'member',
     isBanned: true,
@@ -910,7 +910,7 @@ export const mockCommunityPreferences: CommunityPreferenceOverride[] = [
     communityName: 'Gaming Forum',
     maturityLevel: 'mature',
     mutedWords: ['spoiler'],
-    blockedDids: ['did:plc:user-robin-004'],
+    blockedDids: ['did:plc:user-dave-004'],
   },
 ]
 
@@ -961,9 +961,9 @@ export const mockOnboardingFields: OnboardingField[] = [
 export const mockMyReports: MyReport[] = [
   {
     id: 1,
-    reporterDid: 'did:plc:user-jay-001',
-    targetUri: 'at://did:plc:user-alex-002/forum.barazo.topic.post/abc123',
-    targetDid: 'did:plc:user-alex-002',
+    reporterDid: 'did:plc:user-alice-001',
+    targetUri: 'at://did:plc:user-bob-002/forum.barazo.topic.post/abc123',
+    targetDid: 'did:plc:user-bob-002',
     reasonType: 'spam',
     description: 'This is spam content',
     status: 'pending',
@@ -977,9 +977,9 @@ export const mockMyReports: MyReport[] = [
   },
   {
     id: 2,
-    reporterDid: 'did:plc:user-jay-001',
-    targetUri: 'at://did:plc:user-sam-003/forum.barazo.topic.post/def456',
-    targetDid: 'did:plc:user-sam-003',
+    reporterDid: 'did:plc:user-alice-001',
+    targetUri: 'at://did:plc:user-carol-003/forum.barazo.topic.post/def456',
+    targetDid: 'did:plc:user-carol-003',
     reasonType: 'harassment',
     description: 'Targeted harassment',
     status: 'resolved',
@@ -993,9 +993,9 @@ export const mockMyReports: MyReport[] = [
   },
   {
     id: 3,
-    reporterDid: 'did:plc:user-jay-001',
-    targetUri: 'at://did:plc:user-robin-004/forum.barazo.topic.reply/ghi789',
-    targetDid: 'did:plc:user-robin-004',
+    reporterDid: 'did:plc:user-alice-001',
+    targetUri: 'at://did:plc:user-dave-004/forum.barazo.topic.reply/ghi789',
+    targetDid: 'did:plc:user-dave-004',
     reasonType: 'misleading',
     description: 'Misleading information',
     status: 'resolved',
@@ -1009,9 +1009,9 @@ export const mockMyReports: MyReport[] = [
   },
   {
     id: 4,
-    reporterDid: 'did:plc:user-jay-001',
-    targetUri: 'at://did:plc:user-morgan-005/forum.barazo.topic.post/jkl012',
-    targetDid: 'did:plc:user-morgan-005',
+    reporterDid: 'did:plc:user-alice-001',
+    targetUri: 'at://did:plc:user-eve-005/forum.barazo.topic.post/jkl012',
+    targetDid: 'did:plc:user-eve-005',
     reasonType: 'violation',
     description: 'Rule violation',
     status: 'pending',
@@ -1028,11 +1028,11 @@ export const mockMyReports: MyReport[] = [
 // --- User Profiles (public, keyed by handle) ---
 
 export const mockUserProfiles: Record<string, UserProfile> = {
-  'jay.bsky.team': {
-    did: 'did:plc:user-jay-001',
-    handle: 'jay.bsky.team',
-    displayName: 'Jay',
-    avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+  'alice.bsky.social': {
+    did: 'did:plc:user-alice-001',
+    handle: 'alice.bsky.social',
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
     bannerUrl: null,
     bio: 'Community admin and AT Protocol enthusiast.',
     role: 'admin',
@@ -1044,7 +1044,7 @@ export const mockUserProfiles: Record<string, UserProfile> = {
     atprotoPostsCount: 230,
     hasBlueskyProfile: true,
     communityCount: 2,
-    labels: [{ val: 'adult-content', src: 'did:plc:user-jay-001', isSelfLabel: true }],
+    labels: [{ val: 'adult-content', src: 'did:plc:user-alice-001', isSelfLabel: true }],
     activity: {
       topicCount: 15,
       replyCount: 42,
@@ -1058,10 +1058,10 @@ export const mockUserProfiles: Record<string, UserProfile> = {
       votesReceived: 55,
     },
   },
-  'alex.bsky.team': {
-    did: 'did:plc:user-alex-002',
-    handle: 'alex.bsky.team',
-    displayName: 'Alex',
+  'bob.bsky.social': {
+    did: 'did:plc:user-bob-002',
+    handle: 'bob.bsky.social',
+    displayName: 'Bob',
     avatarUrl: null,
     bannerUrl: null,
     bio: null,
@@ -1097,17 +1097,17 @@ export const mockPublicSettings: PublicSettings = {
 // --- Community Profile (own profile in a community) ---
 
 export const mockCommunityProfile: CommunityProfile = {
-  did: 'did:plc:user-jay-001',
-  handle: 'jay.bsky.team',
-  displayName: 'Jay',
-  avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
   bannerUrl: null,
   bio: 'Community admin and AT Protocol enthusiast.',
   communityDid: COMMUNITY_DID,
   hasOverride: false,
   source: {
-    displayName: 'Jay',
-    avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+    displayName: 'Alice',
+    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
     bannerUrl: null,
     bio: 'Community admin and AT Protocol enthusiast.',
   },
@@ -1139,7 +1139,7 @@ export const mockSybilClusters: SybilCluster[] = [
     suspicionRatio: 0.62,
     status: 'monitoring',
     detectedAt: YESTERDAY,
-    reviewedBy: 'did:plc:user-jay-001',
+    reviewedBy: 'did:plc:user-alice-001',
     reviewedAt: NOW,
   },
   {
@@ -1151,7 +1151,7 @@ export const mockSybilClusters: SybilCluster[] = [
     suspicionRatio: 0.33,
     status: 'dismissed',
     detectedAt: LAST_WEEK,
-    reviewedBy: 'did:plc:user-jay-001',
+    reviewedBy: 'did:plc:user-alice-001',
     reviewedAt: YESTERDAY,
   },
 ]
@@ -1265,9 +1265,9 @@ export const mockTrustSeeds: TrustSeed[] = [
   },
   {
     id: 3,
-    did: 'did:plc:user-jay-001',
-    handle: 'jay.bsky.team',
-    displayName: 'Jay',
+    did: 'did:plc:user-alice-001',
+    handle: 'alice.bsky.social',
+    displayName: 'Alice',
     communityId: null,
     reason: null,
     implicit: true,
@@ -1275,9 +1275,9 @@ export const mockTrustSeeds: TrustSeed[] = [
   },
   {
     id: 4,
-    did: 'did:plc:user-alex-002',
-    handle: 'alex.bsky.team',
-    displayName: 'Alex',
+    did: 'did:plc:user-bob-002',
+    handle: 'bob.bsky.social',
+    displayName: 'Bob',
     communityId: null,
     reason: null,
     implicit: true,
@@ -1285,9 +1285,9 @@ export const mockTrustSeeds: TrustSeed[] = [
   },
   {
     id: 5,
-    did: 'did:plc:user-sam-003',
-    handle: 'sam.example.com',
-    displayName: 'Sam',
+    did: 'did:plc:user-carol-003',
+    handle: 'carol.example.com',
+    displayName: 'Carol',
     communityId: COMMUNITY_DID,
     reason: null,
     implicit: true,

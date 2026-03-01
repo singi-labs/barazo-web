@@ -9,10 +9,10 @@ import type { AuthContextValue } from '@/context/auth-context'
 import type { AuthUser } from '@/lib/api/types'
 
 export const mockUser: AuthUser = {
-  did: 'did:plc:user-jay-001',
-  handle: 'jay.bsky.team',
-  displayName: 'Jay',
-  avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
+  did: 'did:plc:user-alice-001',
+  handle: 'alice.bsky.social',
+  displayName: 'Alice',
+  avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
   role: 'user',
 }
 
