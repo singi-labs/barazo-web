@@ -108,7 +108,7 @@ export default function MyReportsPage() {
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
-            { label: 'Settings', href: '/settings' },
+            { label: 'Account Settings', href: '/settings' },
             { label: 'My Reports' },
           ]}
         />

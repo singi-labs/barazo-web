@@ -20,6 +20,7 @@ export type MaturityLevel = 'sfw' | 'sfw-mature'
 export interface SettingsValues {
   maturityLevel: MaturityLevel
   mutedWords: string
+  blockedDids: string
   crossPostBluesky: boolean
   crossPostFrontpage: boolean
   notifyReplies: boolean
@@ -38,6 +39,7 @@ export interface CommunityOverrideValues {
 const INITIAL_VALUES: SettingsValues = {
   maturityLevel: 'sfw',
   mutedWords: '',
+  blockedDids: '',
   crossPostBluesky: true,
   crossPostFrontpage: false,
   notifyReplies: true,
@@ -69,6 +71,7 @@ export function useSettingsForm() {
         setValues({
           maturityLevel: prefs.maturityLevel === 'mature' ? 'sfw-mature' : 'sfw',
           mutedWords: prefs.mutedWords.join(', '),
+          blockedDids: prefs.blockedDids.join(', '),
           crossPostBluesky: prefs.crossPostBluesky,
           crossPostFrontpage: prefs.crossPostFrontpage,
           notifyReplies: true,
@@ -127,10 +130,16 @@ export function useSettingsForm() {
           .map((w) => w.trim())
           .filter(Boolean)
 
+        const blockedDids = values.blockedDids
+          .split(',')
+          .map((d) => d.trim())
+          .filter(Boolean)
+
         await updatePreferences(
           {
             maturityLevel: values.maturityLevel === 'sfw-mature' ? 'mature' : 'sfw',
             mutedWords,
+            blockedDids,
             crossPostBluesky: values.crossPostBluesky,
             crossPostFrontpage: values.crossPostFrontpage,
           },

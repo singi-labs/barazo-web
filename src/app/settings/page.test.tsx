@@ -69,16 +69,16 @@ describe('SettingsPage', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders settings heading', async () => {
+  it('renders account settings heading', async () => {
     render(<SettingsPage />)
-    expect(screen.getByRole('heading', { name: /settings/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /account settings/i })).toBeInTheDocument()
   })
 
-  it('renders content safety section when not authenticated', async () => {
+  it('renders default content preferences section when not authenticated', async () => {
     render(<SettingsPage />)
     // Without a token, loading finishes immediately and form renders with defaults
     await waitFor(() => {
-      expect(screen.getByText(/content safety/i)).toBeInTheDocument()
+      expect(screen.getByText(/default content preferences/i)).toBeInTheDocument()
     })
     expect(screen.getByLabelText(/maturity level/i)).toBeInTheDocument()
   })
@@ -145,11 +145,11 @@ describe('SettingsPage', () => {
 
   // --- Per-Community Overrides ---
 
-  describe('Per-Community Overrides', () => {
-    it('renders per-community overrides section', async () => {
+  describe('Community-Specific Settings', () => {
+    it('renders community-specific settings section', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText(/per-community overrides/i)).toBeInTheDocument()
+        expect(screen.getByText(/community-specific settings/i)).toBeInTheDocument()
       })
     })
 
@@ -204,11 +204,11 @@ describe('SettingsPage', () => {
       expect(blockedInput.value).toBe('did:plc:user-dave-004')
     })
 
-    it('shows empty state when user has no community overrides', async () => {
+    it('shows empty state when user has no community-specific settings', async () => {
       // This test verifies the section renders even with empty data
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText(/per-community overrides/i)).toBeInTheDocument()
+        expect(screen.getByText(/community-specific settings/i)).toBeInTheDocument()
       })
     })
 

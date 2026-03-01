@@ -24,12 +24,16 @@ export function CommunityOverridesSection({ overrides, onChange }: CommunityOver
   return (
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
       <legend className="px-2 text-sm font-semibold text-foreground">
-        Per-Community Overrides
+        Community-Specific Settings
       </legend>
+      <p className="text-xs text-muted-foreground">
+        Override your defaults for individual communities. These take priority over your default
+        preferences above.
+      </p>
 
       {overrides.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No community memberships found. Join a community to configure per-community settings.
+          No community memberships found. Join a community to configure community-specific settings.
         </p>
       ) : (
         <div className="space-y-3">
