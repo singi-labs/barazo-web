@@ -35,37 +35,43 @@ vi.mock('@/hooks/use-auth', () => ({
 }))
 
 describe('AccessibilityPage', () => {
-  it('renders page heading', () => {
-    render(<AccessibilityPage />)
+  it('renders page heading', async () => {
+    const page = await AccessibilityPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /accessibility/i, level: 1 })).toBeInTheDocument()
   })
 
-  it('states WCAG 2.2 AA conformance target', () => {
-    render(<AccessibilityPage />)
+  it('states WCAG 2.2 AA conformance target', async () => {
+    const page = await AccessibilityPage()
+    render(page)
     expect(screen.getByText(/wcag.*2\.2/i)).toBeInTheDocument()
     expect(screen.getByText(/level aa/i)).toBeInTheDocument()
   })
 
-  it('lists testing methods', () => {
-    render(<AccessibilityPage />)
+  it('lists testing methods', async () => {
+    const page = await AccessibilityPage()
+    render(page)
     expect(screen.getByText(/automated testing/i)).toBeInTheDocument()
     expect(screen.getByText(/keyboard navigation/i)).toBeInTheDocument()
     expect(screen.getByText(/screen reader/i)).toBeInTheDocument()
   })
 
-  it('includes contact information', () => {
-    render(<AccessibilityPage />)
+  it('includes contact information', async () => {
+    const page = await AccessibilityPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /contact/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /github issue tracker/i })).toBeInTheDocument()
   })
 
-  it('renders breadcrumbs', () => {
-    render(<AccessibilityPage />)
+  it('renders breadcrumbs', async () => {
+    const page = await AccessibilityPage()
+    render(page)
     expect(screen.getByText('Home')).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
-    const { container } = render(<AccessibilityPage />)
+    const page = await AccessibilityPage()
+    const { container } = render(page)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })

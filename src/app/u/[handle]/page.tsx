@@ -34,6 +34,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const [error, setError] = useState<string | null>(null)
   const [isBlocked, setIsBlocked] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const [communityName, setCommunityName] = useState('')
   const { user } = useAuth()
 
   // Resolve Next.js async params
@@ -59,6 +60,9 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
         const publicSettings = await getPublicSettings({
           signal: controller.signal,
         }).catch(() => null)
+        if (!cancelled && publicSettings?.communityName) {
+          setCommunityName(publicSettings.communityName)
+        }
         const communityDid = publicSettings?.communityDid ?? undefined
         const data = await getUserProfile(handle!, communityDid, {
           signal: controller.signal,
@@ -89,7 +93,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // Loading state: show skeleton while params resolve or data loads
   if (!handle || loading) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <ProfileSkeleton />
       </ForumLayout>
     )
@@ -98,7 +102,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // Error state
   if (error) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">{error}</p>
         </div>
@@ -109,7 +113,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // No profile loaded (shouldn't happen if no error, but guard)
   if (!profile) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">Profile not found.</p>
         </div>

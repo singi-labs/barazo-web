@@ -156,7 +156,10 @@ describe('SettingsPage', () => {
     it('loads and displays community list from API', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText('Barazo Test Community')).toBeInTheDocument()
+        // 'Barazo Test Community' may appear in both the header (communityName)
+        // and the per-community overrides section
+        const matches = screen.getAllByText('Barazo Test Community')
+        expect(matches.length).toBeGreaterThanOrEqual(1)
         expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
       })
     })

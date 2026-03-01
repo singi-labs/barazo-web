@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react'
 vi.mock('@/lib/api/client', () => ({
   getCategories: vi.fn(),
   getTopics: vi.fn(),
+  getPublicSettings: vi.fn(),
 }))
 
 // Mock next/navigation
@@ -53,16 +54,18 @@ vi.mock('@/hooks/use-auth', () => ({
   }),
 }))
 
-import { getCategories, getTopics } from '@/lib/api/client'
-import { mockCategories, mockTopics } from '@/mocks/data'
+import { getCategories, getTopics, getPublicSettings } from '@/lib/api/client'
+import { mockCategories, mockTopics, mockPublicSettings } from '@/mocks/data'
 import HomePage from './page'
 
 const mockGetCategories = vi.mocked(getCategories)
 const mockGetTopics = vi.mocked(getTopics)
+const mockGetPublicSettings = vi.mocked(getPublicSettings)
 
 beforeEach(() => {
   mockGetCategories.mockResolvedValue({ categories: mockCategories })
   mockGetTopics.mockResolvedValue({ topics: mockTopics, cursor: null })
+  mockGetPublicSettings.mockResolvedValue(mockPublicSettings)
 })
 
 describe('HomePage', () => {

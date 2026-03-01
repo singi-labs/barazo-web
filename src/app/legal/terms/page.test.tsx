@@ -35,44 +35,52 @@ vi.mock('@/hooks/use-auth', () => ({
 }))
 
 describe('TermsOfServicePage', () => {
-  it('renders page heading', () => {
-    render(<TermsOfServicePage />)
+  it('renders page heading', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByRole('heading', { name: /terms of service/i, level: 1 })).toBeInTheDocument()
   })
 
-  it('states minimum age requirement', () => {
-    render(<TermsOfServicePage />)
+  it('states minimum age requirement', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByText(/at least 16 years old/i)).toBeInTheDocument()
   })
 
-  it('covers content and conduct rules', () => {
-    render(<TermsOfServicePage />)
+  it('covers content and conduct rules', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByRole('heading', { name: /content and conduct/i })).toBeInTheDocument()
   })
 
-  it('discloses AI summary behavior', () => {
-    render(<TermsOfServicePage />)
+  it('discloses AI summary behavior', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByRole('heading', { name: /ai-generated summaries/i })).toBeInTheDocument()
     expect(screen.getByText(/summaries may persist/i)).toBeInTheDocument()
   })
 
-  it('discloses moderation labels', () => {
-    render(<TermsOfServicePage />)
+  it('discloses moderation labels', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByRole('heading', { name: /moderation and labels/i })).toBeInTheDocument()
   })
 
-  it('specifies governing law', () => {
-    render(<TermsOfServicePage />)
+  it('specifies governing law', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByText(/laws of the Netherlands/i)).toBeInTheDocument()
   })
 
-  it('renders breadcrumbs', () => {
-    render(<TermsOfServicePage />)
+  it('renders breadcrumbs', async () => {
+    const page = await TermsOfServicePage()
+    render(page)
     expect(screen.getByText('Home')).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
-    const { container } = render(<TermsOfServicePage />)
+    const page = await TermsOfServicePage()
+    const { container } = render(page)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })

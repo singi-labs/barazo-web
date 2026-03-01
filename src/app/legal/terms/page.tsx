@@ -6,6 +6,7 @@
  */
 
 import type { Metadata } from 'next'
+import { getPublicSettings } from '@/lib/api/client'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
@@ -18,9 +19,17 @@ export const metadata: Metadata = {
   },
 }
 
-export default function TermsOfServicePage() {
+export default async function TermsOfServicePage() {
+  let communityName = ''
+  try {
+    const settings = await getPublicSettings()
+    communityName = settings.communityName
+  } catch {
+    // silently degrade
+  }
+
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="mx-auto max-w-2xl space-y-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Terms of Service' }]} />
 

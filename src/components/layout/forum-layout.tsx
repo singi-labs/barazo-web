@@ -17,9 +17,10 @@ import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 interface ForumLayoutProps {
   children: React.ReactNode
   sidebar?: React.ReactNode
+  communityName?: string
 }
 
-export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
+export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <SkipLinks />
@@ -47,6 +48,9 @@ export function ForumLayout({ children, sidebar }: ForumLayoutProps) {
               style={{ width: 'auto' }}
               priority
             />
+            {communityName && (
+              <span className="text-lg font-semibold text-foreground">{communityName}</span>
+            )}
           </Link>
 
           {/* Search */}

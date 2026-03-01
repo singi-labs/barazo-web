@@ -13,7 +13,7 @@ import { ChatCircle, Heart, At, ShieldCheck, CheckCircle } from '@phosphor-icons
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ErrorAlert } from '@/components/error-alert'
-import { getNotifications, markNotificationsRead } from '@/lib/api/client'
+import { getNotifications, markNotificationsRead, getPublicSettings } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { Notification, NotificationType } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
@@ -31,6 +31,13 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [communityName, setCommunityName] = useState('')
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
 
   const fetchNotifications = useCallback(async () => {
     setLoadError(null)
@@ -73,7 +80,7 @@ export default function NotificationsPage() {
   const hasUnread = notifications.some((n) => !n.read)
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Notifications' }]} />
 

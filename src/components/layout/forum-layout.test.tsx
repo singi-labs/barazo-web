@@ -55,11 +55,7 @@ vi.mock('@/hooks/use-auth', () => ({
 
 describe('ForumLayout', () => {
   it('renders header with logo', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     const logos = screen.getAllByAltText('Barazo')
     expect(logos.length).toBeGreaterThan(0)
   })
@@ -74,57 +70,45 @@ describe('ForumLayout', () => {
   })
 
   it('renders header landmark', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByRole('banner')).toBeInTheDocument()
   })
 
   it('renders main landmark', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
   it('renders footer', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
 
   it('renders skip links', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByText('Skip to main content')).toBeInTheDocument()
   })
 
   it('renders notification bell in header', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByRole('link', { name: /notification/i })).toBeInTheDocument()
   })
 
   it('renders search input in header', () => {
-    render(
-      <ForumLayout>
-        <p>Content</p>
-      </ForumLayout>
-    )
+    render(<ForumLayout>Content</ForumLayout>)
     expect(screen.getByRole('combobox')).toBeInTheDocument()
+  })
+
+  it('renders community name next to logo', () => {
+    render(<ForumLayout communityName="Test Community">Content</ForumLayout>)
+    expect(screen.getByText('Test Community')).toBeInTheDocument()
+  })
+
+  it('renders without community name when not provided', () => {
+    render(<ForumLayout>Content</ForumLayout>)
+    // Should still render the logo without crashing
+    const logos = screen.getAllByAltText('Barazo')
+    expect(logos.length).toBeGreaterThan(0)
   })
 
   it('passes axe accessibility check', async () => {

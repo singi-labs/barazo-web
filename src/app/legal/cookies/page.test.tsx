@@ -35,44 +35,51 @@ vi.mock('@/hooks/use-auth', () => ({
 }))
 
 describe('CookiePolicyPage', () => {
-  it('renders page heading', () => {
-    render(<CookiePolicyPage />)
+  it('renders page heading', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /cookie policy/i, level: 1 })).toBeInTheDocument()
   })
 
-  it('describes the single essential cookie', () => {
-    render(<CookiePolicyPage />)
+  it('describes the single essential cookie', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /cookies we use/i })).toBeInTheDocument()
     // Table shows the refresh token cookie details
     expect(screen.getByRole('table')).toBeInTheDocument()
     expect(screen.getByText('Refresh token')).toBeInTheDocument()
   })
 
-  it('lists cookie security properties', () => {
-    render(<CookiePolicyPage />)
+  it('lists cookie security properties', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByText(/HTTP-only/i)).toBeInTheDocument()
     expect(screen.getByText(/SameSite=Strict/i)).toBeInTheDocument()
   })
 
-  it('states no tracking cookies are used', () => {
-    render(<CookiePolicyPage />)
+  it('states no tracking cookies are used', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /what we do not use/i })).toBeInTheDocument()
     expect(screen.getByText(/no tracking or advertising cookies/i)).toBeInTheDocument()
   })
 
-  it('explains cookie consent exemption', () => {
-    render(<CookiePolicyPage />)
+  it('explains cookie consent exemption', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /cookie consent/i })).toBeInTheDocument()
     expect(screen.getByText(/ePrivacy Directive/i)).toBeInTheDocument()
   })
 
-  it('renders breadcrumbs', () => {
-    render(<CookiePolicyPage />)
+  it('renders breadcrumbs', async () => {
+    const page = await CookiePolicyPage()
+    render(page)
     expect(screen.getByText('Home')).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
-    const { container } = render(<CookiePolicyPage />)
+    const page = await CookiePolicyPage()
+    const { container } = render(page)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
