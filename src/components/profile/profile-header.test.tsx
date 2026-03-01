@@ -289,6 +289,25 @@ describe('ProfileHeader', () => {
     })
   })
 
+  it('renders AT Protocol account creation date when accountCreatedAt is set', () => {
+    const { container } = render(
+      <ProfileHeader
+        profile={createProfile({ accountCreatedAt: '2024-06-15T10:30:00.000Z' })}
+        {...defaultProps}
+      />
+    )
+    const timeEl = container.querySelector('time[datetime="2024-06-15T10:30:00.000Z"]')
+    expect(timeEl).toBeInTheDocument()
+    expect(timeEl).toHaveTextContent('June 15, 2024')
+  })
+
+  it('does not render AT Protocol account creation date when accountCreatedAt is null', () => {
+    const { container } = render(
+      <ProfileHeader profile={createProfile({ accountCreatedAt: null })} {...defaultProps} />
+    )
+    expect(container.querySelector('time')).not.toBeInTheDocument()
+  })
+
   it('renders labels section when labels are present', () => {
     render(
       <ProfileHeader

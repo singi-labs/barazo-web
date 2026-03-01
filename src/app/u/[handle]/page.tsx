@@ -15,6 +15,7 @@ import { ProfileHeader } from '@/components/profile/profile-header'
 import { ProfileSkeleton } from '@/components/profile/profile-skeleton'
 import { getUserProfile, getPublicSettings } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
+import { formatDateLong } from '@/lib/format'
 import type { UserProfile } from '@/lib/api/types'
 
 interface UserProfilePageProps {
@@ -119,11 +120,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const reputationScore = computeReputation(profile.activity)
   const postCount = profile.activity.topicCount + profile.activity.replyCount
 
-  const joinDate = new Date(profile.firstSeenAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const joinDate = formatDateLong(profile.firstSeenAt)
 
   return (
     <ForumLayout>

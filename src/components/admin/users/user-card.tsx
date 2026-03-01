@@ -7,20 +7,13 @@
 
 import { Prohibit, WarningCircle } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import { formatDateShort } from '@/lib/format'
 import type { AdminUser } from '@/lib/api/types'
 
 const ROLE_COLORS: Record<string, string> = {
   admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
   moderator: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
   member: 'bg-muted text-muted-foreground',
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 interface UserCardProps {
@@ -61,7 +54,7 @@ export function UserCard({ user, onBan, onUnban }: UserCardProps) {
             <span>{user.topicCount} topics</span>
             <span>{user.replyCount} replies</span>
             <span>{user.reportCount} reports</span>
-            <span>Joined {formatDate(user.firstSeenAt)}</span>
+            <span>Joined {formatDateShort(user.firstSeenAt)}</span>
           </div>
           {user.bannedFromOtherCommunities > 0 && (
             <p className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-destructive">
