@@ -75,8 +75,8 @@ describe('UserMenu', () => {
     await user.click(screen.getByRole('button', { name: /user menu/i }))
 
     await waitFor(() => {
-      expect(screen.getByText('Alice')).toBeInTheDocument()
-      expect(screen.getByText('@alice.bsky.social')).toBeInTheDocument()
+      expect(screen.getByText('Jay')).toBeInTheDocument()
+      expect(screen.getByText('@jay.bsky.team')).toBeInTheDocument()
     })
   })
 
@@ -92,7 +92,7 @@ describe('UserMenu', () => {
     })
   })
 
-  it('has settings link in dropdown', async () => {
+  it('has account settings link in dropdown', async () => {
     mockUseAuth.mockReturnValue(createMockAuthContext())
     const user = userEvent.setup()
 
@@ -100,8 +100,35 @@ describe('UserMenu', () => {
     await user.click(screen.getByRole('button', { name: /user menu/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('menuitem', { name: /settings/i })).toBeInTheDocument()
+      expect(screen.getByRole('menuitem', { name: /account settings/i })).toBeInTheDocument()
     })
+  })
+
+  it('shows admin panel link for admin users', async () => {
+    mockUseAuth.mockReturnValue(createMockAuthContext({ user: { ...mockUser, role: 'admin' } }))
+    const user = userEvent.setup()
+
+    render(<UserMenu />)
+    await user.click(screen.getByRole('button', { name: /user menu/i }))
+
+    await waitFor(() => {
+      const adminLink = screen.getByRole('menuitem', { name: /admin panel/i })
+      expect(adminLink).toBeInTheDocument()
+      expect(adminLink).toHaveAttribute('href', '/admin')
+    })
+  })
+
+  it('hides admin panel link for non-admin users', async () => {
+    mockUseAuth.mockReturnValue(createMockAuthContext())
+    const user = userEvent.setup()
+
+    render(<UserMenu />)
+    await user.click(screen.getByRole('button', { name: /user menu/i }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('menuitem', { name: /account settings/i })).toBeInTheDocument()
+    })
+    expect(screen.queryByRole('menuitem', { name: /admin panel/i })).not.toBeInTheDocument()
   })
 
   it('has logout option in dropdown', async () => {

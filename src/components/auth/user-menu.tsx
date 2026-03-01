@@ -8,7 +8,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { User, SignOut, GearSix } from '@phosphor-icons/react'
+import { User, SignOut, GearSix, ShieldCheck } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
 import {
   DropdownMenu,
@@ -80,9 +80,18 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href="/settings" className="flex items-center gap-2">
             <GearSix size={16} aria-hidden="true" />
-            Settings
+            Account settings
           </Link>
         </DropdownMenuItem>
+
+        {user.role === 'admin' && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin" className="flex items-center gap-2">
+              <ShieldCheck size={16} aria-hidden="true" />
+              Admin Panel
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator />
 

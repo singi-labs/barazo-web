@@ -70,6 +70,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       handle: session.handle,
       displayName: session.displayName,
       avatarUrl: session.avatarUrl,
+      role: session.role,
     })
     setCrossPostScopesGranted(session.crossPostScopesGranted ?? false)
   }, [])
