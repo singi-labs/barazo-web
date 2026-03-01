@@ -34,9 +34,9 @@ vi.mock('next/image', () => ({
 vi.mock('@/hooks/use-auth', () => {
   const mockAuth = {
     user: {
-      did: 'did:plc:user-alice-001',
-      handle: 'alice.bsky.social',
-      displayName: 'Alice',
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
       avatarUrl: null,
     },
     isAuthenticated: true,
@@ -59,10 +59,10 @@ describe('AdminUsersPage', () => {
   it('renders user list from API', async () => {
     render(<AdminUsersPage />)
     await waitFor(() => {
-      expect(screen.getByText('Alice Admin')).toBeInTheDocument()
+      expect(screen.getByText('Jay Admin')).toBeInTheDocument()
     })
-    expect(screen.getByText('Bob Moderator')).toBeInTheDocument()
-    expect(screen.getByText('Carol Member')).toBeInTheDocument()
+    expect(screen.getByText('Alex Moderator')).toBeInTheDocument()
+    expect(screen.getByText('Sam Member')).toBeInTheDocument()
   })
 
   it('shows user roles', async () => {
@@ -76,9 +76,9 @@ describe('AdminUsersPage', () => {
   it('shows banned status', async () => {
     render(<AdminUsersPage />)
     await waitFor(() => {
-      expect(screen.getByText('Eve Banned')).toBeInTheDocument()
+      expect(screen.getByText('Morgan Banned')).toBeInTheDocument()
     })
-    // Eve should show as banned
+    // Morgan should show as banned
     expect(screen.getByText('Banned')).toBeInTheDocument()
   })
 
@@ -99,7 +99,7 @@ describe('AdminUsersPage', () => {
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminUsersPage />)
     await waitFor(() => {
-      expect(screen.getByText('Alice Admin')).toBeInTheDocument()
+      expect(screen.getByText('Jay Admin')).toBeInTheDocument()
     })
     const results = await axe(container)
     expect(results).toHaveNoViolations()

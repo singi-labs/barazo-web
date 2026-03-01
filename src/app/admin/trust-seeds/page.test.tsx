@@ -36,9 +36,9 @@ vi.mock('next/image', () => ({
 vi.mock('@/hooks/use-auth', () => {
   const mockAuth = {
     user: {
-      did: 'did:plc:user-alice-001',
-      handle: 'alice.bsky.social',
-      displayName: 'Alice',
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
       avatarUrl: null,
     },
     isAuthenticated: true,
@@ -66,7 +66,7 @@ describe('AdminTrustSeedsPage', () => {
     await waitFor(() => {
       expect(screen.getByText(/trusted-mod\.bsky\.social/i)).toBeInTheDocument()
       expect(screen.getByText(/verified-expert\.bsky\.social/i)).toBeInTheDocument()
-      expect(screen.getByText(/alice\.bsky\.social/i)).toBeInTheDocument()
+      expect(screen.getByText(/jay\.bsky\.team/i)).toBeInTheDocument()
     })
     // Check type badges - use exact text to avoid partial matches
     const manualBadges = screen.getAllByText('Manual')
@@ -123,7 +123,7 @@ describe('AdminTrustSeedsPage', () => {
   it('implicit seeds cannot be removed', async () => {
     render(<AdminTrustSeedsPage />)
     await waitFor(() => {
-      expect(screen.getByText(/alice\.bsky\.social/i)).toBeInTheDocument()
+      expect(screen.getByText(/jay\.bsky\.team/i)).toBeInTheDocument()
     })
     // Automatic seeds should not have remove buttons
     // There are 2 manual seeds, so 2 remove buttons

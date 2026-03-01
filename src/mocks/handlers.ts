@@ -841,7 +841,7 @@ export const handlers = [
     return HttpResponse.json({
       ...cluster,
       ...body,
-      reviewedBy: 'did:plc:user-alice-001',
+      reviewedBy: 'did:plc:user-jay-001',
       reviewedAt: new Date().toISOString(),
     })
   }),

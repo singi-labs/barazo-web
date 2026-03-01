@@ -41,14 +41,14 @@ vi.mock('next/navigation', () => ({
 
 describe('UserProfilePage', () => {
   it('renders user display name in heading', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /alice/i })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /jay/i })).toBeInTheDocument()
     })
   })
 
   it('renders breadcrumbs', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
       expect(screen.getByText('Home')).toBeInTheDocument()
     })
@@ -57,22 +57,22 @@ describe('UserProfilePage', () => {
   })
 
   it('renders profile sections', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
       expect(screen.getByText(/recent activity/i)).toBeInTheDocument()
     })
   })
 
   it('renders user bio when available', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
       expect(screen.getByText(/community admin and at protocol enthusiast/i)).toBeInTheDocument()
     })
   })
 
   it('renders post count from activity data', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    // alice has topicCount 15 + replyCount 42 = 57 posts
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
+    // jay has topicCount 15 + replyCount 42 = 57 posts
     await waitFor(() => {
       expect(screen.getByText(/57 posts/i)).toBeInTheDocument()
     })
@@ -86,25 +86,25 @@ describe('UserProfilePage', () => {
   })
 
   it('renders community-scoped profile with globalActivity', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
-    // Alice's mock data has globalActivity (communityCount: 2)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
+    // Jay's mock data has globalActivity (communityCount: 2)
     await waitFor(() => {
       expect(screen.getByText('Barazo-wide')).toBeInTheDocument()
     })
   })
 
   it('renders AT Protocol stats', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
       expect(screen.getByText(/150 followers/i)).toBeInTheDocument()
     })
   })
 
   it('renders Bluesky link', async () => {
-    render(<UserProfilePage params={{ handle: 'alice.bsky.social' }} />)
+    render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /bsky\.app\/profile\/alice\.bsky\.social/i })
-      expect(link).toHaveAttribute('href', 'https://bsky.app/profile/alice.bsky.social')
+      const link = screen.getByRole('link', { name: /bsky\.app\/profile\/jay\.bsky\.team/i })
+      expect(link).toHaveAttribute('href', 'https://bsky.app/profile/jay.bsky.team')
     })
   })
 })

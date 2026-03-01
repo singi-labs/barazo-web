@@ -118,7 +118,7 @@ function LoginContent() {
               type="text"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
-              placeholder="alice.bsky.social"
+              placeholder="jay.bsky.team"
               autoComplete="username"
               disabled={submitting}
               className={cn(
@@ -128,7 +128,7 @@ function LoginContent() {
               )}
             />
             <p className="text-xs text-muted-foreground">
-              Your Bluesky or AT Protocol handle (e.g. alice.bsky.social)
+              Your Bluesky or AT Protocol handle (e.g. jay.bsky.team)
             </p>
           </div>
 

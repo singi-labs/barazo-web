@@ -13,9 +13,9 @@ const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
     user: {
-      did: 'did:plc:user-alice-001',
-      handle: 'alice.bsky.social',
-      displayName: 'Alice',
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
       avatarUrl: null,
     },
     isAuthenticated: true,

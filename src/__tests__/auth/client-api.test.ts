@@ -17,12 +17,12 @@ describe('initiateLogin', () => {
     server.use(
       http.get(`${API_URL}/api/auth/login`, ({ request }) => {
         const url = new URL(request.url)
-        expect(url.searchParams.get('handle')).toBe('alice.bsky.social')
+        expect(url.searchParams.get('handle')).toBe('jay.bsky.team')
         return HttpResponse.json({ url: expectedUrl })
       })
     )
 
-    const result = await initiateLogin('alice.bsky.social')
+    const result = await initiateLogin('jay.bsky.team')
     expect(result).toEqual({ url: expectedUrl })
     expect(result.url).toBe(expectedUrl)
   })
