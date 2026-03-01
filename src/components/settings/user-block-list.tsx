@@ -19,13 +19,7 @@ interface UserBlockListProps {
   description: string
 }
 
-export function UserBlockList({
-  users,
-  onAdd,
-  onRemove,
-  label,
-  description,
-}: UserBlockListProps) {
+export function UserBlockList({ users, onAdd, onRemove, label, description }: UserBlockListProps) {
   const instanceId = useId()
   const errorId = `block-error-${instanceId}`
   const [handleInput, setHandleInput] = useState('')
@@ -60,13 +54,7 @@ export function UserBlockList({
               <div className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 py-1 pl-1 pr-2 text-sm">
                 <div className="relative flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
                   {user.avatarUrl ? (
-                    <Image
-                      src={user.avatarUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="20px"
-                    />
+                    <Image src={user.avatarUrl} alt="" fill className="object-cover" sizes="20px" />
                   ) : (
                     <User size={12} className="text-muted-foreground" aria-hidden="true" />
                   )}

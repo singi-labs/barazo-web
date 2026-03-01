@@ -7,12 +7,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import {
-  getPreferences,
-  updatePreferences,
-  resolveHandles,
-  declareAge,
-} from '@/lib/api/client'
+import { getPreferences, updatePreferences, resolveHandles, declareAge } from '@/lib/api/client'
 import type { AuthorProfile } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 
