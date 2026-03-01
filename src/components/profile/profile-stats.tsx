@@ -4,7 +4,7 @@
  * @see specs/prd-web.md Section M8
  */
 
-import { Users, ArrowSquareOut } from '@phosphor-icons/react'
+import { Users, ArrowSquareOut, CalendarBlank } from '@phosphor-icons/react'
 import { formatCount } from '@/lib/format-count'
 import type { UserProfile } from '@/lib/api/types'
 
@@ -14,6 +14,14 @@ interface ProfileStatsProps {
 }
 
 export function ProfileStats({ profile, handle }: ProfileStatsProps) {
+  const accountCreatedDate = profile.accountCreatedAt
+    ? new Date(profile.accountCreatedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null
+
   return (
     <div className="flex flex-col gap-1 text-sm text-muted-foreground">
       <span className="flex items-center gap-1">
@@ -29,6 +37,14 @@ export function ProfileStats({ profile, handle }: ProfileStatsProps) {
       <span title={profile.atprotoPostsCount.toLocaleString()}>
         {formatCount(profile.atprotoPostsCount)} AT Proto posts
       </span>
+
+      {/* Account creation date from PLC directory */}
+      {accountCreatedDate && (
+        <span className="flex items-center gap-1">
+          <CalendarBlank size={16} aria-hidden="true" />
+          Since {accountCreatedDate}
+        </span>
+      )}
 
       {/* Bluesky link */}
       {profile.hasBlueskyProfile && (
