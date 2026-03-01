@@ -53,6 +53,17 @@ export function formatDateShort(dateStr: string): string {
 }
 
 /**
+ * Formats an ISO date string as a long date (e.g., "January 15, 2026").
+ */
+export function formatDateLong(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+/**
  * Formats a number with locale-aware separators (e.g., 1,234).
  */
 export function formatNumber(n: number): string {

@@ -6,6 +6,7 @@
 
 import { Users, ArrowSquareOut, CalendarBlank } from '@phosphor-icons/react'
 import { formatCount } from '@/lib/format-count'
+import { formatDateLong } from '@/lib/format'
 import type { UserProfile } from '@/lib/api/types'
 
 interface ProfileStatsProps {
@@ -15,11 +16,7 @@ interface ProfileStatsProps {
 
 export function ProfileStats({ profile, handle }: ProfileStatsProps) {
   const accountCreatedDate = profile.accountCreatedAt
-    ? new Date(profile.accountCreatedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+    ? formatDateLong(profile.accountCreatedAt)
     : null
 
   return (
@@ -42,7 +39,7 @@ export function ProfileStats({ profile, handle }: ProfileStatsProps) {
       {accountCreatedDate && (
         <span className="flex items-center gap-1">
           <CalendarBlank size={16} aria-hidden="true" />
-          Since {accountCreatedDate}
+          Since <time dateTime={profile.accountCreatedAt!}>{accountCreatedDate}</time>
         </span>
       )}
 
