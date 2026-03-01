@@ -6,11 +6,11 @@
  */
 
 import type { Metadata } from 'next'
-import { getCategories, getTopics } from '@/lib/api/client'
+import { getCategories, getTopics, getPublicSettings } from '@/lib/api/client'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { TopicList } from '@/components/topic-list'
 import { CategoryNav } from '@/components/category-nav'
-import type { CategoriesResponse, TopicsResponse } from '@/lib/api/types'
+import type { CategoriesResponse, TopicsResponse, PublicSettings } from '@/lib/api/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,21 +26,26 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   let categoriesResult: CategoriesResponse = { categories: [] }
   let topicsResult: TopicsResponse = { topics: [], cursor: null }
+  let publicSettings: PublicSettings | null = null
   let apiError = false
 
   try {
-    ;[categoriesResult, topicsResult] = await Promise.all([
+    ;[categoriesResult, topicsResult, publicSettings] = await Promise.all([
       getCategories(),
       getTopics({ limit: 20, sort: 'latest' }),
+      getPublicSettings(),
     ])
   } catch {
     apiError = true
   }
 
+  const communityName = publicSettings?.communityName ?? ''
+  const welcomeHeading = communityName ? `Welcome to ${communityName}` : 'Welcome to the Community'
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Barazo',
+    name: communityName || 'Barazo',
     url: 'https://barazo.forum',
     potentialAction: {
       '@type': 'SearchAction',
@@ -54,6 +59,7 @@ export default async function HomePage() {
 
   return (
     <ForumLayout
+      communityName={communityName}
       sidebar={
         categoriesResult.categories.length > 0 ? (
           <CategoryNav categories={categoriesResult.categories} />
@@ -68,7 +74,7 @@ export default async function HomePage() {
 
       {/* Welcome / Stats */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Welcome to the Community</h1>
+        <h1 className="text-2xl font-bold text-foreground">{welcomeHeading}</h1>
         <p className="mt-1 text-muted-foreground">
           Discussions powered by the AT Protocol. Your identity, your data.
         </p>

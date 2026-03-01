@@ -44,6 +44,13 @@ vi.mock('next/link', () => ({
 vi.mock('@/lib/api/client', () => ({
   getNotifications: vi.fn(),
   markNotificationsRead: vi.fn(),
+  getPublicSettings: vi.fn().mockResolvedValue({
+    communityDid: 'did:plc:test-community-123',
+    communityName: 'Test Community',
+    maturityRating: 'safe',
+    communityDescription: null,
+    communityLogoUrl: null,
+  }),
 }))
 
 vi.mock('@/hooks/use-auth', () => {

@@ -59,6 +59,13 @@ vi.mock('@/hooks/use-auth', () => ({
 // Mock API client
 vi.mock('@/lib/api/client', () => ({
   searchContent: vi.fn(),
+  getPublicSettings: vi.fn().mockResolvedValue({
+    communityDid: 'did:plc:test-community-123',
+    communityName: 'Test Community',
+    maturityRating: 'safe',
+    communityDescription: null,
+    communityLogoUrl: null,
+  }),
 }))
 
 import { searchContent } from '@/lib/api/client'

@@ -9,7 +9,9 @@
 
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { getPublicSettings } from '@/lib/api/client'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
@@ -23,6 +25,14 @@ import { cn } from '@/lib/utils'
 import { useSettingsForm } from '@/hooks/use-settings-form'
 
 export default function SettingsPage() {
+  const [communityName, setCommunityName] = useState('')
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
+
   const {
     values,
     setValues,
@@ -43,7 +53,7 @@ export default function SettingsPage() {
   } = useSettingsForm()
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Settings' }]} />
 

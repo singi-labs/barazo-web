@@ -6,6 +6,7 @@ vi.mock('@/lib/api/client', () => ({
   getCategoryBySlug: vi.fn(),
   getCategories: vi.fn(),
   getTopics: vi.fn(),
+  getPublicSettings: vi.fn(),
 }))
 
 // Mock next/navigation
@@ -54,8 +55,13 @@ vi.mock('@/hooks/use-auth', () => ({
   }),
 }))
 
-import { getCategoryBySlug, getCategories, getTopics } from '@/lib/api/client'
-import { mockCategories, mockCategoryWithTopicCount, mockTopics } from '@/mocks/data'
+import { getCategoryBySlug, getCategories, getTopics, getPublicSettings } from '@/lib/api/client'
+import {
+  mockCategories,
+  mockCategoryWithTopicCount,
+  mockTopics,
+  mockPublicSettings,
+} from '@/mocks/data'
 import CategoryPage from './page'
 
 const mockGetCategoryBySlug = vi.mocked(getCategoryBySlug)
@@ -69,6 +75,7 @@ beforeEach(() => {
     topics: mockTopics.filter((t) => t.category === 'general'),
     cursor: null,
   })
+  vi.mocked(getPublicSettings).mockResolvedValue(mockPublicSettings)
 })
 
 const params = Promise.resolve({ slug: 'general' })

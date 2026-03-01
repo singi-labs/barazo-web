@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { getPublicSettings } from '@/lib/api/client'
 import { ArrowCounterClockwise } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -40,6 +41,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
     handleSave,
   } = useCommunityProfile()
 
+  const [communityName, setCommunityName] = useState('')
   const [handle, setHandle] = useState<string | null>(null)
 
   // Resolve Next.js async params
@@ -50,6 +52,12 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
     }
     void resolveParams()
   }, [params])
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
 
   // Auth gate: redirect unauthenticated users
   useEffect(() => {
@@ -70,7 +78,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
   // Don't render until we know the user is authenticated and it's their profile
   if (authLoading || !user || !handle) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <p className="text-sm text-muted-foreground">Loading...</p>
       </ForumLayout>
     )
@@ -82,7 +90,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
 
   if (loading) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <p className="text-sm text-muted-foreground">Loading...</p>
       </ForumLayout>
     )
@@ -90,7 +98,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
 
   if (error) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">{error}</p>
         </div>
@@ -111,7 +119,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
   )
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="mx-auto max-w-2xl space-y-6">
         <Breadcrumbs
           items={[

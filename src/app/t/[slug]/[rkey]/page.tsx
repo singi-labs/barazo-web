@@ -122,6 +122,8 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const categoryName =
     findCategoryName(categoriesResult.categories, topic.category) ?? topic.category
 
+  const communityName = publicSettings?.communityName ?? ''
+
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
     { label: categoryName, href: `/c/${topic.category}` },
@@ -150,6 +152,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   return (
     <ForumLayout
+      communityName={communityName}
       sidebar={
         categoriesResult.categories.length > 0 ? (
           <CategoryNav categories={categoriesResult.categories} />

@@ -10,7 +10,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CreateTopicInput, Topic } from '@/lib/api/types'
-import { getTopicByRkey, updateTopic } from '@/lib/api/client'
+import { getTopicByRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -27,6 +27,13 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [communityName, setCommunityName] = useState('')
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
 
   // Resolve params (handles both Promise and plain object)
   useEffect(() => {
@@ -89,7 +96,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
 
   if (loading) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <div className="space-y-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Loading...' }]} />
           <p className="text-muted-foreground" aria-busy="true">
@@ -102,7 +109,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
 
   if (!topic) {
     return (
-      <ForumLayout>
+      <ForumLayout communityName={communityName}>
         <div className="space-y-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Error' }]} />
           <p className="text-destructive" role="alert">
@@ -114,7 +121,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   }
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs
           items={[

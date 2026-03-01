@@ -7,10 +7,10 @@
 
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CreateTopicInput } from '@/lib/api/types'
-import { createTopic } from '@/lib/api/client'
+import { createTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -24,8 +24,15 @@ export default function NewTopicPage() {
   const { getAccessToken } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [communityName, setCommunityName] = useState('')
   const onboarding = useOnboarding()
   const pendingValues = useRef<CreateTopicInput | null>(null)
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
 
   const doSubmit = async (values: CreateTopicInput) => {
     setSubmitting(true)
@@ -62,7 +69,7 @@ export default function NewTopicPage() {
   }
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'New Topic' }]} />
 

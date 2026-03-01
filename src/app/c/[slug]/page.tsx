@@ -81,13 +81,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     throw error
   }
 
-  const [categoriesResult, topicsResult] = await Promise.all([
+  const [categoriesResult, topicsResult, publicSettings] = await Promise.all([
     getCategories(),
     getTopics({
       category: slug,
       limit: TOPICS_PER_PAGE,
     }),
+    getPublicSettings().catch(() => null),
   ])
+
+  const communityName = publicSettings?.communityName ?? ''
 
   const totalPages = Math.max(1, Math.ceil(category.topicCount / TOPICS_PER_PAGE))
 
@@ -98,6 +101,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   return (
     <ForumLayout
+      communityName={communityName}
       sidebar={<CategoryNav categories={categoriesResult.categories} currentSlug={slug} />}
     >
       {/* Breadcrumbs (includes JSON-LD BreadcrumbList) */}

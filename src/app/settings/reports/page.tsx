@@ -14,7 +14,7 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ErrorAlert } from '@/components/error-alert'
 import { ReportCard } from '@/components/settings/report-card'
-import { getMyReports, submitAppeal } from '@/lib/api/client'
+import { getMyReports, submitAppeal, getPublicSettings } from '@/lib/api/client'
 import type { MyReport } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 
@@ -23,6 +23,13 @@ export default function MyReportsPage() {
   const [reports, setReports] = useState<MyReport[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [communityName, setCommunityName] = useState('')
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
   const [appealingId, setAppealingId] = useState<number | null>(null)
   const [appealReason, setAppealReason] = useState('')
   const [appealError, setAppealError] = useState('')
@@ -96,7 +103,7 @@ export default function MyReportsPage() {
   )
 
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs
           items={[

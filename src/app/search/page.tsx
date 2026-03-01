@@ -8,15 +8,24 @@
 
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useState, useEffect } from 'react'
+import { getPublicSettings } from '@/lib/api/client'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { SearchInput } from '@/components/search-input'
 import { SearchResults } from '@/components/search-results'
 
 export default function SearchPage() {
+  const [communityName, setCommunityName] = useState('')
+
+  useEffect(() => {
+    getPublicSettings()
+      .then((settings) => setCommunityName(settings.communityName))
+      .catch(() => {})
+  }, [])
+
   return (
-    <ForumLayout>
+    <ForumLayout communityName={communityName}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Search' }]} />
 

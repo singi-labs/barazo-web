@@ -35,37 +35,43 @@ vi.mock('@/hooks/use-auth', () => ({
 }))
 
 describe('PrivacyPolicyPage', () => {
-  it('renders page heading', () => {
-    render(<PrivacyPolicyPage />)
+  it('renders page heading', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /privacy policy/i, level: 1 })).toBeInTheDocument()
   })
 
-  it('describes what data is collected', () => {
-    render(<PrivacyPolicyPage />)
+  it('describes what data is collected', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /what we collect/i })).toBeInTheDocument()
     expect(screen.getByText(/AT Protocol identifiers/i)).toBeInTheDocument()
   })
 
-  it('describes authentication cookie instead of generic session data', () => {
-    render(<PrivacyPolicyPage />)
+  it('describes authentication cookie instead of generic session data', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByText(/Authentication cookie/i)).toBeInTheDocument()
     expect(screen.getByText(/HTTP-only, Secure, SameSite=Strict/i)).toBeInTheDocument()
   })
 
-  it('lists age declaration and per-community preferences', () => {
-    render(<PrivacyPolicyPage />)
+  it('lists age declaration and per-community preferences', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByText(/Age declaration/i)).toBeInTheDocument()
     expect(screen.getByText(/Per-community preferences/i)).toBeInTheDocument()
   })
 
-  it('describes what data is not collected', () => {
-    render(<PrivacyPolicyPage />)
+  it('describes what data is not collected', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /what we do not collect/i })).toBeInTheDocument()
     expect(screen.getByText(/device fingerprinting/i)).toBeInTheDocument()
   })
 
-  it('describes anonymize-on-deletion approach', () => {
-    render(<PrivacyPolicyPage />)
+  it('describes anonymize-on-deletion approach', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(
       screen.getByRole('heading', { name: /data retention and deletion/i })
     ).toBeInTheDocument()
@@ -74,38 +80,44 @@ describe('PrivacyPolicyPage', () => {
     expect(screen.getByText(/anonymized content.*may be retained/i)).toBeInTheDocument()
   })
 
-  it('describes AI features', () => {
-    render(<PrivacyPolicyPage />)
+  it('describes AI features', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /ai features/i })).toBeInTheDocument()
     expect(screen.getByText(/No training on your content/i)).toBeInTheDocument()
     expect(screen.getByText(/Local-first processing/i)).toBeInTheDocument()
     expect(screen.getByText(/Anonymized summaries/i)).toBeInTheDocument()
   })
 
-  it('lists user rights under GDPR', () => {
-    render(<PrivacyPolicyPage />)
+  it('lists user rights under GDPR', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByRole('heading', { name: /your rights/i })).toBeInTheDocument()
     expect(screen.getByText(/right to be forgotten/i)).toBeInTheDocument()
   })
 
-  it('links to barazo-workspace for issue tracking', () => {
-    render(<PrivacyPolicyPage />)
+  it('links to barazo-workspace for issue tracking', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     const link = screen.getByRole('link', { name: /github issue tracker/i })
     expect(link).toHaveAttribute('href', 'https://github.com/barazo-forum/barazo-workspace/issues')
   })
 
-  it('mentions GDPR compliance', () => {
-    render(<PrivacyPolicyPage />)
+  it('mentions GDPR compliance', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByText(/General Data Protection Regulation/i)).toBeInTheDocument()
   })
 
-  it('renders breadcrumbs', () => {
-    render(<PrivacyPolicyPage />)
+  it('renders breadcrumbs', async () => {
+    const page = await PrivacyPolicyPage()
+    render(page)
     expect(screen.getByText('Home')).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
-    const { container } = render(<PrivacyPolicyPage />)
+    const page = await PrivacyPolicyPage()
+    const { container } = render(page)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
