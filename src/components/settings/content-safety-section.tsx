@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 type MaturityLevel = 'sfw' | 'sfw-mature'
 
 interface ContentSafetySectionProps {
+  communityName: string
   maturityLevel: MaturityLevel
   mutedWords: string
   blockedDids: string
@@ -19,6 +20,7 @@ interface ContentSafetySectionProps {
 }
 
 export function ContentSafetySection({
+  communityName,
   maturityLevel,
   mutedWords,
   blockedDids,
@@ -26,13 +28,34 @@ export function ContentSafetySection({
   onMutedWordsChange,
   onBlockedDidsChange,
 }: ContentSafetySectionProps) {
+  const displayName = communityName || 'This community'
+
   return (
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
       <legend className="px-2 text-sm font-semibold text-foreground">
         Default Content Preferences
       </legend>
       <p className="text-xs text-muted-foreground">
-        These apply to all Barazo communities you join, unless you override them for a specific
+        {displayName} is built with{' '}
+        <a
+          href="https://barazo.forum"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline underline-offset-2 hover:text-primary-hover"
+        >
+          Barazo
+        </a>
+        , forum software built on the{' '}
+        <a
+          href="https://atproto.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline underline-offset-2 hover:text-primary-hover"
+        >
+          AT Protocol
+        </a>
+        , allowing you to use the same identity and login across all Barazo forums. The settings
+        below apply to all Barazo communities you join, unless you override them for a specific
         community below.
       </p>
 

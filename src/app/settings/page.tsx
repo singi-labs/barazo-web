@@ -88,6 +88,7 @@ export default function SettingsPage() {
             <CommunityProfileSettings />
 
             <ContentSafetySection
+              communityName={communityName}
               maturityLevel={values.maturityLevel}
               mutedWords={values.mutedWords}
               blockedDids={values.blockedDids}
