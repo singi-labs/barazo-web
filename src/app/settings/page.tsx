@@ -55,9 +55,9 @@ export default function SettingsPage() {
   return (
     <ForumLayout communityName={communityName}>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Settings' }]} />
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Account Settings' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
 
         {loading ? (
           <div className="max-w-2xl animate-pulse space-y-4">
@@ -90,8 +90,10 @@ export default function SettingsPage() {
             <ContentSafetySection
               maturityLevel={values.maturityLevel}
               mutedWords={values.mutedWords}
+              blockedDids={values.blockedDids}
               onMaturityChange={(level) => setValues({ ...values, maturityLevel: level })}
               onMutedWordsChange={(words) => setValues({ ...values, mutedWords: words })}
+              onBlockedDidsChange={(dids) => setValues({ ...values, blockedDids: dids })}
             />
 
             <CommunityOverridesSection
