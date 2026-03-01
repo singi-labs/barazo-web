@@ -71,10 +71,7 @@ export default function SettingsPage() {
           <div className="max-w-2xl space-y-12">
             {/* Section 1: Community-scoped settings */}
             <section aria-labelledby="community-settings-heading">
-              <h2
-                id="community-settings-heading"
-                className="text-lg font-semibold text-foreground"
-              >
+              <h2 id="community-settings-heading" className="text-lg font-semibold text-foreground">
                 Your {displayName} Settings
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -103,11 +100,7 @@ export default function SettingsPage() {
                 <CommunityProfileSettings />
               </div>
 
-              <form
-                onSubmit={handleSaveCommunitySettings}
-                className="mt-8 space-y-8"
-                noValidate
-              >
+              <form onSubmit={handleSaveCommunitySettings} className="mt-8 space-y-8" noValidate>
                 <CrossPostingSection
                   authorized={crossPostScopesGranted}
                   crossPostBluesky={values.crossPostBluesky}
@@ -147,10 +140,7 @@ export default function SettingsPage() {
 
             {/* Section 2: Global settings */}
             <section aria-labelledby="global-settings-heading">
-              <h2
-                id="global-settings-heading"
-                className="text-lg font-semibold text-foreground"
-              >
+              <h2 id="global-settings-heading" className="text-lg font-semibold text-foreground">
                 Your Settings Across All Barazo Forums
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -194,11 +184,7 @@ export default function SettingsPage() {
                 </p>
               )}
 
-              <form
-                onSubmit={handleSaveGlobalSettings}
-                className="mt-6 space-y-8"
-                noValidate
-              >
+              <form onSubmit={handleSaveGlobalSettings} className="mt-6 space-y-8" noValidate>
                 <ContentSafetySection
                   maturityLevel={values.maturityLevel}
                   mutedWords={values.mutedWords}

@@ -185,8 +185,7 @@ describe('SettingsPage', () => {
 
       // Community section comes before global section in DOM order
       expect(
-        communitySection.compareDocumentPosition(globalSection) &
-          Node.DOCUMENT_POSITION_FOLLOWING
+        communitySection.compareDocumentPosition(globalSection) & Node.DOCUMENT_POSITION_FOLLOWING
       ).toBeTruthy()
     })
 
@@ -219,9 +218,7 @@ describe('SettingsPage', () => {
     it('passes axe accessibility check', async () => {
       const { container } = render(<SettingsPage />)
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', { name: /save community settings/i })
-        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /save community settings/i })).toBeInTheDocument()
       })
       const results = await axe(container)
       expect(results).toHaveNoViolations()
