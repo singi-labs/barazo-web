@@ -568,6 +568,7 @@ export interface UserProfile {
   role: string
   firstSeenAt: string
   lastActiveAt: string
+  accountCreatedAt: string | null
   followersCount: number
   followsCount: number
   atprotoPostsCount: number
