@@ -465,6 +465,7 @@ export interface UserPreferences {
   declaredAge: number | null
   mutedWords: string[]
   blockedDids: string[]
+  blockedProfiles: AuthorProfile[]
   mutedDids: string[]
   crossPostBluesky: boolean
   crossPostFrontpage: boolean
@@ -488,6 +489,7 @@ export interface CommunityPreferenceOverride {
   maturityLevel: 'inherit' | 'sfw' | 'mature'
   mutedWords: string[]
   blockedDids: string[]
+  blockedProfiles: AuthorProfile[]
 }
 
 export interface CommunityPreferencesResponse {

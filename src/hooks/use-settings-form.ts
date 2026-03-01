@@ -7,7 +7,13 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getPreferences, updatePreferences } from '@/lib/api/client'
+import {
+  getPreferences,
+  updatePreferences,
+  resolveHandles,
+  declareAge,
+} from '@/lib/api/client'
+import type { AuthorProfile } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 
 export type MaturityLevel = 'sfw' | 'sfw-mature'
@@ -15,7 +21,7 @@ export type MaturityLevel = 'sfw' | 'sfw-mature'
 export interface SettingsValues {
   maturityLevel: MaturityLevel
   mutedWords: string
-  blockedDids: string
+  blockedUsers: AuthorProfile[]
   crossPostBluesky: boolean
   crossPostFrontpage: boolean
   notifyReplies: boolean
@@ -26,7 +32,7 @@ export interface SettingsValues {
 const INITIAL_VALUES: SettingsValues = {
   maturityLevel: 'sfw',
   mutedWords: '',
-  blockedDids: '',
+  blockedUsers: [],
   crossPostBluesky: true,
   crossPostFrontpage: false,
   notifyReplies: true,
@@ -62,7 +68,7 @@ export function useSettingsForm() {
         setValues({
           maturityLevel: prefs.maturityLevel === 'mature' ? 'sfw-mature' : 'sfw',
           mutedWords: prefs.mutedWords.join(', '),
-          blockedDids: prefs.blockedDids.join(', '),
+          blockedUsers: prefs.blockedProfiles ?? [],
           crossPostBluesky: prefs.crossPostBluesky,
           crossPostFrontpage: prefs.crossPostFrontpage,
           notifyReplies: true,
@@ -77,6 +83,42 @@ export function useSettingsForm() {
       })
       .finally(() => setLoading(false))
   }, [getAccessToken])
+
+  const handleBlockUser = useCallback(
+    async (handle: string) => {
+      const token = getAccessToken()
+      if (!token) throw new Error('Not authenticated')
+      const { users } = await resolveHandles([handle], token)
+      if (users.length === 0) throw new Error(`Could not find user "${handle}"`)
+      const profile = users[0]!
+      setValues((prev) => {
+        if (prev.blockedUsers.some((u) => u.did === profile.did)) return prev
+        return { ...prev, blockedUsers: [...prev.blockedUsers, profile] }
+      })
+    },
+    [getAccessToken]
+  )
+
+  const handleUnblockUser = useCallback((did: string) => {
+    setValues((prev) => ({
+      ...prev,
+      blockedUsers: prev.blockedUsers.filter((u) => u.did !== did),
+    }))
+  }, [])
+
+  const handleAgeChange = useCallback(
+    async (age: number) => {
+      const token = getAccessToken()
+      if (!token) return
+      try {
+        await declareAge(age, token)
+        setDeclaredAge(age)
+      } catch {
+        setGlobalError('Failed to update age bracket')
+      }
+    },
+    [getAccessToken]
+  )
 
   const handleSaveCommunitySettings = useCallback(
     async (e: React.FormEvent) => {
@@ -136,10 +178,7 @@ export function useSettingsForm() {
           .map((w) => w.trim())
           .filter(Boolean)
 
-        const blockedDids = values.blockedDids
-          .split(',')
-          .map((d) => d.trim())
-          .filter(Boolean)
+        const blockedDids = values.blockedUsers.map((u) => u.did)
 
         await updatePreferences(
           {
@@ -182,6 +221,7 @@ export function useSettingsForm() {
     values,
     setValues,
     loading,
+    declaredAge,
     savingCommunity,
     communityError,
     communitySuccess,
@@ -192,6 +232,9 @@ export function useSettingsForm() {
     showCrossPostAuthDialog,
     setShowCrossPostAuthDialog,
     crossPostScopesGranted,
+    handleBlockUser,
+    handleUnblockUser,
+    handleAgeChange,
     handleSaveCommunitySettings,
     handleSaveGlobalSettings,
     handleAgeConfirm,

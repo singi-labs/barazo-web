@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import SettingsPage from './page'
 
@@ -23,6 +23,7 @@ vi.mock('@/hooks/use-auth', () => {
       handle: 'alice.bsky.social',
       displayName: 'Alice',
       avatarUrl: null,
+      role: 'user' as const,
     },
     isAuthenticated: true,
     isLoading: false,
@@ -81,11 +82,28 @@ describe('SettingsPage', () => {
     expect(screen.getByLabelText(/maturity level/i)).toBeInTheDocument()
   })
 
+  it('renders age bracket dropdown', async () => {
+    render(<SettingsPage />)
+    await waitFor(() => {
+      expect(screen.getByLabelText(/age bracket/i)).toBeInTheDocument()
+    })
+  })
+
   it('renders muted words input', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
       expect(screen.getByLabelText('Muted words')).toBeInTheDocument()
     })
+  })
+
+  it('renders blocked users section with handle-based input', async () => {
+    render(<SettingsPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Blocked users')).toBeInTheDocument()
+    })
+    const safetyFieldset = screen.getByText('Content Safety').closest('fieldset')!
+    expect(within(safetyFieldset).getByLabelText('Handle to block')).toBeInTheDocument()
+    expect(within(safetyFieldset).getByText('No users blocked.')).toBeInTheDocument()
   })
 
   it('renders cross-posting section', async () => {
