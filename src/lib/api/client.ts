@@ -16,7 +16,10 @@ import type {
   CommunityStats,
   CommunityPreferenceOverride,
   CreateTopicInput,
+  InitializeCommunityInput,
+  InitializeResponse,
   PublicSettings,
+  SetupStatus,
   Topic,
   TopicsResponse,
   UpdateCommunityPreferenceInput,
@@ -1066,6 +1069,25 @@ export function updateBehavioralFlag(
     method: 'PUT',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: { status },
+  })
+}
+
+// --- Setup endpoints ---
+
+export function getSetupStatus(options?: FetchOptions): Promise<SetupStatus> {
+  return apiFetch<SetupStatus>('/api/setup/status', options)
+}
+
+export function initializeCommunity(
+  input: InitializeCommunityInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<InitializeResponse> {
+  return apiFetch<InitializeResponse>('/api/setup/initialize', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
   })
 }
 

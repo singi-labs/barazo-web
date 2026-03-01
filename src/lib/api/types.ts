@@ -501,6 +501,21 @@ export interface AgeDeclarationResponse {
   declaredAge: number
 }
 
+// --- Setup ---
+
+export type SetupStatus = { initialized: false } | { initialized: true; communityName: string }
+
+export interface InitializeCommunityInput {
+  communityName?: string
+}
+
+export interface InitializeResponse {
+  initialized: true
+  adminDid: string
+  communityName: string
+  communityDid?: string
+}
+
 // --- Onboarding Fields ---
 
 export type OnboardingFieldType =
