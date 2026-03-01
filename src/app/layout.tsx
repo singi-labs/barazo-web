@@ -4,6 +4,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/auth-context'
 import { AppToastProvider } from '@/context/toast-context'
+import { SetupGuard } from '@/components/setup-guard'
 
 const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
@@ -53,7 +54,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <AppToastProvider>{children}</AppToastProvider>
+            <AppToastProvider>
+              <SetupGuard>{children}</SetupGuard>
+            </AppToastProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
