@@ -54,6 +54,7 @@ function createProfile(overrides?: Partial<UserProfile>): UserProfile {
     role: 'user',
     firstSeenAt: '2026-02-14T12:00:00.000Z',
     lastActiveAt: '2026-02-14T12:00:00.000Z',
+    accountCreatedAt: null,
     followersCount: 0,
     followsCount: 0,
     atprotoPostsCount: 0,

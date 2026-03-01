@@ -41,6 +41,26 @@ import {
 const API_URL = ''
 
 export const handlers = [
+  // --- Setup endpoints ---
+
+  // GET /api/setup/status
+  http.get(`${API_URL}/api/setup/status`, () => {
+    return HttpResponse.json({ initialized: true, communityName: 'Barazo Test Community' })
+  }),
+
+  // POST /api/setup/initialize
+  http.post(`${API_URL}/api/setup/initialize`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({
+      initialized: true,
+      adminDid: 'did:plc:testuser123',
+      communityName: 'Barazo Test Community',
+    })
+  }),
+
   // --- Auth endpoints ---
 
   // GET /api/auth/login
