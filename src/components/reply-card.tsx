@@ -2,6 +2,7 @@
  * ReplyCard - Displays a single reply with depth indication.
  * Includes reactions and report button.
  * Depth is shown via left margin indentation.
+ * Deleted replies render as tombstone placeholders.
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
 
@@ -52,6 +53,49 @@ export function ReplyCard({
 }: ReplyCardProps) {
   const headingId = `reply-heading-${reply.rkey}`
   const indent = DEPTH_INDENT[Math.min(reply.depth, 3)] ?? DEPTH_INDENT[3]
+  const isDeleted = reply.isAuthorDeleted || reply.isModDeleted
+
+  if (isDeleted) {
+    const tombstoneText = reply.isModDeleted
+      ? 'This post was removed by a moderator.'
+      : 'This post was removed by the author.'
+
+    return (
+      <div className={cn(indent, className)}>
+        <article
+          id={`post-${postNumber}`}
+          className="rounded-lg border border-border bg-muted/50"
+          aria-labelledby={headingId}
+        >
+          <div className="flex items-center justify-between px-4 py-2">
+            <div className="flex items-center gap-2 text-sm">
+              <span
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground"
+                aria-hidden="true"
+              >
+                ?
+              </span>
+              <h3 id={headingId} className="font-medium text-muted-foreground">
+                [deleted]
+              </h3>
+            </div>
+            <a
+              href={`#post-${postNumber}`}
+              className="text-xs text-muted-foreground hover:text-foreground"
+              aria-label={`Link to post #${postNumber}`}
+            >
+              #{postNumber}
+            </a>
+          </div>
+          <div className="px-4 pb-3">
+            <p className="text-sm italic text-muted-foreground">
+              {tombstoneText}
+            </p>
+          </div>
+        </article>
+      </div>
+    )
+  }
 
   return (
     <div className={cn(indent, className)}>
