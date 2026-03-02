@@ -214,6 +214,8 @@ export interface CommunityStats {
 
 // --- Auth ---
 
+export type UserRole = 'user' | 'moderator' | 'admin'
+
 export interface AuthSession {
   accessToken: string
   expiresAt: string
@@ -221,6 +223,7 @@ export interface AuthSession {
   handle: string
   displayName: string | null
   avatarUrl: string | null
+  role: UserRole
   crossPostScopesGranted?: boolean
 }
 
@@ -229,6 +232,7 @@ export interface AuthUser {
   handle: string
   displayName: string | null
   avatarUrl: string | null
+  role: UserRole
 }
 
 // --- Notifications ---

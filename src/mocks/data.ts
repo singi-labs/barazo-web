@@ -77,6 +77,7 @@ export const mockAuthSession: AuthSession = {
   handle: 'alice.bsky.social',
   displayName: 'Alice',
   avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+  role: 'user',
 }
 
 export const mockAuthUser: AuthUser = {
@@ -84,6 +85,7 @@ export const mockAuthUser: AuthUser = {
   handle: 'alice.bsky.social',
   displayName: 'Alice',
   avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+  role: 'user',
 }
 
 // --- Categories ---

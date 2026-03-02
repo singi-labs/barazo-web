@@ -74,7 +74,13 @@ describe('useRequireAuth', () => {
 
   it('executes action when authenticated', () => {
     mockedUseAuth.mockReturnValue({
-      user: { did: 'did:plc:test', handle: 'test.bsky.social', displayName: null, avatarUrl: null },
+      user: {
+        did: 'did:plc:test',
+        handle: 'test.bsky.social',
+        displayName: null,
+        avatarUrl: null,
+        role: 'user' as const,
+      },
       isAuthenticated: true,
       isLoading: false,
       crossPostScopesGranted: false,

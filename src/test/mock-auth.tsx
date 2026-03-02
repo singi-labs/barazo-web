@@ -13,6 +13,7 @@ export const mockUser: AuthUser = {
   handle: 'alice.bsky.social',
   displayName: 'Alice',
   avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+  role: 'user',
 }
 
 export function createMockAuthContext(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
