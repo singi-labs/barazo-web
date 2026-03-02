@@ -31,6 +31,25 @@ vi.mock('next/image', () => ({
   },
 }))
 
+vi.mock('@/hooks/use-auth', () => {
+  const mockAuth = {
+    user: {
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
+      avatarUrl: null,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: () => 'mock-access-token',
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    authFetch: vi.fn(),
+  }
+  return { useAuth: () => mockAuth }
+})
+
 describe('AdminContentRatingsPage', () => {
   it('renders content ratings heading', () => {
     render(<AdminContentRatingsPage />)

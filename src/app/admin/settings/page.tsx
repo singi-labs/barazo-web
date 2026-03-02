@@ -35,7 +35,7 @@ export default function AdminSettingsPage() {
     setLoadError(null)
     try {
       const [settingsData, pdsData] = await Promise.all([
-        getCommunitySettings(),
+        getCommunitySettings(getAccessToken() ?? ''),
         getPdsTrustFactors(getAccessToken() ?? ''),
       ])
       setSettings(settingsData)

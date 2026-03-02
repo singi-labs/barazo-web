@@ -13,6 +13,7 @@ import { ErrorAlert } from '@/components/error-alert'
 import { getCategories, getCommunitySettings } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import type { CategoryTreeNode, CommunitySettings, MaturityRating } from '@/lib/api/types'
+import { useAuth } from '@/hooks/use-auth'
 
 const MATURITY_DESCRIPTIONS: Record<MaturityRating, string> = {
   safe: 'Suitable for all audiences. No explicit or mature content.',
@@ -52,6 +53,7 @@ function CategoryRatingRow({ category, depth }: { category: CategoryTreeNode; de
 }
 
 export default function AdminContentRatingsPage() {
+  const { getAccessToken } = useAuth()
   const [categories, setCategories] = useState<CategoryTreeNode[]>([])
   const [communitySettings, setCommunitySettings] = useState<CommunitySettings | null>(null)
   const [loading, setLoading] = useState(true)
@@ -60,7 +62,10 @@ export default function AdminContentRatingsPage() {
   const fetchData = useCallback(async () => {
     setError(null)
     try {
-      const [catRes, settingsRes] = await Promise.all([getCategories(), getCommunitySettings()])
+      const [catRes, settingsRes] = await Promise.all([
+        getCategories(),
+        getCommunitySettings(getAccessToken() ?? ''),
+      ])
       setCategories(catRes.categories)
       setCommunitySettings(settingsRes)
     } catch {
@@ -68,7 +73,7 @@ export default function AdminContentRatingsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getAccessToken])
 
   useEffect(() => {
     void fetchData()
