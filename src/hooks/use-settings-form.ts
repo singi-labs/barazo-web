@@ -1,18 +1,13 @@
 /**
  * Hook for managing user settings form state and API interactions.
+ * Split into community-scoped and global-scoped save handlers.
  * @see specs/prd-web.md Section M8 (Settings page)
  */
 
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import {
-  getPreferences,
-  updatePreferences,
-  getCommunityPreferences,
-  updateCommunityPreference,
-} from '@/lib/api/client'
-import type { CommunityPreferenceOverride } from '@/lib/api/types'
+import { getPreferences, updatePreferences } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 
 export type MaturityLevel = 'sfw' | 'sfw-mature'
@@ -26,14 +21,6 @@ export interface SettingsValues {
   notifyReplies: boolean
   notifyMentions: boolean
   notifyReactions: boolean
-}
-
-export interface CommunityOverrideValues {
-  communityDid: string
-  communityName: string
-  maturityLevel: 'inherit' | 'sfw' | 'mature'
-  mutedWords: string
-  blockedDids: string
 }
 
 const INITIAL_VALUES: SettingsValues = {
@@ -50,14 +37,18 @@ const INITIAL_VALUES: SettingsValues = {
 export function useSettingsForm() {
   const { getAccessToken, crossPostScopesGranted, requestCrossPostAuth } = useAuth()
   const [values, setValues] = useState<SettingsValues>(INITIAL_VALUES)
-  const [communityOverrides, setCommunityOverrides] = useState<CommunityOverrideValues[]>([])
-  const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [declaredAge, setDeclaredAge] = useState<number | null>(null)
   const [showAgeGate, setShowAgeGate] = useState(false)
   const [showCrossPostAuthDialog, setShowCrossPostAuthDialog] = useState(false)
+
+  // Per-section save state
+  const [savingCommunity, setSavingCommunity] = useState(false)
+  const [communityError, setCommunityError] = useState<string | null>(null)
+  const [communitySuccess, setCommunitySuccess] = useState(false)
+  const [savingGlobal, setSavingGlobal] = useState(false)
+  const [globalError, setGlobalError] = useState<string | null>(null)
+  const [globalSuccess, setGlobalSuccess] = useState(false)
 
   useEffect(() => {
     const token = getAccessToken()
@@ -66,8 +57,8 @@ export function useSettingsForm() {
       return
     }
 
-    Promise.all([getPreferences(token), getCommunityPreferences(token)])
-      .then(([prefs, communityPrefs]) => {
+    getPreferences(token)
+      .then((prefs) => {
         setValues({
           maturityLevel: prefs.maturityLevel === 'mature' ? 'sfw-mature' : 'sfw',
           mutedWords: prefs.mutedWords.join(', '),
@@ -79,48 +70,63 @@ export function useSettingsForm() {
           notifyReactions: false,
         })
         setDeclaredAge(prefs.declaredAge)
-        setCommunityOverrides(
-          communityPrefs.communities.map(
-            (c: CommunityPreferenceOverride): CommunityOverrideValues => ({
-              communityDid: c.communityDid,
-              communityName: c.communityName,
-              maturityLevel: c.maturityLevel,
-              mutedWords: c.mutedWords.join(', '),
-              blockedDids: c.blockedDids.join(', '),
-            })
-          )
-        )
       })
-      .catch(() => setError('Failed to load preferences'))
+      .catch(() => {
+        setCommunityError('Failed to load preferences')
+        setGlobalError('Failed to load preferences')
+      })
       .finally(() => setLoading(false))
   }, [getAccessToken])
 
-  const handleCommunityChange = useCallback(
-    (communityDid: string, field: keyof CommunityOverrideValues, value: string) => {
-      setCommunityOverrides((prev) =>
-        prev.map((c) => (c.communityDid === communityDid ? { ...c, [field]: value } : c))
-      )
-    },
-    []
-  )
-
-  const handleSave = useCallback(
+  const handleSaveCommunitySettings = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
-      setSaving(true)
-      setError(null)
-      setSuccess(false)
+      setSavingCommunity(true)
+      setCommunityError(null)
+      setCommunitySuccess(false)
 
       const token = getAccessToken()
       if (!token) {
-        setError('Not authenticated')
-        setSaving(false)
+        setCommunityError('Not authenticated')
+        setSavingCommunity(false)
+        return
+      }
+
+      try {
+        await updatePreferences(
+          {
+            crossPostBluesky: values.crossPostBluesky,
+            crossPostFrontpage: values.crossPostFrontpage,
+          },
+          token
+        )
+        setCommunitySuccess(true)
+      } catch {
+        setCommunityError('Failed to save community settings')
+      } finally {
+        setSavingCommunity(false)
+      }
+    },
+    [values.crossPostBluesky, values.crossPostFrontpage, getAccessToken]
+  )
+
+  const handleSaveGlobalSettings = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setSavingGlobal(true)
+      setGlobalError(null)
+      setGlobalSuccess(false)
+
+      const token = getAccessToken()
+      if (!token) {
+        setGlobalError('Not authenticated')
+        setSavingGlobal(false)
         return
       }
 
       if (values.maturityLevel === 'sfw-mature' && !declaredAge) {
         setShowAgeGate(true)
-        setSaving(false)
+        setSavingGlobal(false)
         return
       }
 
@@ -140,49 +146,26 @@ export function useSettingsForm() {
             maturityLevel: values.maturityLevel === 'sfw-mature' ? 'mature' : 'sfw',
             mutedWords,
             blockedDids,
-            crossPostBluesky: values.crossPostBluesky,
-            crossPostFrontpage: values.crossPostFrontpage,
           },
           token
         )
-
-        await Promise.all(
-          communityOverrides.map((c) =>
-            updateCommunityPreference(
-              c.communityDid,
-              {
-                maturityLevel: c.maturityLevel,
-                mutedWords: c.mutedWords
-                  .split(',')
-                  .map((w) => w.trim())
-                  .filter(Boolean),
-                blockedDids: c.blockedDids
-                  .split(',')
-                  .map((d) => d.trim())
-                  .filter(Boolean),
-              },
-              token
-            )
-          )
-        )
-
-        setSuccess(true)
+        setGlobalSuccess(true)
       } catch {
-        setError('Failed to save preferences')
+        setGlobalError('Failed to save global settings')
       } finally {
-        setSaving(false)
+        setSavingGlobal(false)
       }
     },
-    [values, communityOverrides, declaredAge, getAccessToken]
+    [values, declaredAge, getAccessToken]
   )
 
   const handleAgeConfirm = useCallback(
     (age: number) => {
       setDeclaredAge(age)
       setShowAgeGate(false)
-      void handleSave({ preventDefault: () => {} } as React.FormEvent)
+      void handleSaveGlobalSettings({ preventDefault: () => {} } as React.FormEvent)
     },
-    [handleSave]
+    [handleSaveGlobalSettings]
   )
 
   const handleAgeCancel = useCallback(() => {
@@ -198,17 +181,19 @@ export function useSettingsForm() {
   return {
     values,
     setValues,
-    communityOverrides,
-    saving,
     loading,
-    error,
-    success,
+    savingCommunity,
+    communityError,
+    communitySuccess,
+    savingGlobal,
+    globalError,
+    globalSuccess,
     showAgeGate,
     showCrossPostAuthDialog,
     setShowCrossPostAuthDialog,
     crossPostScopesGranted,
-    handleCommunityChange,
-    handleSave,
+    handleSaveCommunitySettings,
+    handleSaveGlobalSettings,
     handleAgeConfirm,
     handleAgeCancel,
     handleCrossPostAuthorize,

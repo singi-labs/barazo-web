@@ -3,8 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, waitFor } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import SettingsPage from './page'
 
@@ -74,11 +73,10 @@ describe('SettingsPage', () => {
     expect(screen.getByRole('heading', { name: /account settings/i })).toBeInTheDocument()
   })
 
-  it('renders default content preferences section when not authenticated', async () => {
+  it('renders content safety section', async () => {
     render(<SettingsPage />)
-    // Without a token, loading finishes immediately and form renders with defaults
     await waitFor(() => {
-      expect(screen.getByText(/default content preferences/i)).toBeInTheDocument()
+      expect(screen.getByText(/content safety/i)).toBeInTheDocument()
     })
     expect(screen.getByLabelText(/maturity level/i)).toBeInTheDocument()
   })
@@ -108,10 +106,11 @@ describe('SettingsPage', () => {
     })
   })
 
-  it('renders save button', async () => {
+  it('renders two save buttons (community and global)', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /save community settings/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /save global settings/i })).toBeInTheDocument()
     })
   })
 
@@ -134,88 +133,92 @@ describe('SettingsPage', () => {
     expect(mutedWordsInput.value).toBe('spam, offensive')
   })
 
-  it('passes axe accessibility check', async () => {
-    const { container } = render(<SettingsPage />)
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
-    })
-    const results = await axe(container)
-    expect(results).toHaveNoViolations()
-  })
+  // --- Section Layout ---
 
-  // --- Per-Community Overrides ---
-
-  describe('Community-Specific Settings', () => {
-    it('renders community-specific settings section', async () => {
+  describe('Scope-grouped layout', () => {
+    it('renders community section heading containing community name', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText(/community-specific settings/i)).toBeInTheDocument()
+        const heading = screen.getByRole('heading', { name: /your .+ settings/i, level: 2 })
+        expect(heading).toBeInTheDocument()
       })
+      expect(screen.getByText(/these settings only affect this community/i)).toBeInTheDocument()
     })
 
-    it('loads and displays community list from API', async () => {
+    it('renders global section heading with Barazo intro text', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        // 'Barazo Test Community' may appear in both the header (communityName)
-        // and the per-community overrides section
-        const matches = screen.getAllByText('Barazo Test Community')
-        expect(matches.length).toBeGreaterThanOrEqual(1)
-        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', {
+            name: /your settings across all barazo forums/i,
+            level: 2,
+          })
+        ).toBeInTheDocument()
       })
+      // Intro paragraph with links to barazo.forum and atproto.com
+      expect(screen.getByText(/built with/i)).toBeInTheDocument()
+      const barazoLinks = screen.getAllByRole('link', { name: /barazo/i })
+      const barazoForumLink = barazoLinks.find(
+        (link) => link.getAttribute('href') === 'https://barazo.forum'
+      )
+      expect(barazoForumLink).toBeDefined()
+      expect(screen.getByRole('link', { name: /at protocol/i })).toHaveAttribute(
+        'href',
+        'https://atproto.com/'
+      )
     })
 
-    it('shows maturity override for each community', async () => {
+    it('renders sections in correct DOM order (community first, global second)', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', { name: /your .+ settings/i, level: 2 })
+        ).toBeInTheDocument()
       })
-      // Gaming Forum has maturity override set to 'mature'
-      const gamingSection = screen.getByText('Gaming Forum').closest('details')!
-      const maturitySelect = within(gamingSection).getByLabelText(/maturity override/i)
-      expect(maturitySelect).toBeInTheDocument()
+
+      const communitySection = screen
+        .getByRole('heading', { name: /your .+ settings/i, level: 2 })
+        .closest('section')!
+      const globalSection = screen
+        .getByRole('heading', { name: /your settings across all barazo forums/i, level: 2 })
+        .closest('section')!
+
+      // Community section comes before global section in DOM order
+      expect(
+        communitySection.compareDocumentPosition(globalSection) & Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy()
     })
 
-    it('shows community-specific muted words', async () => {
+    it('renders reports link below both sections', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+        expect(screen.getByRole('link', { name: /view my reports/i })).toBeInTheDocument()
       })
-      // Expand Gaming Forum section to see community-specific fields
-      const gamingSummary = screen.getByText('Gaming Forum')
-      await userEvent.click(gamingSummary)
-      const gamingSection = gamingSummary.closest('details')!
-      const mutedWordsInput = within(gamingSection).getByLabelText(
-        /community muted words/i
-      ) as HTMLTextAreaElement
-      expect(mutedWordsInput.value).toBe('spoiler')
+
+      const reportsLink = screen.getByRole('link', { name: /view my reports/i })
+      const globalSection = screen
+        .getByRole('heading', { name: /your settings across all barazo forums/i, level: 2 })
+        .closest('section')!
+
+      // Reports link comes after the global section
+      expect(
+        globalSection.compareDocumentPosition(reportsLink) & Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy()
     })
 
-    it('shows community-specific blocked users', async () => {
+    it('does not render community overrides content', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /account settings/i })).toBeInTheDocument()
       })
-      const gamingSummary = screen.getByText('Gaming Forum')
-      await userEvent.click(gamingSummary)
-      const gamingSection = gamingSummary.closest('details')!
-      const blockedInput = within(gamingSection).getByLabelText(
-        /community blocked users/i
-      ) as HTMLTextAreaElement
-      expect(blockedInput.value).toBe('did:plc:user-dave-004')
+      expect(screen.queryByText(/community-specific settings/i)).not.toBeInTheDocument()
+      expect(screen.queryByText('Gaming Forum')).not.toBeInTheDocument()
     })
 
-    it('shows empty state when user has no community-specific settings', async () => {
-      // This test verifies the section renders even with empty data
-      render(<SettingsPage />)
-      await waitFor(() => {
-        expect(screen.getByText(/community-specific settings/i)).toBeInTheDocument()
-      })
-    })
-
-    it('passes axe accessibility check with community overrides', async () => {
+    it('passes axe accessibility check', async () => {
       const { container } = render(<SettingsPage />)
       await waitFor(() => {
-        expect(screen.getByText('Gaming Forum')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /save community settings/i })).toBeInTheDocument()
       })
       const results = await axe(container)
       expect(results).toHaveNoViolations()
