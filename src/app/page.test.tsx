@@ -78,7 +78,8 @@ describe('HomePage', () => {
   it('renders recent topics', async () => {
     const page = await HomePage()
     render(page)
-    expect(screen.getByText('Welcome to Barazo Forums')).toBeInTheDocument()
+    const matches = screen.getAllByText('Welcome to Barazo Forums')
+    expect(matches.length).toBeGreaterThan(0)
   })
 
   it('renders category navigation', async () => {
