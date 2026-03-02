@@ -40,7 +40,6 @@ import type {
   MaturityRating,
   PluginsResponse,
   OnboardingField,
-  OnboardingFieldsResponse,
   CreateOnboardingFieldInput,
   UpdateOnboardingFieldInput,
   OnboardingStatus,
@@ -87,14 +86,15 @@ class ApiError extends Error {
 
 async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const url = `${API_URL}${path}`
+  const hasBody = options.body !== undefined
   const response = await fetch(url, {
     method: options.method ?? 'GET',
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
       ...options.headers,
     },
     signal: options.signal,
-    ...(options.body !== undefined ? { body: JSON.stringify(options.body) } : {}),
+    ...(hasBody ? { body: JSON.stringify(options.body) } : {}),
   })
 
   if (!response.ok) {
@@ -735,8 +735,8 @@ export function unmuteUser(
 export function getOnboardingFields(
   accessToken: string,
   options?: FetchOptions
-): Promise<OnboardingFieldsResponse> {
-  return apiFetch<OnboardingFieldsResponse>('/api/admin/onboarding-fields', {
+): Promise<OnboardingField[]> {
+  return apiFetch<OnboardingField[]>('/api/admin/onboarding-fields', {
     ...options,
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })

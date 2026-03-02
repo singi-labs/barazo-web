@@ -623,7 +623,7 @@ export const handlers = [
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return HttpResponse.json({ fields: mockOnboardingFields })
+    return HttpResponse.json(mockOnboardingFields)
   }),
 
   // POST /api/admin/onboarding-fields
@@ -911,7 +911,7 @@ export const handlers = [
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return HttpResponse.json({ providers: mockPdsTrustFactors })
+    return HttpResponse.json({ factors: mockPdsTrustFactors, cursor: null })
   }),
 
   // PUT /api/admin/pds-trust
