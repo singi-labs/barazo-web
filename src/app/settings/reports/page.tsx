@@ -108,12 +108,12 @@ export default function MyReportsPage() {
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
-            { label: 'Account Settings', href: '/settings' },
-            { label: 'My Reports' },
+            { label: 'Account settings', href: '/settings' },
+            { label: 'My reports' },
           ]}
         />
 
-        <h1 className="text-2xl font-bold text-foreground">My Reports</h1>
+        <h1 className="text-2xl font-bold text-foreground">My reports</h1>
 
         {loading ? (
           <div className="max-w-2xl animate-pulse space-y-4">

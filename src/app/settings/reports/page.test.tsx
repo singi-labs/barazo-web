@@ -54,7 +54,7 @@ describe('MyReportsPage', () => {
 
   it('renders breadcrumbs with link to settings', async () => {
     render(<MyReportsPage />)
-    expect(screen.getByText('Account Settings')).toBeInTheDocument()
+    expect(screen.getByText('Account settings')).toBeInTheDocument()
   })
 
   it('loads and displays user reports from API', async () => {

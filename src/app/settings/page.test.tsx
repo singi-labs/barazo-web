@@ -106,7 +106,7 @@ describe('SettingsPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Blocked users')).toBeInTheDocument()
     })
-    const safetyFieldset = screen.getByText('Content Safety').closest('fieldset')!
+    const safetyFieldset = screen.getByText('Content safety').closest('fieldset')!
     expect(within(safetyFieldset).getByLabelText('Handle to block')).toBeInTheDocument()
     expect(within(safetyFieldset).getByText('No users blocked.')).toBeInTheDocument()
   })
@@ -114,7 +114,7 @@ describe('SettingsPage', () => {
   it('renders cross-posting section', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
-      expect(screen.getByText('Cross-Posting')).toBeInTheDocument()
+      expect(screen.getByText('Cross-posting')).toBeInTheDocument()
     })
     expect(screen.getByLabelText(/bluesky/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/frontpage/i)).toBeInTheDocument()
@@ -212,21 +212,19 @@ describe('SettingsPage', () => {
       ).toBeTruthy()
     })
 
-    it('renders reports link below both sections', async () => {
+    it('renders reports link inside the community section', async () => {
       render(<SettingsPage />)
       await waitFor(() => {
         expect(screen.getByRole('link', { name: /view my reports/i })).toBeInTheDocument()
       })
 
       const reportsLink = screen.getByRole('link', { name: /view my reports/i })
-      const globalSection = screen
-        .getByRole('heading', { name: /your settings across all barazo forums/i, level: 2 })
+      const communitySection = screen
+        .getByRole('heading', { name: /your .+ settings/i, level: 2 })
         .closest('section')!
 
-      // Reports link comes after the global section
-      expect(
-        globalSection.compareDocumentPosition(reportsLink) & Node.DOCUMENT_POSITION_FOLLOWING
-      ).toBeTruthy()
+      // Reports link is inside the community section (scoped to this AppView)
+      expect(communitySection.contains(reportsLink)).toBe(true)
     })
 
     it('does not render community overrides content', async () => {
