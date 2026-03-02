@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">User Management</h1>
+        <h1 className="text-2xl font-bold text-foreground">User management</h1>
 
         {loadError && (
           <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchUsers()} />

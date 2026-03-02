@@ -132,7 +132,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
           ]}
         />
 
-        <h1 className="text-2xl font-bold text-foreground">Edit Topic</h1>
+        <h1 className="text-2xl font-bold text-foreground">Edit topic</h1>
 
         {error && (
           <div

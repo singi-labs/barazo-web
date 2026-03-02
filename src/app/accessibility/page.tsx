@@ -33,10 +33,10 @@ export default async function AccessibilityPage() {
       <div className="mx-auto max-w-2xl space-y-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Accessibility' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Accessibility Statement</h1>
+        <h1 className="text-2xl font-bold text-foreground">Accessibility statement</h1>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Our Commitment</h2>
+          <h2 className="text-lg font-semibold text-foreground">Our commitment</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo is committed to ensuring digital accessibility for people with disabilities. We
             continually improve the user experience for everyone and apply the relevant
@@ -45,7 +45,7 @@ export default async function AccessibilityPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Conformance Status</h2>
+          <h2 className="text-lg font-semibold text-foreground">Conformance status</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             We aim to conform to the{' '}
             <strong>Web Content Accessibility Guidelines (WCAG) 2.2 Level AA</strong>. These
@@ -55,7 +55,7 @@ export default async function AccessibilityPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Testing Methods</h2>
+          <h2 className="text-lg font-semibold text-foreground">Testing methods</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             We test accessibility through a combination of methods:
           </p>
@@ -80,7 +80,7 @@ export default async function AccessibilityPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Accessibility Features</h2>
+          <h2 className="text-lg font-semibold text-foreground">Accessibility features</h2>
           <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
             <li>Semantic HTML with proper heading hierarchy and landmark regions.</li>
             <li>Skip links for jumping to main content and the reply editor.</li>
@@ -93,7 +93,7 @@ export default async function AccessibilityPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Known Limitations</h2>
+          <h2 className="text-lg font-semibold text-foreground">Known limitations</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             While we strive for full accessibility, some areas may have limitations:
           </p>
@@ -107,7 +107,7 @@ export default async function AccessibilityPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Contact Us</h2>
+          <h2 className="text-lg font-semibold text-foreground">Contact us</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             If you encounter accessibility barriers on Barazo, please contact us. We take
             accessibility feedback seriously and will work to address issues promptly.

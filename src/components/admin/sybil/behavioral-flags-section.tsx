@@ -15,7 +15,7 @@ interface BehavioralFlagsSectionProps {
 export function BehavioralFlagsSection({ flags, onDismiss }: BehavioralFlagsSectionProps) {
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">Behavioral Flags</h2>
+      <h2 className="text-lg font-semibold text-foreground">Behavioral flags</h2>
       {flags.length === 0 && (
         <p className="py-4 text-center text-muted-foreground">No behavioral flags.</p>
       )}

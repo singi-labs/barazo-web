@@ -52,7 +52,7 @@ export function AddSeedDialog({ open, onClose, onSubmit }: AddSeedDialogProps) {
       aria-label="Add trust seed"
     >
       <div className="mx-4 w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-lg">
-        <h3 className="text-lg font-semibold text-foreground">Add Trust Seed</h3>
+        <h3 className="text-lg font-semibold text-foreground">Add trust seed</h3>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <label htmlFor="seed-handle" className="block text-sm font-medium text-foreground">

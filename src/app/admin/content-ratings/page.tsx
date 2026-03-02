@@ -77,11 +77,11 @@ export default function AdminContentRatingsPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">Content Ratings</h1>
+        <h1 className="text-2xl font-bold text-foreground">Content ratings</h1>
 
         {/* Rating level explanation */}
         <div className="rounded-lg border border-border bg-card p-4">
-          <h2 className="mb-3 text-lg font-semibold text-foreground">Maturity Levels</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Maturity levels</h2>
           <dl className="space-y-2">
             {(Object.entries(MATURITY_DESCRIPTIONS) as [MaturityRating, string][]).map(
               ([rating, description]) => (
@@ -110,7 +110,7 @@ export default function AdminContentRatingsPage() {
         {/* Community rating */}
         {communitySettings && (
           <div className="rounded-lg border border-border bg-card p-4">
-            <h2 className="mb-2 text-lg font-semibold text-foreground">Community Rating</h2>
+            <h2 className="mb-2 text-lg font-semibold text-foreground">Community rating</h2>
             <p className="text-sm text-muted-foreground">
               Current community maturity rating:{' '}
               <span
@@ -128,7 +128,7 @@ export default function AdminContentRatingsPage() {
         {/* Category ratings table */}
         {!loading && categories.length > 0 && (
           <div className="rounded-lg border border-border bg-card p-4">
-            <h2 className="mb-3 text-lg font-semibold text-foreground">Category Ratings</h2>
+            <h2 className="mb-3 text-lg font-semibold text-foreground">Category ratings</h2>
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border text-left">

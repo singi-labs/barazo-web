@@ -26,7 +26,7 @@ export function CrossPostingSection({
 }: CrossPostingSectionProps) {
   return (
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
-      <legend className="px-2 text-sm font-semibold text-foreground">Cross-Posting</legend>
+      <legend className="px-2 text-sm font-semibold text-foreground">Cross-posting</legend>
       {authorized ? (
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">

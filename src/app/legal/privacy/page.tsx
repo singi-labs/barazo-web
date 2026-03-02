@@ -31,9 +31,9 @@ export default async function PrivacyPolicyPage() {
   return (
     <ForumLayout communityName={communityName}>
       <div className="mx-auto max-w-2xl space-y-8">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Privacy Policy' }]} />
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Privacy policy' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Privacy Policy</h1>
+        <h1 className="text-2xl font-bold text-foreground">Privacy policy</h1>
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Overview</h2>
@@ -46,7 +46,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">What We Collect</h2>
+          <h2 className="text-lg font-semibold text-foreground">What we collect</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             When you use Barazo, we process the following data:
           </p>
@@ -89,7 +89,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">What We Do Not Collect</h2>
+          <h2 className="text-lg font-semibold text-foreground">What we do not collect</h2>
           <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
             <li>
               We do not collect or store your password (authentication is handled via AT Protocol
@@ -106,7 +106,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Legal Basis</h2>
+          <h2 className="text-lg font-semibold text-foreground">Legal basis</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             We process your data under the following legal bases (GDPR Art. 6):
           </p>
@@ -124,7 +124,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Data Storage and Transfers</h2>
+          <h2 className="text-lg font-semibold text-foreground">Data storage and transfers</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Our servers are hosted in the European Union (Hetzner, Germany). We use the following
             sub-processors:
@@ -141,7 +141,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Data Retention and Deletion</h2>
+          <h2 className="text-lg font-semibold text-foreground">Data retention and deletion</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Your indexed data is retained while the source exists on your AT Protocol PDS. When you
             delete content or your account via the AT Protocol, we process the deletion event
@@ -176,7 +176,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">AI Features</h2>
+          <h2 className="text-lg font-semibold text-foreground">AI features</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo offers optional AI features including thread summaries, semantic search, and
             content moderation assistance. Here is how they work:
@@ -202,7 +202,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Content Labels</h2>
+          <h2 className="text-lg font-semibold text-foreground">Content labels</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             We subscribe to content labeling services (such as Bluesky&apos;s Ozone) for spam
             detection and content moderation. Labels applied to your account may affect posting
@@ -212,7 +212,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Your Rights</h2>
+          <h2 className="text-lg font-semibold text-foreground">Your rights</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Under the GDPR, you have the right to:
           </p>
@@ -242,7 +242,7 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Data Breach Notification</h2>
+          <h2 className="text-lg font-semibold text-foreground">Data breach notification</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             In the event of a data breach, we will notify the Dutch Data Protection Authority within
             72 hours (GDPR Art. 33). For high-risk breaches, we will notify affected users without

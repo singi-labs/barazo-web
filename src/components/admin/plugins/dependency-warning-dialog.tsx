@@ -29,7 +29,7 @@ export function DependencyWarningDialog({
       <div className="w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-lg">
         <div className="mb-3 flex items-center gap-2 text-destructive">
           <WarningCircle size={20} aria-hidden="true" />
-          <h2 className="font-semibold">Dependency Warning</h2>
+          <h2 className="font-semibold">Dependency warning</h2>
         </div>
         <p className="text-sm text-muted-foreground">
           Disabling <strong>{pluginName}</strong> will affect the following plugins that depend on
@@ -48,7 +48,7 @@ export function DependencyWarningDialog({
             onClick={onConfirm}
             className="rounded-md bg-destructive px-3 py-1.5 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
           >
-            Disable Anyway
+            Disable anyway
           </button>
         </div>
       </div>

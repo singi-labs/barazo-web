@@ -71,9 +71,9 @@ export default function NewTopicPage() {
   return (
     <ForumLayout communityName={communityName}>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'New Topic' }]} />
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'New topic' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Create New Topic</h1>
+        <h1 className="text-2xl font-bold text-foreground">Create new topic</h1>
 
         {error && (
           <div

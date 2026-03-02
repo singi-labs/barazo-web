@@ -31,12 +31,12 @@ export default async function TermsOfServicePage() {
   return (
     <ForumLayout communityName={communityName}>
       <div className="mx-auto max-w-2xl space-y-8">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Terms of Service' }]} />
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Terms of service' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Terms of Service</h1>
+        <h1 className="text-2xl font-bold text-foreground">Terms of service</h1>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Acceptance of Terms</h2>
+          <h2 className="text-lg font-semibold text-foreground">Acceptance of terms</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             By accessing or using Barazo, you agree to be bound by these Terms of Service. If you do
             not agree to these terms, you may not use the service. Barazo reserves the right to
@@ -55,7 +55,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Account and Authentication</h2>
+          <h2 className="text-lg font-semibold text-foreground">Account and authentication</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo uses the AT Protocol for authentication. You log in using your existing AT
             Protocol identity (e.g., a Bluesky account). You are responsible for maintaining the
@@ -64,7 +64,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Content and Conduct</h2>
+          <h2 className="text-lg font-semibold text-foreground">Content and conduct</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             You retain ownership of content you post on Barazo. By posting, you grant Barazo a
             license to display, index, and distribute your content as part of the forum service and
@@ -88,7 +88,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Content Maturity Ratings</h2>
+          <h2 className="text-lg font-semibold text-foreground">Content maturity ratings</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Communities and categories may be rated for content maturity (Safe for Work, Mature, or
             Adult). You are responsible for accurately labeling your content. Communities may
@@ -98,7 +98,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Cross-Posting</h2>
+          <h2 className="text-lg font-semibold text-foreground">Cross-posting</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo may cross-post your content to connected platforms (such as Bluesky or Frontpage)
             when you enable this feature. Cross-posting is optional and can be controlled in your
@@ -107,7 +107,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Moderation and Labels</h2>
+          <h2 className="text-lg font-semibold text-foreground">Moderation and labels</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Your account may be labeled by independent moderation services (such as Bluesky&apos;s
             Ozone). Labels affect posting limits and content visibility. You cannot delete labels
@@ -117,7 +117,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">AI-Generated Summaries</h2>
+          <h2 className="text-lg font-semibold text-foreground">AI-generated summaries</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo may generate AI-powered summaries of discussion threads. These summaries are
             anonymized derivative works that do not contain personal data (no usernames or verbatim
@@ -128,7 +128,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">AT Protocol and Federation</h2>
+          <h2 className="text-lg font-semibold text-foreground">AT Protocol and federation</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo is built on the AT Protocol, which is a federated, open network. Content you post
             may be indexed by other services on the AT Protocol network. Barazo cannot control how
@@ -146,7 +146,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Limitation of Liability</h2>
+          <h2 className="text-lg font-semibold text-foreground">Limitation of liability</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo is provided &quot;as is&quot; without warranties of any kind. We are not liable
             for any damages arising from your use of the service, including but not limited to loss
@@ -156,7 +156,7 @@ export default async function TermsOfServicePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Governing Law</h2>
+          <h2 className="text-lg font-semibold text-foreground">Governing law</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             These terms are governed by the laws of the Netherlands. Any disputes arising from these
             terms will be subject to the exclusive jurisdiction of the courts of the Netherlands.
