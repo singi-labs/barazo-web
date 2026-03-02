@@ -43,6 +43,15 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
       getTopicByRkey(rkey),
       getPublicSettings().catch(() => null),
     ])
+
+    // Deleted topics: noindex, no OG, generic title
+    if (topic.isAuthorDeleted || topic.isModDeleted) {
+      return {
+        title: 'Topic Removed',
+        robots: { index: false, follow: false },
+      }
+    }
+
     const description =
       topic.content.length > 160 ? topic.content.slice(0, 157) + '...' : topic.content
 
@@ -89,8 +98,38 @@ export default async function TopicPage({ params }: TopicPageProps) {
     throw error
   }
 
+  const isDeleted = topic.isAuthorDeleted || topic.isModDeleted
+
   // Fetch community settings for maturity context
   const publicSettings = await getPublicSettings().catch(() => null)
+  const communityName = publicSettings?.communityName ?? ''
+
+  // Deleted topics: minimal page with tombstone, no replies/JSON-LD
+  if (isDeleted) {
+    let categoriesResult: CategoriesResponse = { categories: [] }
+    try {
+      categoriesResult = await getCategories()
+    } catch {
+      // Non-critical
+    }
+
+    return (
+      <ForumLayout
+        communityName={communityName}
+        sidebar={
+          categoriesResult.categories.length > 0 ? (
+            <CategoryNav categories={categoriesResult.categories} />
+          ) : undefined
+        }
+      >
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Topic Removed' }]} />
+        <div className="mt-4">
+          <TopicView topic={topic} />
+        </div>
+      </ForumLayout>
+    )
+  }
+
   const communityRating = publicSettings?.maturityRating ?? 'safe'
   const effectiveMaturity = getEffectiveMaturity(communityRating, topic.categoryMaturityRating)
 
@@ -121,8 +160,6 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   const categoryName =
     findCategoryName(categoriesResult.categories, topic.category) ?? topic.category
-
-  const communityName = publicSettings?.communityName ?? ''
 
   const breadcrumbItems = [
     { label: 'Home', href: '/' },

@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { TopicView } from './topic-view'
-import { mockTopics, mockUsers } from '@/mocks/data'
+import { mockTopics, mockUsers, mockAuthorDeletedTopic, mockModDeletedTopic } from '@/mocks/data'
 
 const topic = mockTopics[0]!
 
@@ -106,5 +106,89 @@ describe('TopicView', () => {
     render(<TopicView topic={topic} reactions={mockReactions} onReactionToggle={onToggle} />)
     await user.click(screen.getByRole('button', { name: /like/i }))
     expect(onToggle).toHaveBeenCalledWith('like')
+  })
+
+  describe('tombstone: author-deleted topics', () => {
+    it('shows author-deleted placeholder text', () => {
+      render(<TopicView topic={mockAuthorDeletedTopic} />)
+      expect(screen.getByText('This topic was removed by the author.')).toBeInTheDocument()
+    })
+
+    it('does not render topic content for author-deleted topics', () => {
+      const { container } = render(<TopicView topic={mockAuthorDeletedTopic} />)
+      expect(container.querySelector('.prose')).not.toBeInTheDocument()
+    })
+
+    it('does not render the API placeholder title for author-deleted topics', () => {
+      render(<TopicView topic={mockAuthorDeletedTopic} />)
+      expect(screen.queryByText('[Deleted by author]')).not.toBeInTheDocument()
+    })
+
+    it('shows [deleted] instead of author identity for author-deleted topics', () => {
+      render(<TopicView topic={mockAuthorDeletedTopic} />)
+      expect(screen.getByText('[deleted]')).toBeInTheDocument()
+    })
+
+    it('does not render category or tags for author-deleted topics', () => {
+      render(<TopicView topic={mockAuthorDeletedTopic} />)
+      expect(screen.queryByText(mockAuthorDeletedTopic.category)).not.toBeInTheDocument()
+    })
+
+    it('does not render reactions footer for author-deleted topics', () => {
+      render(
+        <TopicView
+          topic={mockAuthorDeletedTopic}
+          reactions={[{ type: 'like', count: 3, reacted: true }]}
+          onReactionToggle={vi.fn()}
+        />
+      )
+      expect(screen.queryByRole('group', { name: 'Reactions' })).not.toBeInTheDocument()
+    })
+
+    it('does not render report button for author-deleted topics', () => {
+      render(<TopicView topic={mockAuthorDeletedTopic} canReport={true} onReport={vi.fn()} />)
+      expect(screen.queryByRole('button', { name: /report/i })).not.toBeInTheDocument()
+    })
+
+    it('uses muted styling for author-deleted topics', () => {
+      const { container } = render(<TopicView topic={mockAuthorDeletedTopic} />)
+      const article = container.querySelector('article')
+      expect(article?.className).toContain('bg-muted/50')
+    })
+
+    it('passes axe accessibility check for author-deleted topics', async () => {
+      const { container } = render(<TopicView topic={mockAuthorDeletedTopic} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('tombstone: moderator-deleted topics', () => {
+    it('shows moderator-deleted placeholder text', () => {
+      render(<TopicView topic={mockModDeletedTopic} />)
+      expect(screen.getByText('This topic was removed by a moderator.')).toBeInTheDocument()
+    })
+
+    it('does not render the API placeholder title for mod-deleted topics', () => {
+      render(<TopicView topic={mockModDeletedTopic} />)
+      expect(screen.queryByText('[Removed by moderator]')).not.toBeInTheDocument()
+    })
+
+    it('shows [deleted] instead of author identity for mod-deleted topics', () => {
+      render(<TopicView topic={mockModDeletedTopic} />)
+      expect(screen.getByText('[deleted]')).toBeInTheDocument()
+    })
+
+    it('uses muted styling for mod-deleted topics', () => {
+      const { container } = render(<TopicView topic={mockModDeletedTopic} />)
+      const article = container.querySelector('article')
+      expect(article?.className).toContain('bg-muted/50')
+    })
+
+    it('passes axe accessibility check for mod-deleted topics', async () => {
+      const { container } = render(<TopicView topic={mockModDeletedTopic} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
   })
 })
