@@ -146,9 +146,7 @@ describe('TopicView', () => {
     })
 
     it('does not render report button for author-deleted topics', () => {
-      render(
-        <TopicView topic={mockAuthorDeletedTopic} canReport={true} onReport={vi.fn()} />
-      )
+      render(<TopicView topic={mockAuthorDeletedTopic} canReport={true} onReport={vi.fn()} />)
       expect(screen.queryByRole('button', { name: /report/i })).not.toBeInTheDocument()
     })
 
