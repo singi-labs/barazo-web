@@ -82,11 +82,16 @@ describe('SettingsPage', () => {
     expect(screen.getByLabelText(/maturity level/i)).toBeInTheDocument()
   })
 
-  it('renders age bracket dropdown', async () => {
+  it('renders age bracket dropdown in community section', async () => {
     render(<SettingsPage />)
     await waitFor(() => {
       expect(screen.getByLabelText(/age bracket/i)).toBeInTheDocument()
     })
+    // Age is AppView-specific (not stored in PDS), so it belongs in the community section
+    const communitySection = screen
+      .getByRole('heading', { name: /your .+ settings/i, level: 2 })
+      .closest('section')!
+    expect(within(communitySection).getByLabelText(/age bracket/i)).toBeInTheDocument()
   })
 
   it('renders muted words input', async () => {

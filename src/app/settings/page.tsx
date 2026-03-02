@@ -19,6 +19,7 @@ import { CommunityProfileSettings } from '@/components/community-profile-setting
 import { ContentSafetySection } from '@/components/settings/content-safety-section'
 import { CrossPostingSection } from '@/components/settings/cross-posting-section'
 import { NotificationsSection } from '@/components/settings/notifications-section'
+import { AGE_OPTIONS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { useSettingsForm } from '@/hooks/use-settings-form'
 
@@ -105,6 +106,43 @@ export default function SettingsPage() {
               </div>
 
               <form onSubmit={handleSaveCommunitySettings} className="mt-8 space-y-8" noValidate>
+                <fieldset className="space-y-4 rounded-lg border border-border p-4">
+                  <legend className="px-2 text-sm font-semibold text-foreground">
+                    Age Declaration
+                  </legend>
+
+                  <div className="space-y-1">
+                    <label
+                      htmlFor="age-bracket"
+                      className="block text-sm font-medium text-foreground"
+                    >
+                      Age bracket
+                    </label>
+                    <select
+                      id="age-bracket"
+                      value={declaredAge ?? ''}
+                      onChange={(e) => handleAgeChange(Number(e.target.value))}
+                      className={cn(
+                        'block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                      )}
+                    >
+                      <option value="" disabled>
+                        Select your age bracket
+                      </option>
+                      {AGE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      Your age bracket determines which content is available. Selecting &quot;Rather
+                      not say&quot; restricts you to safe content only.
+                    </p>
+                  </div>
+                </fieldset>
+
                 <CrossPostingSection
                   authorized={crossPostScopesGranted}
                   crossPostBluesky={values.crossPostBluesky}
@@ -191,11 +229,9 @@ export default function SettingsPage() {
               <form onSubmit={handleSaveGlobalSettings} className="mt-6 space-y-8" noValidate>
                 <ContentSafetySection
                   maturityLevel={values.maturityLevel}
-                  declaredAge={declaredAge}
                   mutedWords={values.mutedWords}
                   blockedUsers={values.blockedUsers}
                   onMaturityChange={(level) => setValues({ ...values, maturityLevel: level })}
-                  onAgeChange={handleAgeChange}
                   onMutedWordsChange={(words) => setValues({ ...values, mutedWords: words })}
                   onBlockUser={handleBlockUser}
                   onUnblockUser={handleUnblockUser}
