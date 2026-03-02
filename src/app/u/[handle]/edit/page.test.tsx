@@ -49,17 +49,17 @@ vi.mock('@/hooks/use-toast', () => ({
 
 function createCommunityProfile(overrides?: Partial<CommunityProfile>): CommunityProfile {
   return {
-    did: 'did:plc:user-alice-001',
-    handle: 'alice.bsky.social',
-    displayName: 'Alice',
-    avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+    did: 'did:plc:user-jay-001',
+    handle: 'jay.bsky.team',
+    displayName: 'Jay',
+    avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
     bannerUrl: null,
     bio: 'Community admin and AT Protocol enthusiast.',
     communityDid: 'did:plc:test-community-123',
     hasOverride: false,
     source: {
-      displayName: 'Alice',
-      avatarUrl: 'https://cdn.bsky.social/avatar/alice.jpg',
+      displayName: 'Jay',
+      avatarUrl: 'https://cdn.bsky.social/avatar/jay.jpg',
       bannerUrl: null,
       bio: 'Community admin and AT Protocol enthusiast.',
     },
@@ -69,7 +69,7 @@ function createCommunityProfile(overrides?: Partial<CommunityProfile>): Communit
 
 function defaultAuth(overrides?: Record<string, unknown>) {
   return {
-    user: { did: 'did:plc:user-alice-001', handle: 'alice.bsky.social' },
+    user: { did: 'did:plc:user-jay-001', handle: 'jay.bsky.team' },
     isAuthenticated: true,
     isLoading: false,
     getAccessToken: () => 'mock-token',
@@ -122,7 +122,7 @@ describe('EditProfilePage', () => {
         defaultAuth({ user: null, isAuthenticated: false, getAccessToken: () => null })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
 
       await waitFor(() => {
         expect(mockReplace).toHaveBeenCalledWith('/')
@@ -130,41 +130,41 @@ describe('EditProfilePage', () => {
     })
 
     it('does not redirect when authenticated', () => {
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(mockReplace).not.toHaveBeenCalled()
     })
   })
 
   describe('own profile check', () => {
     it('redirects when viewing another user profile', async () => {
-      render(<EditProfilePage params={{ handle: 'bob.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'alex.bsky.team' }} />)
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith('/u/bob.bsky.social')
+        expect(mockReplace).toHaveBeenCalledWith('/u/alex.bsky.team')
       })
     })
   })
 
   describe('form rendering', () => {
     it('renders display name input', () => {
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByLabelText(/display name/i)).toBeInTheDocument()
     })
 
     it('renders bio textarea', () => {
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByLabelText(/bio/i)).toBeInTheDocument()
     })
 
     it('renders save button', () => {
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
     })
 
     it('renders cancel link', () => {
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       const cancel = screen.getByRole('link', { name: /cancel/i })
-      expect(cancel).toHaveAttribute('href', '/u/alice.bsky.social')
+      expect(cancel).toHaveAttribute('href', '/u/jay.bsky.team')
     })
   })
 
@@ -178,7 +178,7 @@ describe('EditProfilePage', () => {
         })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       const indicators = screen.getAllByText(/synced from at protocol/i)
       expect(indicators.length).toBeGreaterThanOrEqual(1)
     })
@@ -187,12 +187,12 @@ describe('EditProfilePage', () => {
       mockUseCommunityProfile.mockReturnValue(
         defaultCommunityProfile({
           profile: createCommunityProfile({ hasOverride: true }),
-          displayName: 'Custom Alice',
+          displayName: 'Custom Jay',
           bio: 'Custom bio',
         })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       const indicators = screen.getAllByText(/custom for this community/i)
       expect(indicators.length).toBeGreaterThanOrEqual(1)
     })
@@ -204,7 +204,7 @@ describe('EditProfilePage', () => {
       mockUseCommunityProfile.mockReturnValue(defaultCommunityProfile({ handleSave }))
 
       const user = userEvent.setup()
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
 
       await user.click(screen.getByRole('button', { name: /save/i }))
       expect(handleSave).toHaveBeenCalled()
@@ -213,7 +213,7 @@ describe('EditProfilePage', () => {
     it('disables save button while saving', () => {
       mockUseCommunityProfile.mockReturnValue(defaultCommunityProfile({ saving: true }))
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByRole('button', { name: /saving/i })).toBeDisabled()
     })
   })
@@ -223,12 +223,12 @@ describe('EditProfilePage', () => {
       mockUseCommunityProfile.mockReturnValue(
         defaultCommunityProfile({
           profile: createCommunityProfile({ hasOverride: true }),
-          displayName: 'Custom Alice',
+          displayName: 'Custom Jay',
           bio: 'Custom bio',
         })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       const resetButtons = screen.getAllByRole('button', { name: /reset to at protocol/i })
       expect(resetButtons.length).toBe(2)
     })
@@ -238,14 +238,14 @@ describe('EditProfilePage', () => {
       mockUseCommunityProfile.mockReturnValue(
         defaultCommunityProfile({
           profile: createCommunityProfile({ hasOverride: true }),
-          displayName: 'Custom Alice',
+          displayName: 'Custom Jay',
           bio: '',
           setDisplayName,
         })
       )
 
       const user = userEvent.setup()
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
 
       const resetButtons = screen.getAllByRole('button', { name: /reset to at protocol/i })
       await user.click(resetButtons[0]!)
@@ -259,7 +259,7 @@ describe('EditProfilePage', () => {
         defaultCommunityProfile({ loading: true, profile: null })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByText(/loading/i)).toBeInTheDocument()
     })
   })
@@ -270,7 +270,7 @@ describe('EditProfilePage', () => {
         defaultCommunityProfile({ error: 'Failed to load community profile.' })
       )
 
-      render(<EditProfilePage params={{ handle: 'alice.bsky.social' }} />)
+      render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       expect(screen.getByText(/failed to load community profile/i)).toBeInTheDocument()
     })
   })

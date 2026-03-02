@@ -75,8 +75,8 @@ describe('UserMenu', () => {
     await user.click(screen.getByRole('button', { name: /user menu/i }))
 
     await waitFor(() => {
-      expect(screen.getByText('Alice')).toBeInTheDocument()
-      expect(screen.getByText('@alice.bsky.social')).toBeInTheDocument()
+      expect(screen.getByText('Jay')).toBeInTheDocument()
+      expect(screen.getByText('@jay.bsky.team')).toBeInTheDocument()
     })
   })
 

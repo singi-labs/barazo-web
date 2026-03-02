@@ -12,7 +12,7 @@ vi.mock('next/link', () => ({
 }))
 
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/u/alice.bsky.social',
+  usePathname: () => '/u/jay.bsky.team',
 }))
 
 describe('ProfileError', () => {

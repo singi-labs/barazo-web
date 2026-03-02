@@ -36,9 +36,9 @@ vi.mock('next/image', () => ({
 vi.mock('@/hooks/use-auth', () => {
   const mockAuth = {
     user: {
-      did: 'did:plc:user-alice-001',
-      handle: 'alice.bsky.social',
-      displayName: 'Alice',
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
       avatarUrl: null,
     },
     isAuthenticated: true,

@@ -46,9 +46,9 @@ vi.mock('@/hooks/use-auth', () => ({
 
 function setAuthenticated() {
   mockAuthState.user = {
-    did: 'did:plc:user-alice-001',
-    handle: 'alice.bsky.social',
-    displayName: 'Alice',
+    did: 'did:plc:user-jay-001',
+    handle: 'jay.bsky.team',
+    displayName: 'Jay',
     avatarUrl: null,
   }
   mockAuthState.isAuthenticated = true
@@ -172,7 +172,7 @@ describe('SetupPage', () => {
         await new Promise((resolve) => setTimeout(resolve, 100))
         return HttpResponse.json({
           initialized: true,
-          adminDid: 'did:plc:user-alice-001',
+          adminDid: 'did:plc:user-jay-001',
           communityName: 'Test',
         })
       })

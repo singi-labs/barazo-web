@@ -64,7 +64,7 @@ describe('AuthProvider', () => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false')
     })
     expect(screen.getByTestId('authenticated')).toHaveTextContent('true')
-    expect(screen.getByTestId('handle')).toHaveTextContent('alice.bsky.social')
+    expect(screen.getByTestId('handle')).toHaveTextContent('jay.bsky.team')
   })
 
   it('stays unauthenticated when refresh fails', async () => {

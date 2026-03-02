@@ -19,7 +19,7 @@ const pages = [
   { name: 'Search page', path: '/search/' },
   { name: 'Admin dashboard', path: '/admin/' },
   { name: 'Settings page', path: '/settings/' },
-  { name: 'Profile page', path: '/u/alice/' },
+  { name: 'Profile page', path: '/u/jay/' },
   { name: 'Accessibility statement', path: '/accessibility/' },
 ]
 

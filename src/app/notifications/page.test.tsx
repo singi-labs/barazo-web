@@ -56,9 +56,9 @@ vi.mock('@/lib/api/client', () => ({
 vi.mock('@/hooks/use-auth', () => {
   const mockAuth = {
     user: {
-      did: 'did:plc:user-alice-001',
-      handle: 'alice.bsky.social',
-      displayName: 'Alice',
+      did: 'did:plc:user-jay-001',
+      handle: 'jay.bsky.team',
+      displayName: 'Jay',
       avatarUrl: null,
     },
     isAuthenticated: true,
@@ -82,11 +82,11 @@ const mockNotifications = [
     id: 'notif-1',
     type: 'reply' as const,
     userDid: 'did:plc:user',
-    actorDid: 'did:plc:bob',
-    actorHandle: 'bob.bsky.social',
+    actorDid: 'did:plc:alex',
+    actorHandle: 'alex.bsky.team',
     subjectUri: 'at://did:plc:user/forum.barazo.topic.post/abc',
     subjectTitle: 'My Topic',
-    message: 'bob.bsky.social replied to your topic',
+    message: 'alex.bsky.team replied to your topic',
     read: false,
     createdAt: '2026-02-14T12:00:00Z',
   },
@@ -94,11 +94,11 @@ const mockNotifications = [
     id: 'notif-2',
     type: 'reaction' as const,
     userDid: 'did:plc:user',
-    actorDid: 'did:plc:carol',
-    actorHandle: 'carol.example.com',
+    actorDid: 'did:plc:sam',
+    actorHandle: 'sam.example.com',
     subjectUri: 'at://did:plc:user/forum.barazo.topic.post/abc',
     subjectTitle: 'My Topic',
-    message: 'carol.example.com reacted to your topic',
+    message: 'sam.example.com reacted to your topic',
     read: true,
     createdAt: '2026-02-13T12:00:00Z',
   },
@@ -128,8 +128,8 @@ describe('NotificationsPage', () => {
       await new Promise((r) => setTimeout(r, 100))
     })
 
-    expect(await screen.findByText(/bob\.bsky\.social replied/)).toBeInTheDocument()
-    expect(screen.getByText(/carol\.example\.com reacted/)).toBeInTheDocument()
+    expect(await screen.findByText(/alex\.bsky\.team replied/)).toBeInTheDocument()
+    expect(screen.getByText(/sam\.example\.com reacted/)).toBeInTheDocument()
   })
 
   it('shows unread indicator on unread notifications', async () => {

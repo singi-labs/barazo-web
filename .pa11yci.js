@@ -33,7 +33,7 @@ module.exports = {
     'http://localhost:3000/search/',
     'http://localhost:3000/admin/',
     'http://localhost:3000/settings/',
-    'http://localhost:3000/u/alice/',
+    'http://localhost:3000/u/jay/',
     'http://localhost:3000/accessibility/',
   ],
 }

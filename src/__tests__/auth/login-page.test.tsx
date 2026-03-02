@@ -55,7 +55,7 @@ describe('LoginPage', () => {
     render(<LoginPage />)
     const input = screen.getByLabelText(/handle/i)
     expect(input).toBeInTheDocument()
-    expect(input).toHaveAttribute('placeholder', 'alice.bsky.social')
+    expect(input).toHaveAttribute('placeholder', 'jay.bsky.team')
   })
 
   it('renders continue button', () => {
@@ -107,10 +107,10 @@ describe('LoginPage', () => {
     const user = userEvent.setup()
     render(<LoginPage />)
 
-    await user.type(screen.getByLabelText(/handle/i), 'Alice.Bsky.Social')
+    await user.type(screen.getByLabelText(/handle/i), 'Jay.Bsky.Team')
     await user.click(screen.getByRole('button', { name: /continue/i }))
 
-    expect(mockLogin).toHaveBeenCalledWith('alice.bsky.social')
+    expect(mockLogin).toHaveBeenCalledWith('jay.bsky.team')
   })
 
   it('strips trailing dot from handle', async () => {
