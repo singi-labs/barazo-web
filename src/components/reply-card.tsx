@@ -88,9 +88,7 @@ export function ReplyCard({
             </a>
           </div>
           <div className="px-4 pb-3">
-            <p className="text-sm italic text-muted-foreground">
-              {tombstoneText}
-            </p>
+            <p className="text-sm italic text-muted-foreground">{tombstoneText}</p>
           </div>
         </article>
       </div>
