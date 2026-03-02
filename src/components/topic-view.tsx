@@ -50,6 +50,36 @@ export function TopicView({
   className,
 }: TopicViewProps) {
   const headingId = `topic-heading-${topic.rkey}`
+  const isDeleted = topic.isAuthorDeleted || topic.isModDeleted
+
+  if (isDeleted) {
+    const tombstoneText = topic.isModDeleted
+      ? 'This topic was removed by a moderator.'
+      : 'This topic was removed by the author.'
+
+    return (
+      <article
+        id="post-1"
+        className={cn('rounded-lg border border-border bg-muted/50', className)}
+        aria-labelledby={headingId}
+      >
+        <div className="p-4 sm:p-6">
+          <div className="flex items-center gap-2 text-sm">
+            <span
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground"
+              aria-hidden="true"
+            >
+              ?
+            </span>
+            <h2 id={headingId} className="font-medium text-muted-foreground">
+              [deleted]
+            </h2>
+          </div>
+          <p className="mt-4 text-sm italic text-muted-foreground">{tombstoneText}</p>
+        </div>
+      </article>
+    )
+  }
 
   return (
     <article

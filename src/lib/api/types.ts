@@ -74,6 +74,8 @@ export interface Topic {
   cid: string
   replyCount: number
   reactionCount: number
+  isAuthorDeleted: boolean
+  isModDeleted: boolean
   categoryMaturityRating: MaturityRating
   lastActivityAt: string
   createdAt: string
