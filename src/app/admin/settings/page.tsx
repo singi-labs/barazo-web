@@ -39,7 +39,7 @@ export default function AdminSettingsPage() {
         getPdsTrustFactors(getAccessToken() ?? ''),
       ])
       setSettings(settingsData)
-      setPdsProviders(pdsData.providers)
+      setPdsProviders(pdsData.factors)
     } catch {
       setLoadError('Failed to load community settings. The API may be unreachable.')
     } finally {

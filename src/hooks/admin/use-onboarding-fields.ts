@@ -30,8 +30,8 @@ export function useOnboardingFields() {
   const fetchFields = useCallback(async () => {
     setLoadError(null)
     try {
-      const response = await getOnboardingFields(getAccessToken() ?? '')
-      setFields(response.fields)
+      const fields = await getOnboardingFields(getAccessToken() ?? '')
+      setFields(fields)
     } catch {
       setLoadError('Failed to load onboarding fields. The API may be unreachable.')
     } finally {

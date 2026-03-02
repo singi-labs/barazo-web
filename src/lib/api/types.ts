@@ -708,7 +708,8 @@ export interface PdsTrustFactor {
 }
 
 export interface PdsTrustFactorsResponse {
-  providers: PdsTrustFactor[]
+  factors: PdsTrustFactor[]
+  cursor: string | null
 }
 
 export interface TrustGraphStatus {
