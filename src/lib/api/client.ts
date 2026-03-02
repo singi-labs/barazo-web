@@ -317,10 +317,13 @@ export function markNotificationsRead(
 
 // --- Community endpoints ---
 
-export function getCommunitySettings(options?: FetchOptions): Promise<CommunitySettings> {
+export function getCommunitySettings(
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunitySettings> {
   return apiFetch<CommunitySettings>('/api/admin/settings', {
     ...options,
-    headers: { ...options?.headers },
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })
 }
 
@@ -787,7 +790,7 @@ export function reorderOnboardingFields(
     ...options,
     method: 'PUT',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
-    body: { fields },
+    body: fields,
   })
 }
 
