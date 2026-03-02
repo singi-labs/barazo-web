@@ -49,7 +49,7 @@ export function PdsTrustSection({ providers, onUpdate, onRemove }: PdsTrustSecti
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">PDS Provider Trust</h2>
+          <h2 className="text-lg font-semibold text-foreground">PDS provider trust</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
             Accounts from providers with higher trust factors earn reputation faster. Override the
             default if you trust a specific self-hosted PDS provider.
@@ -61,7 +61,7 @@ export function PdsTrustSection({ providers, onUpdate, onRemove }: PdsTrustSecti
           aria-label="Add override"
           className="shrink-0 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          Add Override
+          Add override
         </button>
       </div>
 

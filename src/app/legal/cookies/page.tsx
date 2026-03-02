@@ -31,9 +31,9 @@ export default async function CookiePolicyPage() {
   return (
     <ForumLayout communityName={communityName}>
       <div className="mx-auto max-w-2xl space-y-8">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cookie Policy' }]} />
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cookie policy' }]} />
 
-        <h1 className="text-2xl font-bold text-foreground">Cookie Policy</h1>
+        <h1 className="text-2xl font-bold text-foreground">Cookie policy</h1>
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Overview</h2>
@@ -45,7 +45,7 @@ export default async function CookiePolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Cookies We Use</h2>
+          <h2 className="text-lg font-semibold text-foreground">Cookies we use</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Barazo uses a single essential cookie:
           </p>
@@ -74,7 +74,7 @@ export default async function CookiePolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Technical Details</h2>
+          <h2 className="text-lg font-semibold text-foreground">Technical details</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             The refresh token cookie has the following security properties:
           </p>
@@ -98,7 +98,7 @@ export default async function CookiePolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">What We Do Not Use</h2>
+          <h2 className="text-lg font-semibold text-foreground">What we do not use</h2>
           <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
             <li>No tracking or advertising cookies.</li>
             <li>No third-party analytics (Google Analytics, etc.).</li>
@@ -108,7 +108,7 @@ export default async function CookiePolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Cookie Consent</h2>
+          <h2 className="text-lg font-semibold text-foreground">Cookie consent</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Because we only use a single essential cookie required for the service to function, a
             cookie consent banner is not required under the ePrivacy Directive (EU Directive
@@ -118,7 +118,7 @@ export default async function CookiePolicyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Theme Preference</h2>
+          <h2 className="text-lg font-semibold text-foreground">Theme preference</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Your light/dark mode preference is stored in localStorage (not a cookie). This is a
             client-side preference that is never sent to our servers.

@@ -146,7 +146,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
         {/* Recent activity */}
         <section>
-          <h2 className="text-lg font-semibold text-foreground">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-foreground">Recent activity</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Recent posts and replies will appear here once the activity feed is implemented.
           </p>

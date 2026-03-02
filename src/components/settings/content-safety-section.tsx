@@ -33,7 +33,7 @@ export function ContentSafetySection({
 }: ContentSafetySectionProps) {
   return (
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
-      <legend className="px-2 text-sm font-semibold text-foreground">Content Safety</legend>
+      <legend className="px-2 text-sm font-semibold text-foreground">Content safety</legend>
 
       <div className="space-y-1">
         <label htmlFor="maturity-level" className="block text-sm font-medium text-foreground">

@@ -81,7 +81,7 @@ export function SybilClusterDetailView({ detail, onBack, onAction }: SybilCluste
               <th className="pb-2 pr-4 font-medium text-muted-foreground">Role</th>
               <th className="pb-2 pr-4 font-medium text-muted-foreground">Trust</th>
               <th className="pb-2 pr-4 font-medium text-muted-foreground">Reputation</th>
-              <th className="pb-2 pr-4 font-medium text-muted-foreground">Account Age</th>
+              <th className="pb-2 pr-4 font-medium text-muted-foreground">Account age</th>
               <th className="pb-2 font-medium text-muted-foreground">Communities</th>
             </tr>
           </thead>

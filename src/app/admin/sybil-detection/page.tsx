@@ -43,7 +43,7 @@ export default function AdminSybilDetectionPage() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Sybil Detection</h1>
+          <h1 className="text-2xl font-bold text-foreground">Sybil detection</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Monitor the trust graph for suspicious account clusters. The system uses EigenTrust
             scores and behavioral heuristics to detect coordinated inauthentic activity.

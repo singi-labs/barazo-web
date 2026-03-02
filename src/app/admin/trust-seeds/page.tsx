@@ -80,7 +80,7 @@ export default function AdminTrustSeedsPage() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Trust Seeds</h1>
+          <h1 className="text-2xl font-bold text-foreground">Trust seeds</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Trusted accounts that anchor the EigenTrust computation. Manual seeds are explicitly
             added by admins. Automatic seeds are derived from moderators and admins.
@@ -108,7 +108,7 @@ export default function AdminTrustSeedsPage() {
                 aria-label="Add trust seed"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Add Trust Seed
+                Add trust seed
               </button>
             </div>
 

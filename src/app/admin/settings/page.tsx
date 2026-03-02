@@ -99,7 +99,7 @@ export default function AdminSettingsPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">Community Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground">Community settings</h1>
 
         {loading && <p className="text-sm text-muted-foreground">Loading settings...</p>}
 

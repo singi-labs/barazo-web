@@ -38,7 +38,7 @@ export default function AdminOnboardingPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Onboarding Fields</h1>
+            <h1 className="text-2xl font-bold text-foreground">Onboarding fields</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Configure fields that users must complete before they can post in this community.
             </p>
@@ -49,7 +49,7 @@ export default function AdminOnboardingPage() {
             className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             <Plus size={16} aria-hidden="true" />
-            Add Field
+            Add field
           </button>
         </div>
 

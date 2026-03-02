@@ -42,7 +42,7 @@ export function CommunityProfileSettings() {
   if (loading || !communityDid) {
     return (
       <fieldset className="space-y-4 rounded-lg border border-border p-4">
-        <legend className="px-2 text-sm font-semibold text-foreground">Community Profile</legend>
+        <legend className="px-2 text-sm font-semibold text-foreground">Community profile</legend>
         {loading ? (
           <div className="animate-pulse space-y-3">
             <div className="h-24 w-24 rounded-full bg-muted" />
@@ -62,7 +62,7 @@ export function CommunityProfileSettings() {
   return (
     <>
       <fieldset className="space-y-6 rounded-lg border border-border p-4">
-        <legend className="px-2 text-sm font-semibold text-foreground">Community Profile</legend>
+        <legend className="px-2 text-sm font-semibold text-foreground">Community profile</legend>
 
         <p className="text-sm text-muted-foreground">
           Customize how you appear in this community. Leave fields empty to use your AT Protocol
@@ -132,7 +132,7 @@ export function CommunityProfileSettings() {
             )}
           >
             <ArrowCounterClockwise size={16} weight="bold" aria-hidden="true" />
-            Reset to AT Protocol Profile
+            Reset to AT Protocol profile
           </button>
 
           <button
@@ -145,17 +145,17 @@ export function CommunityProfileSettings() {
               'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
-            {saving ? 'Saving...' : 'Save Profile'}
+            {saving ? 'Saving...' : 'Save profile'}
           </button>
         </div>
       </fieldset>
 
       <ConfirmDialog
         open={showResetConfirm}
-        title="Reset Community Profile"
+        title="Reset community profile"
         description="This will remove all community-specific overrides (display name, bio, avatar, banner) and revert to your AT Protocol profile. This action cannot be undone."
-        confirmLabel="Reset Profile"
-        cancelLabel="Keep Overrides"
+        confirmLabel="Reset profile"
+        cancelLabel="Keep overrides"
         variant="destructive"
         onConfirm={handleReset}
         onCancel={() => setShowResetConfirm(false)}

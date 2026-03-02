@@ -42,7 +42,7 @@ vi.mock('next/navigation', () => ({
 describe('EditTopicPage', () => {
   it('renders edit topic heading', async () => {
     render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
-    expect(await screen.findByRole('heading', { name: 'Edit Topic' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Edit topic' })).toBeInTheDocument()
   })
 
   it('pre-populates form with topic data', async () => {

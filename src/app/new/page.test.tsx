@@ -65,7 +65,7 @@ vi.mock('@/hooks/use-auth', () => ({
 describe('NewTopicPage', () => {
   it('renders create topic heading', () => {
     render(<NewTopicPage />)
-    expect(screen.getByRole('heading', { name: 'Create New Topic' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Create new topic' })).toBeInTheDocument()
   })
 
   it('renders topic form', () => {
@@ -78,6 +78,6 @@ describe('NewTopicPage', () => {
   it('renders breadcrumbs', () => {
     render(<NewTopicPage />)
     expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('New Topic')).toBeInTheDocument()
+    expect(screen.getByText('New topic')).toBeInTheDocument()
   })
 })

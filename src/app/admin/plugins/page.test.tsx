@@ -97,9 +97,9 @@ describe('AdminPluginsPage', () => {
 
     // Should show dependency warning dialog
     await waitFor(() => {
-      expect(screen.getByText('Dependency Warning')).toBeInTheDocument()
+      expect(screen.getByText('Dependency warning')).toBeInTheDocument()
     })
-    expect(screen.getByText('Disable Anyway')).toBeInTheDocument()
+    expect(screen.getByText('Disable anyway')).toBeInTheDocument()
   })
 
   it('opens settings modal when settings button is clicked', async () => {

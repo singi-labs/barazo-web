@@ -67,7 +67,7 @@ export default function SetupPage() {
     return (
       <div className="flex min-h-screen items-center justify-center p-6">
         <div className="w-full max-w-md space-y-4 text-center">
-          <h1 className="text-2xl font-bold">Community Setup</h1>
+          <h1 className="text-2xl font-bold">Community setup</h1>
           <p className="text-muted-foreground">
             This community hasn&apos;t been set up yet. Log in to initialize it.
           </p>
@@ -86,13 +86,13 @@ export default function SetupPage() {
     <div className="flex min-h-screen items-center justify-center p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">Set Up Your Community</h1>
+          <h1 className="text-2xl font-bold">Set up your community</h1>
           <p className="text-muted-foreground">You&apos;ll become the admin of this community.</p>
         </div>
 
         <div className="space-y-2">
           <label htmlFor="community-name" className="text-sm font-medium">
-            Community Name
+            Community name
           </label>
           <input
             id="community-name"
@@ -119,7 +119,7 @@ export default function SetupPage() {
           disabled={submitting}
           className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
-          {submitting ? 'Initializing...' : 'Initialize Community'}
+          {submitting ? 'Initializing...' : 'Initialize community'}
         </button>
       </form>
     </div>
