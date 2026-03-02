@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { ReplyCard } from './reply-card'
-import { mockReplies } from '@/mocks/data'
+import { mockReplies, mockAuthorDeletedReply, mockModDeletedReply } from '@/mocks/data'
 
 const reply = mockReplies[0]!
 const nestedReply = mockReplies[1]! // depth 1
@@ -104,5 +104,85 @@ describe('ReplyCard', () => {
     )
     await user.click(screen.getByRole('button', { name: /like/i }))
     expect(onToggle).toHaveBeenCalledWith('like')
+  })
+
+  describe('tombstone: author-deleted replies', () => {
+    it('shows author-deleted placeholder text', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      expect(screen.getByText('This post was removed by the author.')).toBeInTheDocument()
+    })
+
+    it('does not render MarkdownContent for author-deleted replies', () => {
+      const { container } = render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      expect(container.querySelector('.prose')).not.toBeInTheDocument()
+    })
+
+    it('shows [deleted] instead of author name for author-deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      expect(screen.getByText('[deleted]')).toBeInTheDocument()
+    })
+
+    it('does not render author avatar for author-deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
+
+    it('preserves post number anchor for author-deleted replies', () => {
+      const { container } = render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      const article = container.querySelector('article')
+      expect(article).toHaveAttribute('id', 'post-4')
+    })
+
+    it('does not render reactions footer for author-deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      expect(screen.queryByLabelText(/reactions/i)).not.toBeInTheDocument()
+    })
+
+    it('does not render report button for author-deleted replies', () => {
+      render(
+        <ReplyCard
+          reply={mockAuthorDeletedReply}
+          postNumber={4}
+          canReport={true}
+          onReport={vi.fn()}
+        />
+      )
+      expect(screen.queryByRole('button', { name: /report/i })).not.toBeInTheDocument()
+    })
+
+    it('passes axe accessibility check for author-deleted replies', async () => {
+      const { container } = render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('tombstone: moderator-deleted replies', () => {
+    it('shows moderator-deleted placeholder text', () => {
+      render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      expect(screen.getByText('This post was removed by a moderator.')).toBeInTheDocument()
+    })
+
+    it('does not render original reply content for mod-deleted replies', () => {
+      render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      expect(screen.queryByText('[Removed by moderator]')).not.toBeInTheDocument()
+    })
+
+    it('shows [deleted] instead of author name for mod-deleted replies', () => {
+      render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      expect(screen.getByText('[deleted]')).toBeInTheDocument()
+    })
+
+    it('preserves post number anchor for mod-deleted replies', () => {
+      const { container } = render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      const article = container.querySelector('article')
+      expect(article).toHaveAttribute('id', 'post-5')
+    })
+
+    it('passes axe accessibility check for mod-deleted replies', async () => {
+      const { container } = render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
   })
 })

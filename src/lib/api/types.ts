@@ -118,6 +118,8 @@ export interface Reply {
   cid: string
   depth: number
   reactionCount: number
+  isAuthorDeleted: boolean
+  isModDeleted: boolean
   createdAt: string
   indexedAt: string
 }
