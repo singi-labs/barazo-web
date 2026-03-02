@@ -25,14 +25,16 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   let categoriesResult: CategoriesResponse = { categories: [] }
-  let topicsResult: TopicsResponse = { topics: [], cursor: null }
+  let recentTopics: TopicsResponse = { topics: [], cursor: null }
+  let popularTopics: TopicsResponse = { topics: [], cursor: null }
   let publicSettings: PublicSettings | null = null
   let apiError = false
 
   try {
-    ;[categoriesResult, topicsResult, publicSettings] = await Promise.all([
+    ;[categoriesResult, recentTopics, popularTopics, publicSettings] = await Promise.all([
       getCategories(),
-      getTopics({ limit: 20, sort: 'latest' }),
+      getTopics({ limit: 10, sort: 'latest' }),
+      getTopics({ limit: 10, sort: 'popular' }),
       getPublicSettings(),
     ])
   } catch {
@@ -96,7 +98,14 @@ export default async function HomePage() {
           )}
 
           {/* Recent Topics */}
-          <TopicList topics={topicsResult.topics} heading="Recent Topics" />
+          <TopicList topics={recentTopics.topics} heading="Recent Topics" />
+
+          {/* Popular Topics */}
+          {popularTopics.topics.length > 0 && (
+            <div className="mt-8">
+              <TopicList topics={popularTopics.topics} heading="Popular Topics" />
+            </div>
+          )}
         </>
       )}
     </ForumLayout>
