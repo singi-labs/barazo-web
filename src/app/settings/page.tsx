@@ -35,6 +35,7 @@ export default function SettingsPage() {
     values,
     setValues,
     loading,
+    declaredAge,
     savingCommunity,
     communityError,
     communitySuccess,
@@ -45,6 +46,9 @@ export default function SettingsPage() {
     showCrossPostAuthDialog,
     setShowCrossPostAuthDialog,
     crossPostScopesGranted,
+    handleBlockUser,
+    handleUnblockUser,
+    handleAgeChange,
     handleSaveCommunitySettings,
     handleSaveGlobalSettings,
     handleAgeConfirm,
@@ -187,11 +191,14 @@ export default function SettingsPage() {
               <form onSubmit={handleSaveGlobalSettings} className="mt-6 space-y-8" noValidate>
                 <ContentSafetySection
                   maturityLevel={values.maturityLevel}
+                  declaredAge={declaredAge}
                   mutedWords={values.mutedWords}
-                  blockedDids={values.blockedDids}
+                  blockedUsers={values.blockedUsers}
                   onMaturityChange={(level) => setValues({ ...values, maturityLevel: level })}
+                  onAgeChange={handleAgeChange}
                   onMutedWordsChange={(words) => setValues({ ...values, mutedWords: words })}
-                  onBlockedDidsChange={(dids) => setValues({ ...values, blockedDids: dids })}
+                  onBlockUser={handleBlockUser}
+                  onUnblockUser={handleUnblockUser}
                 />
 
                 <div className="flex justify-end">

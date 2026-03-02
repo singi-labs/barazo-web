@@ -9,18 +9,9 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { AGE_OPTIONS } from '@/lib/constants'
 import { declareAge } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
-
-/** Valid age bracket options. 0 = "Rather not say". */
-const AGE_OPTIONS = [
-  { value: 0, label: 'Rather not say' },
-  { value: 13, label: '13+' },
-  { value: 14, label: '14+' },
-  { value: 15, label: '15+' },
-  { value: 16, label: '16+' },
-  { value: 18, label: '18+' },
-] as const
 
 interface AgeGateDialogProps {
   open: boolean

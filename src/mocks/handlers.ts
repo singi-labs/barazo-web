@@ -529,6 +529,23 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
+  // GET /api/users/resolve-handles
+  http.get(`${API_URL}/api/users/resolve-handles`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const url = new URL(request.url)
+    const handles = (url.searchParams.get('handles') ?? '').split(',').filter(Boolean)
+    const users = handles.map((handle) => ({
+      did: `did:plc:resolved-${handle.replace(/\./g, '-')}`,
+      handle,
+      displayName: handle.split('.')[0] ?? handle,
+      avatarUrl: null,
+    }))
+    return HttpResponse.json({ users })
+  }),
+
   // GET /api/users/me/preferences
   http.get(`${API_URL}/api/users/me/preferences`, ({ request }) => {
     const auth = request.headers.get('Authorization')

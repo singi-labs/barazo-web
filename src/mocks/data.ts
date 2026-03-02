@@ -901,6 +901,7 @@ export const mockUserPreferences: UserPreferences = {
   declaredAge: null,
   mutedWords: ['spam', 'offensive'],
   blockedDids: [],
+  blockedProfiles: [],
   mutedDids: [],
   crossPostBluesky: true,
   crossPostFrontpage: false,

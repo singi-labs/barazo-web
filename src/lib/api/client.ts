@@ -6,6 +6,7 @@
 
 import type {
   AgeDeclarationResponse,
+  AuthorProfile,
   AuthSession,
   AuthUser,
   CategoriesResponse,
@@ -632,6 +633,18 @@ export function declareAge(
     method: 'POST',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: { declaredAge },
+  })
+}
+
+export function resolveHandles(
+  handles: string[],
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ users: AuthorProfile[] }> {
+  const qs = encodeURIComponent(handles.join(','))
+  return apiFetch<{ users: AuthorProfile[] }>(`/api/users/resolve-handles?handles=${qs}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })
 }
 

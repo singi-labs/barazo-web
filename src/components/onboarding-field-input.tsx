@@ -4,15 +4,7 @@
  */
 
 import type { OnboardingField } from '@/lib/api/types'
-
-const AGE_OPTIONS = [
-  { value: 0, label: 'Rather not say' },
-  { value: 13, label: '13+' },
-  { value: 14, label: '14+' },
-  { value: 15, label: '15+' },
-  { value: 16, label: '16+' },
-  { value: 18, label: '18+' },
-] as const
+import { AGE_OPTIONS } from '@/lib/constants'
 
 const INPUT_CLASS =
   'mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground'
