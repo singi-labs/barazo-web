@@ -1,6 +1,6 @@
 /**
  * TopicView - Displays a full topic post with content and metadata.
- * Includes reactions, moderation controls, report button, and self-labels.
+ * Includes reactions, moderation controls, report button, edit button, and self-labels.
  * Used on the topic detail page.
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
