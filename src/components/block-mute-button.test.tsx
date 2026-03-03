@@ -52,6 +52,15 @@ beforeEach(() => {
     key: vi.fn(),
   })
   mockStorage['accessToken'] = 'test-token'
+  mockGetAccessToken.mockReturnValue('mock-access-token')
+
+  // Mock native dialog methods for JSDOM
+  HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  })
+  HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+  })
 })
 
 afterEach(() => {
@@ -112,7 +121,8 @@ describe('BlockMuteButton', () => {
     expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Unmute this user')
   })
 
-  it('calls onToggle after successful block', async () => {
+  it('calls onToggle after successful block (dialog already dismissed)', async () => {
+    mockStorage['barazo_block_explained'] = '1'
     const onToggle = vi.fn()
     render(
       <BlockMuteButton
@@ -131,7 +141,8 @@ describe('BlockMuteButton', () => {
     })
   })
 
-  it('calls onToggle after successful mute', async () => {
+  it('calls onToggle after successful mute (dialog already dismissed)', async () => {
+    mockStorage['barazo_mute_explained'] = '1'
     const onToggle = vi.fn()
     render(
       <BlockMuteButton
@@ -151,6 +162,7 @@ describe('BlockMuteButton', () => {
   })
 
   it('does not call onToggle without auth token', async () => {
+    mockStorage['barazo_block_explained'] = '1'
     mockGetAccessToken.mockReturnValue(null)
     const onToggle = vi.fn()
     render(
@@ -168,5 +180,205 @@ describe('BlockMuteButton', () => {
     // Wait a tick and verify onToggle was NOT called
     await new Promise((r) => setTimeout(r, 100))
     expect(onToggle).not.toHaveBeenCalled()
+  })
+
+  describe('first-use confirmation dialog', () => {
+    it('opens block confirmation dialog on first block click', async () => {
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="block"
+          isActive={false}
+          onToggle={vi.fn()}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Block'))
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText('Block this user?')).toBeInTheDocument()
+    })
+
+    it('calls API and sets localStorage when confirming block dialog', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="block"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Block'))
+      await user.click(screen.getByRole('button', { name: /^block$/i }))
+
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(true)
+      })
+      expect(mockStorage['barazo_block_explained']).toBe('1')
+    })
+
+    it('does not call API when canceling block dialog', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="block"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Block'))
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      await new Promise((r) => setTimeout(r, 100))
+      expect(onToggle).not.toHaveBeenCalled()
+      expect(mockStorage['barazo_block_explained']).toBeUndefined()
+    })
+
+    it('skips dialog when localStorage flag is set for block', async () => {
+      mockStorage['barazo_block_explained'] = '1'
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="block"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Block'))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(true)
+      })
+    })
+
+    it('never shows dialog for unblock', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="block"
+          isActive={true}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Unblock'))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(false)
+      })
+    })
+
+    it('opens mute confirmation dialog on first mute click', async () => {
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="mute"
+          isActive={false}
+          onToggle={vi.fn()}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Mute'))
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText('Mute this user?')).toBeInTheDocument()
+    })
+
+    it('calls API and sets localStorage when confirming mute dialog', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="mute"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Mute'))
+      await user.click(screen.getByRole('button', { name: /^mute$/i }))
+
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(true)
+      })
+      expect(mockStorage['barazo_mute_explained']).toBe('1')
+    })
+
+    it('does not call API when canceling mute dialog', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="mute"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Mute'))
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      await new Promise((r) => setTimeout(r, 100))
+      expect(onToggle).not.toHaveBeenCalled()
+      expect(mockStorage['barazo_mute_explained']).toBeUndefined()
+    })
+
+    it('skips dialog when localStorage flag is set for mute', async () => {
+      mockStorage['barazo_mute_explained'] = '1'
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="mute"
+          isActive={false}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Mute'))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(true)
+      })
+    })
+
+    it('never shows dialog for unmute', async () => {
+      const onToggle = vi.fn()
+      render(
+        <BlockMuteButton
+          targetDid="did:plc:target123"
+          action="mute"
+          isActive={true}
+          onToggle={onToggle}
+        />
+      )
+
+      const user = userEvent.setup()
+      await user.click(screen.getByText('Unmute'))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(onToggle).toHaveBeenCalledWith(false)
+      })
+    })
   })
 })
