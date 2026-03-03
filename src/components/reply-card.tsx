@@ -1,6 +1,6 @@
 /**
  * ReplyCard - Displays a single reply with depth indication.
- * Includes reactions and report button.
+ * Includes reactions, report button, and inline editing for authors.
  * Depth is shown via left margin indentation.
  * Deleted replies render as tombstone placeholders.
  * @see specs/prd-web.md Section 4 (Topic Components)
