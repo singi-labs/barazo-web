@@ -11,10 +11,11 @@ import { ReplyCard } from './reply-card'
 interface ReplyThreadProps {
   replies: Reply[]
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
+  currentUserDid?: string
   className?: string
 }
 
-export function ReplyThread({ replies, onReply, className }: ReplyThreadProps) {
+export function ReplyThread({ replies, onReply, currentUserDid, className }: ReplyThreadProps) {
   const replyCount = replies.length
   const heading =
     replyCount === 0 ? 'Replies' : replyCount === 1 ? '1 Reply' : `${replyCount} Replies`
@@ -30,7 +31,13 @@ export function ReplyThread({ replies, onReply, className }: ReplyThreadProps) {
       ) : (
         <div className="space-y-3">
           {replies.map((reply, index) => (
-            <ReplyCard key={reply.uri} reply={reply} postNumber={index + 2} onReply={onReply} />
+            <ReplyCard
+              key={reply.uri}
+              reply={reply}
+              postNumber={index + 2}
+              onReply={onReply}
+              canEdit={currentUserDid ? reply.authorDid === currentUserDid : false}
+            />
           ))}
         </div>
       )}

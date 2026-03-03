@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { formatRelativeTime, formatCompactNumber, slugify, getTopicUrl } from './format'
+import { formatRelativeTime, formatCompactNumber, slugify, getTopicUrl, isEdited } from './format'
 
 describe('formatRelativeTime', () => {
   it('returns "just now" for recent timestamps', () => {
@@ -79,5 +79,30 @@ describe('getTopicUrl', () => {
       rkey: '3kf3ghi',
     }
     expect(getTopicUrl(topic)).toBe('/t/feature-request-dark-mode/3kf3ghi')
+  })
+})
+
+describe('isEdited', () => {
+  it('returns false when timestamps are equal', () => {
+    const ts = '2026-01-01T12:00:00.000Z'
+    expect(isEdited(ts, ts)).toBe(false)
+  })
+
+  it('returns false when difference is under 30 seconds', () => {
+    const createdAt = '2026-01-01T12:00:00.000Z'
+    const indexedAt = new Date(new Date(createdAt).getTime() + 15_000).toISOString()
+    expect(isEdited(createdAt, indexedAt)).toBe(false)
+  })
+
+  it('returns true when difference exceeds 30 seconds', () => {
+    const createdAt = '2026-01-01T12:00:00.000Z'
+    const indexedAt = new Date(new Date(createdAt).getTime() + 60_000).toISOString()
+    expect(isEdited(createdAt, indexedAt)).toBe(true)
+  })
+
+  it('returns false for invalid date strings', () => {
+    expect(isEdited('not-a-date', '2026-01-01T12:00:00.000Z')).toBe(false)
+    expect(isEdited('2026-01-01T12:00:00.000Z', 'not-a-date')).toBe(false)
+    expect(isEdited('invalid', 'also-invalid')).toBe(false)
   })
 })

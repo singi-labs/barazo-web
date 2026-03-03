@@ -137,6 +137,11 @@ export interface CreateReplyInput {
   labels?: string[]
 }
 
+export interface UpdateReplyInput {
+  content: string
+  labels?: string[]
+}
+
 // --- Reactions ---
 
 export interface Reaction {

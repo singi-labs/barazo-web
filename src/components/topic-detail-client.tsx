@@ -9,6 +9,8 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import type { Reply, Topic } from '@/lib/api/types'
+import { getTopicUrl } from '@/lib/format'
+import { TopicView } from '@/components/topic-view'
 import { ReplyThread } from '@/components/reply-thread'
 import {
   ReplyComposer,
@@ -24,8 +26,13 @@ interface TopicDetailClientProps {
 }
 
 export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDetailClientProps) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
+
+  const canEdit = isAuthenticated && user?.did === topic.authorDid
+  const handleEdit = useCallback(() => {
+    router.push(getTopicUrl(topic) + '/edit')
+  }, [router, topic])
   const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null)
   const [composerContent, setComposerContent] = useState('')
   const composerRef = useRef<ReplyComposerHandle>(null)
@@ -89,9 +96,18 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
 
   return (
     <>
+      {/* Topic with edit button for author */}
+      <div className="mt-4">
+        <TopicView topic={topic} canEdit={canEdit} onEdit={handleEdit} />
+      </div>
+
       {/* Reply thread with reply buttons */}
       <div className="mt-8 pb-16">
-        <ReplyThread replies={replies} onReply={isLocked ? undefined : handleReply} />
+        <ReplyThread
+          replies={replies}
+          onReply={isLocked ? undefined : handleReply}
+          currentUserDid={user?.did}
+        />
       </div>
 
       {/* Composer or auth gate */}
