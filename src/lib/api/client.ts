@@ -27,7 +27,9 @@ import type {
   UpdatePreferencesInput,
   UpdateTopicInput,
   UserPreferences,
+  Reply,
   RepliesResponse,
+  CreateReplyInput,
   SearchResponse,
   NotificationsResponse,
   PaginationParams,
@@ -259,6 +261,23 @@ export function getReplies(
     `/api/topics/${encodeURIComponent(topicUri)}/replies${query}`,
     options
   )
+}
+
+export function createReply(
+  topicUri: string,
+  input: CreateReplyInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Reply> {
+  return apiFetch<Reply>(`/api/topics/${encodeURIComponent(topicUri)}/replies`, {
+    ...options,
+    method: 'POST',
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: input,
+  })
 }
 
 // --- Search endpoints ---

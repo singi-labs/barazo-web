@@ -26,7 +26,7 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { CategoryNav } from '@/components/category-nav'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicView } from '@/components/topic-view'
-import { ReplyThread } from '@/components/reply-thread'
+import { TopicDetailClient } from '@/components/topic-detail-client'
 import type { CategoriesResponse, RepliesResponse } from '@/lib/api/types'
 
 export const dynamic = 'force-dynamic'
@@ -212,10 +212,8 @@ export default async function TopicPage({ params }: TopicPageProps) {
         <TopicView topic={topic} />
       </div>
 
-      {/* Replies */}
-      <div className="mt-8">
-        <ReplyThread replies={repliesResult.replies} />
-      </div>
+      {/* Replies + Composer */}
+      <TopicDetailClient topic={topic} replies={repliesResult.replies} />
     </ForumLayout>
   )
 }

@@ -106,6 +106,31 @@ describe('ReplyCard', () => {
     expect(onToggle).toHaveBeenCalledWith('like')
   })
 
+  describe('reply button', () => {
+    it('calls onReply with correct metadata when Reply button is clicked', async () => {
+      const user = userEvent.setup()
+      const onReply = vi.fn()
+      render(<ReplyCard reply={reply} postNumber={2} onReply={onReply} />)
+      await user.click(screen.getByRole('button', { name: /reply to/i }))
+      expect(onReply).toHaveBeenCalledWith({
+        uri: reply.uri,
+        cid: reply.cid,
+        authorHandle: reply.author?.handle ?? reply.authorDid,
+        snippet: reply.content.slice(0, 100),
+      })
+    })
+
+    it('does not show Reply button on deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} onReply={vi.fn()} />)
+      expect(screen.queryByRole('button', { name: /reply to/i })).not.toBeInTheDocument()
+    })
+
+    it('does not show Reply button when onReply is not provided', () => {
+      render(<ReplyCard reply={reply} postNumber={2} />)
+      expect(screen.queryByRole('button', { name: /reply to/i })).not.toBeInTheDocument()
+    })
+  })
+
   describe('tombstone: author-deleted replies', () => {
     it('shows author-deleted placeholder text', () => {
       render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} />)

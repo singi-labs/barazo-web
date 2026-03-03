@@ -23,6 +23,7 @@ import { TopicList } from '@/components/topic-list'
 import { CategoryNav } from '@/components/category-nav'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { Pagination } from '@/components/pagination'
+import { NewTopicButton } from '@/components/new-topic-button'
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>
@@ -116,6 +117,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         <p className="mt-2 text-sm text-muted-foreground">
           {category.topicCount} {category.topicCount === 1 ? 'topic' : 'topics'}
         </p>
+      </div>
+
+      {/* New topic button */}
+      <div className="mb-4 flex justify-end">
+        <NewTopicButton variant="category" categorySlug={slug} categoryName={category.name} />
       </div>
 
       {/* Topic list */}

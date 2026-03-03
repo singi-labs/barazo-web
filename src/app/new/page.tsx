@@ -8,7 +8,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { CreateTopicInput } from '@/lib/api/types'
 import { createTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
@@ -21,6 +21,8 @@ import { useAuth } from '@/hooks/use-auth'
 
 export default function NewTopicPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialCategory = searchParams.get('category') ?? ''
   const { getAccessToken } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -84,7 +86,11 @@ export default function NewTopicPage() {
           </div>
         )}
 
-        <TopicForm onSubmit={handleSubmit} submitting={submitting} />
+        <TopicForm
+          onSubmit={handleSubmit}
+          submitting={submitting}
+          initialValues={{ category: initialCategory }}
+        />
 
         <OnboardingModal
           open={onboarding.showModal}

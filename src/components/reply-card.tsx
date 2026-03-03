@@ -8,7 +8,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Clock, Link as LinkIcon } from '@phosphor-icons/react/dist/ssr'
+import { Heart, Clock, Link as LinkIcon, ChatCircle } from '@phosphor-icons/react/dist/ssr'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, formatCompactNumber } from '@/lib/format'
@@ -28,6 +28,7 @@ interface ReplyCardProps {
   postNumber: number
   reactions?: ReactionData[]
   onReactionToggle?: (type: string) => void
+  onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
@@ -46,6 +47,7 @@ export function ReplyCard({
   postNumber,
   reactions,
   onReactionToggle,
+  onReply,
   canReport,
   onReport,
   selfLabels,
@@ -146,7 +148,7 @@ export function ReplyCard({
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4" data-reply-content>
           {selfLabels && selfLabels.length > 0 ? (
             <SelfLabelIndicator labels={selfLabels}>
               <MarkdownContent content={reply.content} />
@@ -179,6 +181,25 @@ export function ReplyCard({
           >
             <LinkIcon className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
           </a>
+
+          {onReply && (
+            <button
+              type="button"
+              className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+              aria-label={`Reply to ${reply.author?.displayName ?? reply.author?.handle ?? reply.authorDid}`}
+              onClick={() =>
+                onReply({
+                  uri: reply.uri,
+                  cid: reply.cid,
+                  authorHandle: reply.author?.handle ?? reply.authorDid,
+                  snippet: reply.content.slice(0, 100),
+                })
+              }
+            >
+              <ChatCircle className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
+              Reply
+            </button>
+          )}
 
           {canReport && onReport && <ReportDialog subjectUri={reply.uri} onSubmit={onReport} />}
         </div>
