@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Heart } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 import { getReactions, createReaction, deleteReaction } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
 import { formatCompactNumber } from '@/lib/format'
@@ -29,6 +30,7 @@ export function LikeButton({
   className,
 }: LikeButtonProps) {
   const { user, isAuthenticated, getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [liked, setLiked] = useState(false)
   const [count, setCount] = useState(initialCount)
   const [pending, setPending] = useState(false)
@@ -97,15 +99,17 @@ export function LikeButton({
         const result = await createReaction({ subjectUri, subjectCid, type: 'like' }, token)
         reactionUriRef.current = result.uri
       }
-    } catch {
+    } catch (err) {
       // Revert optimistic update
       setLiked(wasLiked)
       setCount(previousCount)
       reactionUriRef.current = previousUri
+      const message = err instanceof Error ? err.message : 'Failed to update reaction'
+      toast({ title: 'Error', description: message, variant: 'destructive' })
     } finally {
       setPending(false)
     }
-  }, [liked, count, pending, subjectUri, subjectCid, getAccessToken])
+  }, [liked, count, pending, subjectUri, subjectCid, getAccessToken, toast])
 
   const iconSize = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4'
 
