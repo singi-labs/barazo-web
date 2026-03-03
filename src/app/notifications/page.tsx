@@ -17,6 +17,7 @@ import { getNotifications, markNotificationsRead, getPublicSettings } from '@/li
 import { cn } from '@/lib/utils'
 import type { Notification, NotificationType } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { ProtectedRoute } from '@/components/auth/protected-route'
 
 const NOTIFICATION_ICONS: Record<NotificationType, typeof ChatCircle> = {
   reply: ChatCircle,
@@ -26,7 +27,15 @@ const NOTIFICATION_ICONS: Record<NotificationType, typeof ChatCircle> = {
 }
 
 export default function NotificationsPage() {
-  const { getAccessToken } = useAuth()
+  return (
+    <ProtectedRoute>
+      <NotificationsContent />
+    </ProtectedRoute>
+  )
+}
+
+function NotificationsContent() {
+  const { getAccessToken, isLoading: authLoading } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -52,8 +61,10 @@ export default function NotificationsPage() {
   }, [getAccessToken])
 
   useEffect(() => {
-    void fetchNotifications()
-  }, [fetchNotifications])
+    if (!authLoading) {
+      void fetchNotifications()
+    }
+  }, [authLoading, fetchNotifications])
 
   const handleMarkAllRead = useCallback(async () => {
     const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id)
