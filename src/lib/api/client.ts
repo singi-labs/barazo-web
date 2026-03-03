@@ -63,6 +63,7 @@ import type {
   TrustGraphStatus,
   BehavioralFlagsResponse,
   BehavioralFlag,
+  ReactionsResponse,
 } from './types'
 
 /** Client: relative URLs (empty string). Server: internal Docker network URL. */
@@ -1124,6 +1125,63 @@ export function initializeCommunity(
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: input,
   })
+}
+
+// --- Reaction endpoints ---
+
+export interface CreateReactionInput {
+  subjectUri: string
+  subjectCid: string
+  type: string
+}
+
+export interface CreateReactionResponse {
+  uri: string
+  cid: string
+  rkey: string
+  type: string
+  subjectUri: string
+  createdAt: string
+}
+
+export function createReaction(
+  input: CreateReactionInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CreateReactionResponse> {
+  return apiFetch<CreateReactionResponse>('/api/reactions', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function deleteReaction(
+  uri: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  const url = `/api/reactions/${encodeURIComponent(uri)}`
+  return apiFetch<void>(url, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getReactions(
+  subjectUri: string,
+  params: { type?: string; cursor?: string; limit?: number } = {},
+  options?: FetchOptions
+): Promise<ReactionsResponse> {
+  const query = buildQuery({
+    subjectUri,
+    type: params.type,
+    cursor: params.cursor,
+    limit: params.limit,
+  })
+  return apiFetch<ReactionsResponse>(`/api/reactions${query}`, options)
 }
 
 export { ApiError }

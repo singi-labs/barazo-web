@@ -8,14 +8,15 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Clock, Link as LinkIcon, ChatCircle } from '@phosphor-icons/react/dist/ssr'
+import { Clock, Link as LinkIcon, ChatCircle } from '@phosphor-icons/react/dist/ssr'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
-import { formatRelativeTime, formatCompactNumber } from '@/lib/format'
+import { formatRelativeTime } from '@/lib/format'
 import { MarkdownContent } from './markdown-content'
 import { ReactionBar } from './reaction-bar'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
 import { SelfLabelIndicator } from './self-label-indicator'
+import { LikeButton } from './like-button'
 
 interface ReactionData {
   type: string
@@ -163,13 +164,12 @@ export function ReplyCard({
           {reactions && onReactionToggle && (
             <ReactionBar reactions={reactions} onToggle={onReactionToggle} />
           )}
-          <span
-            className="flex items-center gap-1"
-            aria-label={`${formatCompactNumber(reply.reactionCount)} reactions`}
-          >
-            <Heart className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
-            {formatCompactNumber(reply.reactionCount)}
-          </span>
+          <LikeButton
+            subjectUri={reply.uri}
+            subjectCid={reply.cid}
+            initialCount={reply.reactionCount}
+            size="sm"
+          />
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
             {formatRelativeTime(reply.createdAt)}
