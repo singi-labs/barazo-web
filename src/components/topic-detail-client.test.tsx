@@ -8,6 +8,11 @@ import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { TopicDetailClient } from './topic-detail-client'
 import { mockTopics, mockReplies } from '@/mocks/data'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
+}))
 
 const mockRouterRefresh = vi.fn()
 

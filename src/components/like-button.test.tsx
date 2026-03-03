@@ -8,6 +8,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { LikeButton } from './like-button'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
+import type { OnboardingContextValue } from '@/context/onboarding-context'
 
 // --- Mocks ---
 
@@ -33,6 +35,12 @@ vi.mock('@/hooks/use-auth', () => ({
     crossPostScopesGranted: false,
     requestCrossPostAuth: vi.fn(),
   }),
+}))
+
+let mockOnboardingContext: OnboardingContextValue = createMockOnboardingContext()
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => mockOnboardingContext,
 }))
 
 vi.mock('@/lib/api/client', () => ({
@@ -62,6 +70,7 @@ beforeEach(() => {
   mockToast.mockReset()
   mockGetAccessToken.mockReturnValue('mock-access-token')
   mockAuthFetch.mockReset()
+  mockOnboardingContext = createMockOnboardingContext()
   vi.mocked(getReactions).mockResolvedValue({ reactions: [], cursor: null })
   vi.mocked(createReaction).mockResolvedValue({
     uri: 'at://did:plc:user-test-001/forum.barazo.interaction.reaction/abc123',
@@ -352,6 +361,43 @@ describe('LikeButton', () => {
       mockGetAccessToken.mockReturnValue(null as unknown as string)
       render(<LikeButton {...defaultProps} />)
       expect(screen.getByRole('button')).toBeDisabled()
+    })
+  })
+
+  describe('onboarding gate', () => {
+    it('does not call createReaction when ensureOnboarded returns false', async () => {
+      mockOnboardingContext = createMockOnboardingContext({
+        ensureOnboarded: vi.fn(() => false),
+      })
+
+      const user = userEvent.setup()
+      render(<LikeButton {...defaultProps} />)
+
+      await waitFor(() => {
+        expect(getReactions).toHaveBeenCalled()
+      })
+
+      await user.click(screen.getByRole('button'))
+
+      expect(createReaction).not.toHaveBeenCalled()
+      expect(deleteReaction).not.toHaveBeenCalled()
+    })
+
+    it('proceeds normally when ensureOnboarded returns true', async () => {
+      mockOnboardingContext = createMockOnboardingContext({
+        ensureOnboarded: vi.fn(() => true),
+      })
+
+      const user = userEvent.setup()
+      render(<LikeButton {...defaultProps} />)
+
+      await waitFor(() => {
+        expect(getReactions).toHaveBeenCalled()
+      })
+
+      await user.click(screen.getByRole('button'))
+
+      expect(createReaction).toHaveBeenCalled()
     })
   })
 
