@@ -78,7 +78,7 @@ export function TopicCard({ topic, className }: TopicCardProps) {
             <Link
               key={tag}
               href={`/tag/${tag}`}
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center py-1 text-xs text-muted-foreground hover:text-foreground"
             >
               #{tag}
             </Link>

@@ -124,7 +124,7 @@ export function TopicView({
             <Link
               key={tag}
               href={`/tag/${tag}`}
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center gap-1 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
               <Tag className="h-3 w-3" weight="regular" aria-hidden="true" />#{tag}
             </Link>
