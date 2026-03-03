@@ -233,6 +233,13 @@
   max-width: 80rem;
 }
 
+/* Restore centering for native <dialog> elements.
+   Tailwind's preflight resets margin to 0, which strips the browser's
+   default margin:auto that centers modal dialogs opened via showModal(). */
+dialog {
+  margin: auto;
+}
+
 /* Base styles */
 * {
   border-color: var(--color-border);
