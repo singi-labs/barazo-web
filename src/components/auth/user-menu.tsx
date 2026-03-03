@@ -31,7 +31,7 @@ export function UserMenu() {
       <Link
         href="/login"
         className={cn(
-          'inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium text-foreground transition-colors',
+          'inline-flex items-center whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors sm:px-3',
           'hover:bg-card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
         )}
       >

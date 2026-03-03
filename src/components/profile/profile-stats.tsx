@@ -49,7 +49,7 @@ export function ProfileStats({ profile, handle }: ProfileStatsProps) {
           href={`https://bsky.app/profile/${handle}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+          className="mt-1 inline-flex items-center gap-1 break-all text-sm text-primary hover:underline"
         >
           bsky.app/profile/{handle}
           <ArrowSquareOut size={14} aria-hidden="true" />
