@@ -8,6 +8,10 @@ import { axe } from 'vitest-axe'
 import { ReplyThread } from './reply-thread'
 import { mockReplies } from '@/mocks/data'
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
+}))
+
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
     user: { did: 'did:plc:user-test-001', handle: 'test.bsky.social' },
@@ -27,6 +31,7 @@ vi.mock('@/lib/api/client', () => ({
   getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
   createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
   deleteReaction: vi.fn().mockResolvedValue(undefined),
+  updateReply: vi.fn(),
 }))
 
 describe('ReplyThread', () => {

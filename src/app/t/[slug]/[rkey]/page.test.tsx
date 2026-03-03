@@ -7,6 +7,17 @@ import { render, screen } from '@testing-library/react'
 import TopicPage from './page'
 import { mockTopics, mockReplies, mockCategories } from '@/mocks/data'
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn() }),
+}))
+
+vi.mock('@/lib/api/client', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/api/client')>()),
+  getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
+  createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
+  deleteReaction: vi.fn().mockResolvedValue(undefined),
+}))
+
 // Mock useAuth hook
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({

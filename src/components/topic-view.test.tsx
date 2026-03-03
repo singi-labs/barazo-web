@@ -9,6 +9,10 @@ import { axe } from 'vitest-axe'
 import { TopicView } from './topic-view'
 import { mockTopics, mockUsers, mockAuthorDeletedTopic, mockModDeletedTopic } from '@/mocks/data'
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn() }),
+}))
+
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
     user: { did: 'did:plc:user-test-001', handle: 'test.bsky.social' },
