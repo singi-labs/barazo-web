@@ -6,10 +6,10 @@
  */
 
 import Link from 'next/link'
-import { ChatCircle, Heart, Clock, Tag } from '@phosphor-icons/react/dist/ssr'
+import { ChatCircle, Heart, Clock, Tag, PencilSimple } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
-import { formatRelativeTime, formatCompactNumber } from '@/lib/format'
+import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
 import { MarkdownContent } from './markdown-content'
 import { ReactionBar } from './reaction-bar'
 import { ModerationControls, type ModerationAction } from './moderation-controls'
@@ -30,6 +30,8 @@ interface TopicViewProps {
   isLocked?: boolean
   isPinned?: boolean
   onModerationAction?: (action: ModerationAction) => void
+  canEdit?: boolean
+  onEdit?: () => void
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
@@ -44,6 +46,8 @@ export function TopicView({
   isLocked,
   isPinned,
   onModerationAction,
+  canEdit,
+  onEdit,
   canReport,
   onReport,
   selfLabels,
@@ -98,6 +102,14 @@ export function TopicView({
           <span>{topic.authorDid}</span>
           <span aria-hidden="true">·</span>
           <time dateTime={topic.createdAt}>{formatRelativeTime(topic.createdAt)}</time>
+          {isEdited(topic.createdAt, topic.indexedAt) && (
+            <span
+              className="text-muted-foreground"
+              title={`Edited ${new Date(topic.indexedAt).toLocaleString()}`}
+            >
+              (edited)
+            </span>
+          )}
         </div>
 
         {/* Category + Tags */}
@@ -166,6 +178,17 @@ export function TopicView({
           <Clock className="h-4 w-4" weight="regular" aria-hidden="true" />
           Last activity {formatRelativeTime(topic.lastActivityAt)}
         </span>
+
+        {canEdit && onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <PencilSimple className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
+            Edit
+          </button>
+        )}
 
         {canReport && onReport && (
           <span className="ml-auto">

@@ -10,6 +10,11 @@ import { TopicView } from './topic-view'
 import { mockTopics, mockUsers, mockAuthorDeletedTopic, mockModDeletedTopic } from '@/mocks/data'
 
 const topic = mockTopics[0]!
+const baseTopic = topic
+const editedTopic = {
+  ...baseTopic,
+  indexedAt: new Date(new Date(baseTopic.createdAt).getTime() + 60_000).toISOString(),
+}
 
 const mockReactions = [
   { type: 'like', count: 5, reacted: false },
@@ -106,6 +111,54 @@ describe('TopicView', () => {
     render(<TopicView topic={topic} reactions={mockReactions} onReactionToggle={onToggle} />)
     await user.click(screen.getByRole('button', { name: /like/i }))
     expect(onToggle).toHaveBeenCalledWith('like')
+  })
+
+  describe('edit button', () => {
+    it('renders edit button when canEdit is true and onEdit is provided', () => {
+      render(<TopicView topic={topic} canEdit={true} onEdit={vi.fn()} />)
+      expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument()
+    })
+
+    it('does not render edit button when canEdit is false', () => {
+      render(<TopicView topic={topic} canEdit={false} onEdit={vi.fn()} />)
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+    })
+
+    it('does not render edit button when canEdit is undefined', () => {
+      render(<TopicView topic={topic} onEdit={vi.fn()} />)
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+    })
+
+    it('does not render edit button when onEdit is not provided', () => {
+      render(<TopicView topic={topic} canEdit={true} />)
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+    })
+
+    it('calls onEdit callback when edit button is clicked', async () => {
+      const user = userEvent.setup()
+      const onEdit = vi.fn()
+      render(<TopicView topic={topic} canEdit={true} onEdit={onEdit} />)
+      await user.click(screen.getByRole('button', { name: /edit/i }))
+      expect(onEdit).toHaveBeenCalledTimes(1)
+    })
+
+    it('passes axe accessibility check with edit button visible', async () => {
+      const { container } = render(<TopicView topic={topic} canEdit={true} onEdit={vi.fn()} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('edited indicator', () => {
+    it('shows "(edited)" when indexedAt is more than 30s after createdAt', () => {
+      render(<TopicView topic={editedTopic} />)
+      expect(screen.getByText('(edited)')).toBeInTheDocument()
+    })
+
+    it('does not show "(edited)" when timestamps are close', () => {
+      render(<TopicView topic={topic} />)
+      expect(screen.queryByText('(edited)')).not.toBeInTheDocument()
+    })
   })
 
   describe('tombstone: author-deleted topics', () => {
