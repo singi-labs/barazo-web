@@ -11,6 +11,12 @@ import { LikeButton } from './like-button'
 
 // --- Mocks ---
 
+const mockToast = vi.fn()
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: mockToast }),
+}))
+
 const mockGetAccessToken = vi.fn(() => 'mock-access-token')
 const mockAuthFetch = vi.fn()
 
@@ -53,6 +59,7 @@ const defaultProps = {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mockToast.mockReset()
   mockGetAccessToken.mockReturnValue('mock-access-token')
   mockAuthFetch.mockReset()
   vi.mocked(getReactions).mockResolvedValue({ reactions: [], cursor: null })
@@ -289,6 +296,30 @@ describe('LikeButton', () => {
       // After error: reverts to 5
       await waitFor(() => {
         expect(screen.getByText('5')).toBeInTheDocument()
+      })
+    })
+
+    it('shows error toast on like failure', async () => {
+      vi.mocked(createReaction).mockRejectedValueOnce(
+        new Error('API 502: Failed to write to remote PDS')
+      )
+
+      const user = userEvent.setup()
+      render(<LikeButton {...defaultProps} initialCount={5} />)
+
+      await waitFor(() => {
+        expect(getReactions).toHaveBeenCalled()
+      })
+
+      await user.click(screen.getByRole('button'))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'Error',
+            variant: 'destructive',
+          })
+        )
       })
     })
 
