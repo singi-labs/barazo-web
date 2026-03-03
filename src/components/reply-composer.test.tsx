@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { ReplyComposer } from './reply-composer'
@@ -360,6 +360,65 @@ describe('ReplyComposer', () => {
 
       const results = await axe(container)
       expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('keyboard shortcuts', () => {
+    it('collapses when Escape is pressed while expanded', async () => {
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      // Expand first
+      await user.click(screen.getByText('Write a reply...'))
+      expect(screen.getByRole('textbox', { name: 'Reply' })).toBeInTheDocument()
+
+      // Press Escape
+      await user.keyboard('{Escape}')
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+    })
+
+    it('does not collapse when Escape is pressed while already collapsed', async () => {
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      // Press Escape while collapsed - should remain collapsed (no crash)
+      await user.keyboard('{Escape}')
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+    })
+
+    it('preserves draft content after Escape collapse', async () => {
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      // Expand, type content, collapse with Escape
+      await user.click(screen.getByText('Write a reply...'))
+      const textarea = screen.getByRole('textbox', { name: 'Reply' })
+      await user.type(textarea, 'My draft reply')
+      await user.keyboard('{Escape}')
+
+      // Re-expand and verify draft is preserved
+      await user.click(screen.getByText('Write a reply...'))
+      expect(screen.getByRole('textbox', { name: 'Reply' })).toHaveValue('My draft reply')
+    })
+  })
+
+  describe('imperative handle', () => {
+    it('expands composer when expand() is called via ref', async () => {
+      const ref = { current: null } as React.RefObject<import('./reply-composer').ReplyComposerHandle | null>
+      render(<ReplyComposer {...defaultProps} ref={ref} />)
+
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+
+      // Call expand via ref wrapped in act
+      act(() => {
+        ref.current?.expand()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: 'Reply' })).toBeInTheDocument()
+      })
     })
   })
 

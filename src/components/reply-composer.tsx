@@ -1,11 +1,12 @@
 /**
  * ReplyComposer - Fixed bottom bar for replying to topics and replies.
  * Collapse/expand states, reply targeting with quote banner.
+ * Supports keyboard shortcuts: `r` to open (via imperative ref), `Escape` to collapse.
  */
 
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { PaperPlaneRight, X, Lock } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
@@ -20,6 +21,10 @@ export interface ReplyTarget {
   snippet: string
 }
 
+export interface ReplyComposerHandle {
+  expand: () => void
+}
+
 interface ReplyComposerProps {
   topicUri: string
   topicCid: string
@@ -32,23 +37,35 @@ interface ReplyComposerProps {
   className?: string
 }
 
-export function ReplyComposer({
-  topicUri,
-  topicCid,
-  communityDid,
-  onReplyCreated,
-  replyTarget,
-  onClearReplyTarget,
-  initialContent = '',
-  isLocked = false,
-  className,
-}: ReplyComposerProps) {
+export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>(
+  function ReplyComposer(
+    {
+      topicUri,
+      topicCid,
+      communityDid,
+      onReplyCreated,
+      replyTarget,
+      onClearReplyTarget,
+      initialContent = '',
+      isLocked = false,
+      className,
+    },
+    ref
+  ) {
   const { getAccessToken } = useAuth()
   const { toast } = useToast()
   const [isExpanded, setIsExpanded] = useState(false)
   const [content, setContent] = useState(initialContent)
   const [submitting, setSubmitting] = useState(false)
   const composerRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
+  // Expose expand() to parent via ref
+  useImperativeHandle(ref, () => ({
+    expand: () => {
+      setIsExpanded(true)
+    },
+  }))
 
   // Sync initialContent when it changes (e.g., select-to-quote)
   useEffect(() => {
@@ -58,9 +75,10 @@ export function ReplyComposer({
     }
   }, [initialContent])
 
-  // Focus textarea when expanding
+  // Focus textarea when expanding, save previous focus for restoration
   useEffect(() => {
     if (isExpanded) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null
       requestAnimationFrame(() => {
         const textarea = composerRef.current?.querySelector('textarea')
         textarea?.focus()
@@ -75,12 +93,34 @@ export function ReplyComposer({
     }
   }, [replyTarget])
 
+  // Escape key collapses the composer
+  useEffect(() => {
+    if (!isExpanded) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setIsExpanded(false)
+        // Restore focus to the element that was focused before expanding
+        requestAnimationFrame(() => {
+          previousFocusRef.current?.focus()
+        })
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isExpanded])
+
   const handleExpand = useCallback(() => {
     setIsExpanded(true)
   }, [])
 
   const handleCollapse = useCallback(() => {
     setIsExpanded(false)
+    // Restore focus to the element that was focused before expanding
+    requestAnimationFrame(() => {
+      previousFocusRef.current?.focus()
+    })
   }, [])
 
   const handleSubmit = useCallback(async () => {
@@ -219,4 +259,4 @@ export function ReplyComposer({
       </div>
     </div>
   )
-}
+})

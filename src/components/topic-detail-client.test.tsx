@@ -254,6 +254,99 @@ describe('TopicDetailClient', () => {
     })
   })
 
+  describe('keyboard shortcuts', () => {
+    it('opens composer when r key is pressed', async () => {
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+      expect(screen.queryByRole('textbox', { name: 'Reply' })).not.toBeInTheDocument()
+
+      // Press r key
+      await user.keyboard('r')
+
+      expect(screen.getByRole('textbox', { name: 'Reply' })).toBeInTheDocument()
+    })
+
+    it('does not open composer when r key is pressed in an input', async () => {
+      const user = userEvent.setup()
+      render(
+        <div>
+          <input aria-label="test input" />
+          <TopicDetailClient topic={topic} replies={replies} />
+        </div>
+      )
+
+      // Focus the input and press r
+      const input = screen.getByRole('textbox', { name: 'test input' })
+      await user.click(input)
+      await user.keyboard('r')
+
+      // Composer should remain collapsed
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+    })
+
+    it('does not open composer when r key is pressed with modifier keys', async () => {
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      // Press ctrl+r (should not trigger)
+      await user.keyboard('{Control>}r{/Control}')
+
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+    })
+
+    it('does not open composer when topic is locked', async () => {
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+
+      await user.keyboard('r')
+
+      // Should still show locked notice, not the composer
+      expect(
+        screen.getByText('This topic is locked. New replies are not accepted.')
+      ).toBeInTheDocument()
+    })
+
+    it('does not open composer when not authenticated', async () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: false,
+        isLoading: false,
+        user: null,
+        getAccessToken: () => null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      await user.keyboard('r')
+
+      // Should show auth gate, not composer
+      expect(screen.getByText('Sign in to join the discussion')).toBeInTheDocument()
+      expect(screen.queryByRole('textbox', { name: 'Reply' })).not.toBeInTheDocument()
+    })
+
+    it('collapses composer when Escape is pressed', async () => {
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      // Open with r
+      await user.keyboard('r')
+      expect(screen.getByRole('textbox', { name: 'Reply' })).toBeInTheDocument()
+
+      // Collapse with Escape
+      await user.keyboard('{Escape}')
+      expect(screen.queryByRole('textbox', { name: 'Reply' })).not.toBeInTheDocument()
+      expect(screen.getByText('Write a reply...')).toBeInTheDocument()
+    })
+  })
+
   describe('accessibility', () => {
     it('passes axe accessibility check when authenticated', async () => {
       const { container } = render(

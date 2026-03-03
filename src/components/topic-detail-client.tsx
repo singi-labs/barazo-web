@@ -1,16 +1,16 @@
 /**
  * TopicDetailClient - Client-side wrapper for topic detail page.
- * Manages reply state, select-to-quote, and auth gating.
+ * Manages reply state, select-to-quote, auth gating, and keyboard shortcuts.
  */
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import type { Reply, Topic } from '@/lib/api/types'
 import { ReplyThread } from '@/components/reply-thread'
-import { ReplyComposer, type ReplyTarget } from '@/components/reply-composer'
+import { ReplyComposer, type ReplyTarget, type ReplyComposerHandle } from '@/components/reply-composer'
 import { AuthGate } from '@/components/auth-gate'
 
 interface TopicDetailClientProps {
@@ -24,6 +24,29 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
   const router = useRouter()
   const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null)
   const [composerContent, setComposerContent] = useState('')
+  const composerRef = useRef<ReplyComposerHandle>(null)
+
+  // `r` keyboard shortcut opens the composer
+  useEffect(() => {
+    if (!isAuthenticated || isLocked) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return
+      }
+      if (e.key === 'r' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault()
+        composerRef.current?.expand()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isAuthenticated, isLocked])
 
   const handleReply = useCallback(
     (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => {
@@ -75,6 +98,7 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
       {/* Composer or auth gate */}
       {isLoading ? null : isAuthenticated ? (
         <ReplyComposer
+          ref={composerRef}
           topicUri={topic.uri}
           topicCid={topic.cid}
           communityDid={topic.communityDid}
