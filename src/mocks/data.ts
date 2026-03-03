@@ -602,6 +602,7 @@ export const mockCommunitySettings: CommunitySettings = {
   reactionSet: ['like', 'love', 'laugh', 'surprise', 'sad'],
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
+  faviconUrl: null,
   primaryColor: '#31748f',
   accentColor: '#c4a7e7',
   jurisdictionCountry: null,
@@ -1179,6 +1180,7 @@ export const mockPublicSettings: PublicSettings = {
   maturityRating: 'safe',
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
+  faviconUrl: null,
 }
 
 // --- Community Profile (own profile in a community) ---

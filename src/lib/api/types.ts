@@ -199,6 +199,7 @@ export interface CommunitySettings {
   reactionSet: string[]
   communityDescription: string | null
   communityLogoUrl: string | null
+  faviconUrl: string | null
   primaryColor: string | null
   accentColor: string | null
   jurisdictionCountry: string | null
@@ -214,6 +215,7 @@ export interface PublicSettings {
   maturityRating: MaturityRating
   communityDescription: string | null
   communityLogoUrl: string | null
+  faviconUrl: string | null
 }
 
 export interface CommunityStats {

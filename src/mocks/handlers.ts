@@ -328,6 +328,24 @@ export const handlers = [
     return HttpResponse.json({ ...mockCommunitySettings, ...body })
   }),
 
+  // POST /api/admin/design/logo
+  http.post(`${API_URL}/api/admin/design/logo`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'http://localhost:3000/uploads/logos/mock-logo.webp' })
+  }),
+
+  // POST /api/admin/design/favicon
+  http.post(`${API_URL}/api/admin/design/favicon`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'http://localhost:3000/uploads/favicons/mock-favicon.webp' })
+  }),
+
   // GET /api/admin/stats
   http.get(`${API_URL}/api/admin/stats`, ({ request }) => {
     const auth = request.headers.get('Authorization')
