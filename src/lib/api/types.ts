@@ -119,6 +119,7 @@ export interface Reply {
   communityDid: string
   cid: string
   depth: number
+  childCount?: number
   reactionCount: number
   isAuthorDeleted: boolean
   isModDeleted: boolean
@@ -203,6 +204,7 @@ export interface CommunitySettings {
   accentColor: string | null
   jurisdictionCountry: string | null
   ageThreshold: number
+  maxReplyDepth: number
   requireLoginForMature: boolean
   createdAt: string
   updatedAt: string
@@ -212,6 +214,7 @@ export interface PublicSettings {
   communityDid: string | null
   communityName: string
   maturityRating: MaturityRating
+  maxReplyDepth: number
   communityDescription: string | null
   communityLogoUrl: string | null
 }

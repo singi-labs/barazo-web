@@ -45,10 +45,10 @@ interface ReplyCardProps {
 }
 
 const DEPTH_INDENT: Record<number, string> = {
-  0: '',
-  1: 'ml-6 sm:ml-8',
-  2: 'ml-12 sm:ml-16',
-  3: 'ml-16 sm:ml-20',
+  1: '',
+  2: 'ml-6 sm:ml-8',
+  3: 'ml-12 sm:ml-16',
+  4: 'ml-16 sm:ml-20',
 }
 
 export function ReplyCard({
@@ -90,7 +90,7 @@ export function ReplyCard({
   }, [editContent, reply.uri, getAccessToken, toast])
 
   const headingId = `reply-heading-${reply.rkey}`
-  const indent = DEPTH_INDENT[Math.min(reply.depth, 3)] ?? DEPTH_INDENT[3]
+  const indent = DEPTH_INDENT[Math.min(reply.depth, 4)] ?? DEPTH_INDENT[4]
   const isDeleted = reply.isAuthorDeleted || reply.isModDeleted
 
   if (isDeleted) {

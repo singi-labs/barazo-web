@@ -49,7 +49,7 @@ vi.mock('@/lib/api/client', () => ({
 }))
 
 const reply = mockReplies[0]!
-const nestedReply = mockReplies[1]! // depth 1
+const nestedReply = mockReplies[1]! // depth 2
 
 const mockReactions = [{ type: 'like', count: 3, reacted: true }]
 
