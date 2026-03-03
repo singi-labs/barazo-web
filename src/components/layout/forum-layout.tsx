@@ -13,6 +13,7 @@ import { SearchInput } from '@/components/search-input'
 import { NotificationBell } from '@/components/notification-bell'
 import { UserMenu } from '@/components/auth/user-menu'
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
+import { NewTopicButton } from '@/components/new-topic-button'
 
 interface ForumLayoutProps {
   children: React.ReactNode
@@ -60,6 +61,7 @@ export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayo
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <NewTopicButton variant="header" className="hidden sm:inline-flex" />
             {/* Mobile search */}
             <Link
               href="/search"
