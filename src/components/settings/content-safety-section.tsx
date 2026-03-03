@@ -35,6 +35,15 @@ export function ContentSafetySection({
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
       <legend className="px-2 text-sm font-semibold text-foreground">Content safety</legend>
 
+      <p className="text-xs text-muted-foreground">
+        <span className="font-medium text-foreground">Block vs. mute</span>
+        {' \u2014 '}
+        Blocking hides a user&apos;s content entirely &mdash; their posts and replies disappear from
+        your feed and search results. Muting collapses their posts so you can still expand and read
+        them if you choose. Muted users won&apos;t know they&apos;ve been muted. Manage blocked
+        users below, or block/mute anyone from their profile.
+      </p>
+
       <div className="space-y-1">
         <label htmlFor="maturity-level" className="block text-sm font-medium text-foreground">
           Maturity level
