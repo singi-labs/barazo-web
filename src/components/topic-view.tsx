@@ -6,11 +6,12 @@
  */
 
 import Link from 'next/link'
-import { ChatCircle, Heart, Clock, Tag, PencilSimple } from '@phosphor-icons/react/dist/ssr'
+import { ChatCircle, Clock, Tag, PencilSimple } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
 import { MarkdownContent } from './markdown-content'
+import { LikeButton } from './like-button'
 import { ReactionBar } from './reaction-bar'
 import { ModerationControls, type ModerationAction } from './moderation-controls'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
@@ -167,13 +168,11 @@ export function TopicView({
           <ChatCircle className="h-4 w-4" weight="regular" aria-hidden="true" />
           {formatCompactNumber(topic.replyCount)}
         </span>
-        <span
-          className="flex items-center gap-1.5"
-          aria-label={`${formatCompactNumber(topic.reactionCount)} reactions`}
-        >
-          <Heart className="h-4 w-4" weight="regular" aria-hidden="true" />
-          {formatCompactNumber(topic.reactionCount)}
-        </span>
+        <LikeButton
+          subjectUri={topic.uri}
+          subjectCid={topic.cid}
+          initialCount={topic.reactionCount}
+        />
         <span className="flex items-center gap-1.5">
           <Clock className="h-4 w-4" weight="regular" aria-hidden="true" />
           Last activity {formatRelativeTime(topic.lastActivityAt)}
