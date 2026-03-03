@@ -33,6 +33,10 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
+}))
+
 describe('AdminPluginsPage', () => {
   it('renders page heading', async () => {
     render(<AdminPluginsPage />)

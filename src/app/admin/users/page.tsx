@@ -14,9 +14,11 @@ import { UserCard } from '@/components/admin/users/user-card'
 import { getAdminUsers, banUser, unbanUser } from '@/lib/api/client'
 import type { AdminUser } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 export default function AdminUsersPage() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -54,6 +56,7 @@ export default function AdminUsersPage() {
             : u
         )
       )
+      toast({ title: 'User banned' })
     } catch {
       setActionError('Failed to ban user. Please try again.')
     }
@@ -68,6 +71,7 @@ export default function AdminUsersPage() {
           u.did === did ? { ...u, isBanned: false, bannedAt: null, banReason: null } : u
         )
       )
+      toast({ title: 'User unbanned' })
     } catch {
       setActionError('Failed to unban user. Please try again.')
     }

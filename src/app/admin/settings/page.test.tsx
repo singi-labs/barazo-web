@@ -51,6 +51,10 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
+}))
+
 describe('AdminSettingsPage', () => {
   it('renders community settings heading', () => {
     render(<AdminSettingsPage />)

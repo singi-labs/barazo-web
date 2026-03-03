@@ -16,9 +16,11 @@ import { TrustSeedCard } from '@/components/admin/trust-seeds/trust-seed-card'
 import { getTrustSeeds, createTrustSeed, deleteTrustSeed } from '@/lib/api/client'
 import type { TrustSeed } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 export default function AdminTrustSeedsPage() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [seeds, setSeeds] = useState<TrustSeed[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -54,6 +56,7 @@ export default function AdminTrustSeedsPage() {
       const newSeed = await createTrustSeed(data, getAccessToken() ?? '')
       setSeeds((prev) => [...prev, newSeed])
       setAddDialogOpen(false)
+      toast({ title: 'Trust seed added' })
     } catch {
       setActionError('Failed to add trust seed.')
     }
@@ -69,6 +72,7 @@ export default function AdminTrustSeedsPage() {
         try {
           await deleteTrustSeed(seed.id, getAccessToken() ?? '')
           setSeeds((prev) => prev.filter((s) => s.id !== seed.id))
+          toast({ title: 'Trust seed removed' })
         } catch {
           setActionError('Failed to remove trust seed.')
         }

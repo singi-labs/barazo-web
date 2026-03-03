@@ -23,9 +23,11 @@ import type {
   BehavioralFlag,
 } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 export function useSybilData() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [clusters, setClusters] = useState<SybilCluster[]>([])
   const [graphStatus, setGraphStatus] = useState<TrustGraphStatus | null>(null)
   const [flags, setFlags] = useState<BehavioralFlag[]>([])
@@ -94,6 +96,7 @@ export function useSybilData() {
           )
           setClusters((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
           setSelectedDetail({ ...selectedDetail, ...updated })
+          toast({ title: 'Cluster status updated' })
         } catch {
           setActionError('Failed to update cluster status.')
         }
@@ -105,6 +108,7 @@ export function useSybilData() {
     setRecomputing(true)
     try {
       await recomputeTrustGraph(getAccessToken() ?? '')
+      toast({ title: 'Trust graph recomputation started' })
     } catch {
       setActionError('Failed to start recomputation.')
     } finally {
@@ -117,6 +121,7 @@ export function useSybilData() {
     try {
       const updated = await updateBehavioralFlag(id, 'dismissed', getAccessToken() ?? '')
       setFlags((prev) => prev.map((f) => (f.id === updated.id ? updated : f)))
+      toast({ title: 'Flag dismissed' })
     } catch {
       setActionError('Failed to dismiss flag.')
     }

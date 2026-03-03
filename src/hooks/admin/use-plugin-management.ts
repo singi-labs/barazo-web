@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getPlugins, togglePlugin, updatePluginSettings, uninstallPlugin } from '@/lib/api/client'
 import type { Plugin } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 interface DependencyWarning {
   plugin: Plugin
@@ -17,6 +18,7 @@ interface DependencyWarning {
 
 export function usePluginManagement() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [plugins, setPlugins] = useState<Plugin[]>([])
   const [loading, setLoading] = useState(true)
   const [settingsPlugin, setSettingsPlugin] = useState<Plugin | null>(null)
@@ -60,6 +62,7 @@ export function usePluginManagement() {
       setPlugins((prev) =>
         prev.map((p) => (p.id === plugin.id ? { ...p, enabled: !p.enabled } : p))
       )
+      toast({ title: plugin.enabled ? 'Plugin disabled' : 'Plugin enabled' })
     } catch {
       setActionError(`Failed to ${plugin.enabled ? 'disable' : 'enable'} plugin. Please try again.`)
     }
@@ -73,6 +76,7 @@ export function usePluginManagement() {
       setPlugins((prev) =>
         prev.map((p) => (p.id === dependencyWarning.plugin.id ? { ...p, enabled: false } : p))
       )
+      toast({ title: 'Plugin disabled' })
     } catch {
       setActionError('Failed to disable plugin. Please try again.')
     }
@@ -85,6 +89,7 @@ export function usePluginManagement() {
     try {
       await updatePluginSettings(settingsPlugin.id, settings, getAccessToken() ?? '')
       setPlugins((prev) => prev.map((p) => (p.id === settingsPlugin.id ? { ...p, settings } : p)))
+      toast({ title: 'Plugin settings saved' })
     } catch {
       setActionError('Failed to save plugin settings. Please try again.')
     }
@@ -96,6 +101,7 @@ export function usePluginManagement() {
     try {
       await uninstallPlugin(plugin.id, getAccessToken() ?? '')
       setPlugins((prev) => prev.filter((p) => p.id !== plugin.id))
+      toast({ title: 'Plugin uninstalled' })
     } catch {
       setActionError('Failed to uninstall plugin. Please try again.')
     }
