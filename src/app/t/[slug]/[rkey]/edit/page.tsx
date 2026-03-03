@@ -9,9 +9,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import type { CreateTopicInput, Topic } from '@/lib/api/types'
 import { getTopicByRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
+import { useAuth } from '@/hooks/use-auth'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicForm } from '@/components/topic-form'
@@ -22,6 +24,7 @@ interface EditTopicPageProps {
 
 export default function EditTopicPage({ params }: EditTopicPageProps) {
   const router = useRouter()
+  const { user, isLoading: authLoading, getAccessToken } = useAuth()
   const [rkey, setRkey] = useState<string | null>(null)
   const [topic, setTopic] = useState<Topic | null>(null)
   const [loading, setLoading] = useState(true)
@@ -75,8 +78,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
     setError(null)
 
     try {
-      // TODO: Get access token from auth context when auth is implemented (#39)
-      const accessToken = ''
+      const accessToken = getAccessToken() ?? ''
       const updated = await updateTopic(
         rkey,
         {
@@ -94,7 +96,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
     }
   }
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <ForumLayout communityName={communityName}>
         <div className="space-y-6">
@@ -115,6 +117,22 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
           <p className="text-destructive" role="alert">
             {error ?? 'Topic not found'}
           </p>
+        </div>
+      </ForumLayout>
+    )
+  }
+
+  if (!authLoading && (!user || user.did !== topic.authorDid)) {
+    return (
+      <ForumLayout communityName={communityName}>
+        <div className="space-y-6">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Edit' }]} />
+          <div className="py-8 text-center">
+            <p className="text-muted-foreground">You can only edit your own posts.</p>
+            <Link href={getTopicUrl(topic)} className="text-sm text-primary hover:underline">
+              Back to topic
+            </Link>
+          </div>
         </div>
       </ForumLayout>
     )
