@@ -111,7 +111,6 @@ describe('ReplyComposer', () => {
 
   describe('reply target banner', () => {
     it('shows reply target banner when replyTarget prop is provided', async () => {
-      const user = userEvent.setup()
       render(<ReplyComposer {...defaultProps} replyTarget={mockReplyTarget} />)
 
       // Should auto-expand when reply target is set

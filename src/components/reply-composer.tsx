@@ -41,8 +41,8 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
   function ReplyComposer(
     {
       topicUri,
-      topicCid,
-      communityDid,
+      topicCid: _topicCid,
+      communityDid: _communityDid,
       onReplyCreated,
       replyTarget,
       onClearReplyTarget,
