@@ -23,7 +23,7 @@ interface ForumLayoutProps {
 
 export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <SkipLinks />
 
       {/* Header */}
