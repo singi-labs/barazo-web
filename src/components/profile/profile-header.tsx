@@ -117,7 +117,7 @@ export function ProfileHeader({
             {/* Labeled stats sections */}
             <div className="mt-4 flex flex-wrap gap-6">
               {/* This forum */}
-              <div className="min-w-[140px] flex-1">
+              <div className="min-w-0 flex-1 sm:min-w-[140px]">
                 <p className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
                   <HouseSimple size={14} aria-hidden="true" />
                   This forum
@@ -152,7 +152,7 @@ export function ProfileHeader({
               </div>
 
               {/* AT Protocol */}
-              <div className="min-w-[140px] flex-1">
+              <div className="min-w-0 flex-1 sm:min-w-[140px]">
                 <p className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
                   <At size={14} aria-hidden="true" />
                   AT Protocol
@@ -162,7 +162,7 @@ export function ProfileHeader({
 
               {/* Barazo-wide (conditional) */}
               {profile.globalActivity && (
-                <div className="min-w-[140px] flex-1">
+                <div className="min-w-0 flex-1 sm:min-w-[140px]">
                   <p className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
                     <Globe size={14} aria-hidden="true" />
                     Barazo-wide
