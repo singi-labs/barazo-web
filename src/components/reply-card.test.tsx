@@ -249,7 +249,13 @@ describe('ReplyCard', () => {
   describe('edit mode', () => {
     beforeEach(() => {
       vi.mocked(useAuth).mockReturnValue({
-        user: { did: reply.authorDid, handle: reply.author?.handle ?? '', displayName: 'Alex', avatarUrl: null, role: 'user' },
+        user: {
+          did: reply.authorDid,
+          handle: reply.author?.handle ?? '',
+          displayName: 'Alex',
+          avatarUrl: null,
+          role: 'user',
+        },
         isAuthenticated: true,
         isLoading: false,
         crossPostScopesGranted: false,
@@ -265,22 +271,20 @@ describe('ReplyCard', () => {
     it('renders Edit button when canEdit is true', () => {
       render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
       expect(
-        screen.getByRole('button', { name: `Edit reply by ${reply.author?.handle ?? reply.authorDid}` })
+        screen.getByRole('button', {
+          name: `Edit reply by ${reply.author?.handle ?? reply.authorDid}`,
+        })
       ).toBeInTheDocument()
     })
 
     it('does not render Edit button when canEdit is false', () => {
       render(<ReplyCard reply={reply} postNumber={2} />)
-      expect(
-        screen.queryByRole('button', { name: /edit reply by/i })
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /edit reply by/i })).not.toBeInTheDocument()
     })
 
     it('does not render Edit button on deleted replies', () => {
       render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} canEdit={true} />)
-      expect(
-        screen.queryByRole('button', { name: /edit reply by/i })
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /edit reply by/i })).not.toBeInTheDocument()
     })
 
     it('shows MarkdownEditor with reply content when Edit is clicked', async () => {
@@ -311,7 +315,11 @@ describe('ReplyCard', () => {
       await user.type(textarea, 'new content')
       await user.click(screen.getByRole('button', { name: 'Save' }))
       await waitFor(() => {
-        expect(updateReply).toHaveBeenCalledWith(reply.uri, { content: 'new content' }, 'mock-token')
+        expect(updateReply).toHaveBeenCalledWith(
+          reply.uri,
+          { content: 'new content' },
+          'mock-token'
+        )
       })
       // Editor should close after save
       await waitFor(() => {

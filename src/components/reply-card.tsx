@@ -11,13 +11,7 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  Heart,
-  Clock,
-  Link as LinkIcon,
-  ChatCircle,
-  PencilSimple,
-} from '@phosphor-icons/react'
+import { Heart, Clock, Link as LinkIcon, ChatCircle, PencilSimple } from '@phosphor-icons/react'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
