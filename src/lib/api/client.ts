@@ -30,6 +30,7 @@ import type {
   Reply,
   RepliesResponse,
   CreateReplyInput,
+  UpdateReplyInput,
   SearchResponse,
   NotificationsResponse,
   PaginationParams,
@@ -272,6 +273,23 @@ export function createReply(
   return apiFetch<Reply>(`/api/topics/${encodeURIComponent(topicUri)}/replies`, {
     ...options,
     method: 'POST',
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: input,
+  })
+}
+
+export function updateReply(
+  uri: string,
+  input: UpdateReplyInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Reply> {
+  return apiFetch<Reply>(`/api/replies/${encodeURIComponent(uri)}`, {
+    ...options,
+    method: 'PUT',
     headers: {
       ...options?.headers,
       Authorization: `Bearer ${accessToken}`,
