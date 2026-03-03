@@ -6,13 +6,26 @@
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
 
+'use client'
+
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Clock, Link as LinkIcon, ChatCircle } from '@phosphor-icons/react/dist/ssr'
+import {
+  Heart,
+  Clock,
+  Link as LinkIcon,
+  ChatCircle,
+  PencilSimple,
+} from '@phosphor-icons/react'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
-import { formatRelativeTime, formatCompactNumber } from '@/lib/format'
+import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
+import { updateReply } from '@/lib/api/client'
+import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 import { MarkdownContent } from './markdown-content'
+import { MarkdownEditor } from './markdown-editor'
 import { ReactionBar } from './reaction-bar'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
 import { SelfLabelIndicator } from './self-label-indicator'
@@ -29,6 +42,7 @@ interface ReplyCardProps {
   reactions?: ReactionData[]
   onReactionToggle?: (type: string) => void
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
+  canEdit?: boolean
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
@@ -48,11 +62,38 @@ export function ReplyCard({
   reactions,
   onReactionToggle,
   onReply,
+  canEdit,
   canReport,
   onReport,
   selfLabels,
   className,
 }: ReplyCardProps) {
+  const [isEditingReply, setIsEditingReply] = useState(false)
+  const [editContent, setEditContent] = useState(reply.content)
+  const [displayContent, setDisplayContent] = useState(reply.content)
+  const [saving, setSaving] = useState(false)
+  const { getAccessToken } = useAuth()
+  const { toast } = useToast()
+
+  const handleSaveEdit = useCallback(async () => {
+    const trimmed = editContent.trim()
+    if (!trimmed) return
+
+    setSaving(true)
+    try {
+      const accessToken = getAccessToken() ?? ''
+      await updateReply(reply.uri, { content: trimmed }, accessToken)
+      setDisplayContent(trimmed)
+      setIsEditingReply(false)
+      toast({ title: 'Reply updated' })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update reply'
+      toast({ title: 'Error', description: message, variant: 'destructive' })
+    } finally {
+      setSaving(false)
+    }
+  }, [editContent, reply.uri, getAccessToken, toast])
+
   const headingId = `reply-heading-${reply.rkey}`
   const indent = DEPTH_INDENT[Math.min(reply.depth, 3)] ?? DEPTH_INDENT[3]
   const isDeleted = reply.isAuthorDeleted || reply.isModDeleted
@@ -137,6 +178,14 @@ export function ReplyCard({
             <time className="text-muted-foreground" dateTime={reply.createdAt}>
               {formatRelativeTime(reply.createdAt)}
             </time>
+            {isEdited(reply.createdAt, reply.indexedAt) && (
+              <span
+                className="text-muted-foreground"
+                title={`Edited ${new Date(reply.indexedAt).toLocaleString()}`}
+              >
+                (edited)
+              </span>
+            )}
           </div>
           <a
             href={`#post-${postNumber}`}
@@ -149,12 +198,40 @@ export function ReplyCard({
 
         {/* Content */}
         <div className="p-4" data-reply-content>
-          {selfLabels && selfLabels.length > 0 ? (
+          {isEditingReply ? (
+            <div className="space-y-2">
+              <MarkdownEditor
+                value={editContent}
+                onChange={setEditContent}
+                id={`edit-reply-${reply.rkey}`}
+                label="Edit reply"
+                placeholder="Edit your reply..."
+                className="[&_label]:sr-only [&_textarea]:min-h-[100px] [&_textarea]:max-h-[40vh]"
+              />
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingReply(false)}
+                  className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveEdit}
+                  disabled={saving || !editContent.trim()}
+                  className="rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          ) : selfLabels && selfLabels.length > 0 ? (
             <SelfLabelIndicator labels={selfLabels}>
-              <MarkdownContent content={reply.content} />
+              <MarkdownContent content={displayContent} />
             </SelfLabelIndicator>
           ) : (
-            <MarkdownContent content={reply.content} />
+            <MarkdownContent content={displayContent} />
           )}
         </div>
 
@@ -181,6 +258,21 @@ export function ReplyCard({
           >
             <LinkIcon className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
           </a>
+
+          {canEdit && !isEditingReply && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditingReply(true)
+                setEditContent(displayContent)
+              }}
+              className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label={`Edit reply by ${reply.author?.handle ?? reply.authorDid}`}
+            >
+              <PencilSimple className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
+              Edit
+            </button>
+          )}
 
           {onReply && (
             <button

@@ -2,17 +2,52 @@
  * Tests for ReplyCard component.
  */
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { ReplyCard } from './reply-card'
 import { mockReplies, mockAuthorDeletedReply, mockModDeletedReply } from '@/mocks/data'
+import { useAuth } from '@/hooks/use-auth'
+import { updateReply } from '@/lib/api/client'
+import type { Reply } from '@/lib/api/types'
+
+// Mock useAuth
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: vi.fn(() => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    crossPostScopesGranted: false,
+    getAccessToken: () => null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    requestCrossPostAuth: vi.fn(),
+    authFetch: vi.fn(),
+  })),
+}))
+
+// Mock useToast
+const mockToast = vi.fn()
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: mockToast, dismiss: vi.fn() }),
+}))
+
+// Mock updateReply
+vi.mock('@/lib/api/client', () => ({
+  updateReply: vi.fn(),
+}))
 
 const reply = mockReplies[0]!
 const nestedReply = mockReplies[1]! // depth 1
 
 const mockReactions = [{ type: 'like', count: 3, reacted: true }]
+
+beforeEach(() => {
+  vi.clearAllMocks()
+  mockToast.mockReset()
+})
 
 describe('ReplyCard', () => {
   it('renders reply content', () => {
@@ -206,6 +241,160 @@ describe('ReplyCard', () => {
 
     it('passes axe accessibility check for mod-deleted replies', async () => {
       const { container } = render(<ReplyCard reply={mockModDeletedReply} postNumber={5} />)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('edit mode', () => {
+    beforeEach(() => {
+      vi.mocked(useAuth).mockReturnValue({
+        user: { did: reply.authorDid, handle: reply.author?.handle ?? '', displayName: 'Alex', avatarUrl: null, role: 'user' },
+        isAuthenticated: true,
+        isLoading: false,
+        crossPostScopesGranted: false,
+        getAccessToken: () => 'mock-token',
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        requestCrossPostAuth: vi.fn(),
+        authFetch: vi.fn(),
+      } as ReturnType<typeof useAuth>)
+    })
+
+    it('renders Edit button when canEdit is true', () => {
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      expect(
+        screen.getByRole('button', { name: `Edit reply by ${reply.author?.handle ?? reply.authorDid}` })
+      ).toBeInTheDocument()
+    })
+
+    it('does not render Edit button when canEdit is false', () => {
+      render(<ReplyCard reply={reply} postNumber={2} />)
+      expect(
+        screen.queryByRole('button', { name: /edit reply by/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it('does not render Edit button on deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} canEdit={true} />)
+      expect(
+        screen.queryByRole('button', { name: /edit reply by/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it('shows MarkdownEditor with reply content when Edit is clicked', async () => {
+      const user = userEvent.setup()
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      expect(screen.getByRole('toolbar')).toBeInTheDocument()
+      expect(screen.getByRole('textbox')).toHaveValue(reply.content)
+    })
+
+    it('returns to read mode when Cancel is clicked', async () => {
+      const user = userEvent.setup()
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      expect(screen.getByRole('toolbar')).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(screen.queryByRole('toolbar')).not.toBeInTheDocument()
+      expect(screen.getByText(reply.content)).toBeInTheDocument()
+    })
+
+    it('calls updateReply with correct args on save', async () => {
+      const user = userEvent.setup()
+      vi.mocked(updateReply).mockResolvedValueOnce({} as Reply)
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      const textarea = screen.getByRole('textbox')
+      await user.clear(textarea)
+      await user.type(textarea, 'new content')
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+      await waitFor(() => {
+        expect(updateReply).toHaveBeenCalledWith(reply.uri, { content: 'new content' }, 'mock-token')
+      })
+      // Editor should close after save
+      await waitFor(() => {
+        expect(screen.queryByRole('toolbar')).not.toBeInTheDocument()
+      })
+    })
+
+    it('disables Save button when content is empty', async () => {
+      const user = userEvent.setup()
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      const textarea = screen.getByRole('textbox')
+      await user.clear(textarea)
+      expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
+    it('shows "Saving..." while submitting', async () => {
+      const user = userEvent.setup()
+      let resolvePromise: (value: Reply) => void
+      vi.mocked(updateReply).mockReturnValueOnce(
+        new Promise<Reply>((resolve) => {
+          resolvePromise = resolve
+        })
+      )
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+      expect(screen.getByRole('button', { name: 'Saving...' })).toBeInTheDocument()
+      // Resolve and wait for state to settle
+      resolvePromise!({} as Reply)
+      await waitFor(() => {
+        expect(screen.queryByRole('toolbar')).not.toBeInTheDocument()
+      })
+    })
+
+    it('shows error toast on save failure', async () => {
+      const user = userEvent.setup()
+      vi.mocked(updateReply).mockRejectedValueOnce(new Error('Network error'))
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Error',
+          description: 'Network error',
+          variant: 'destructive',
+        })
+      })
+      // Editor should remain open
+      expect(screen.getByRole('toolbar')).toBeInTheDocument()
+    })
+
+    it('shows success toast on save', async () => {
+      const user = userEvent.setup()
+      vi.mocked(updateReply).mockResolvedValueOnce({} as Reply)
+      render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({ title: 'Reply updated' })
+      })
+    })
+
+    it('shows "(edited)" indicator when indexedAt > createdAt + 30s', () => {
+      const editedReply: Reply = {
+        ...reply,
+        createdAt: '2026-02-14T12:00:00.000Z',
+        indexedAt: '2026-02-14T12:01:00.000Z',
+      }
+      render(<ReplyCard reply={editedReply} postNumber={2} />)
+      expect(screen.getByText('(edited)')).toBeInTheDocument()
+    })
+
+    it('does not show "(edited)" indicator when timestamps are close', () => {
+      // Default mock reply has same createdAt and indexedAt
+      render(<ReplyCard reply={reply} postNumber={2} />)
+      expect(screen.queryByText('(edited)')).not.toBeInTheDocument()
+    })
+
+    it('passes axe accessibility check in edit mode', async () => {
+      const user = userEvent.setup()
+      const { container } = render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
+      await user.click(screen.getByRole('button', { name: /edit reply by/i }))
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
