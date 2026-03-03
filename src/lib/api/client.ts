@@ -853,7 +853,7 @@ export function submitOnboarding(
     ...options,
     method: 'POST',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
-    body: input,
+    body: input.responses,
   })
 }
 
