@@ -8,9 +8,14 @@ import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { TopicView } from './topic-view'
 import { mockTopics, mockUsers, mockAuthorDeletedTopic, mockModDeletedTopic } from '@/mocks/data'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
 
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({ toast: vi.fn() }),
+}))
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
 }))
 
 vi.mock('@/hooks/use-auth', () => ({

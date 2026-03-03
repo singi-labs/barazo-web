@@ -11,6 +11,7 @@ import { mockReplies, mockAuthorDeletedReply, mockModDeletedReply } from '@/mock
 import { useAuth } from '@/hooks/use-auth'
 import { updateReply } from '@/lib/api/client'
 import type { Reply } from '@/lib/api/types'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
 
 // Mock useAuth
 vi.mock('@/hooks/use-auth', () => ({
@@ -34,9 +35,17 @@ vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({ toast: mockToast, dismiss: vi.fn() }),
 }))
 
-// Mock updateReply
+// Mock onboarding context
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
+}))
+
+// Mock API client
 vi.mock('@/lib/api/client', () => ({
   updateReply: vi.fn(),
+  getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
+  createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
+  deleteReaction: vi.fn().mockResolvedValue(undefined),
 }))
 
 const reply = mockReplies[0]!

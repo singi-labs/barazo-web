@@ -7,6 +7,12 @@ import { render, screen } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import { ReplyThread } from './reply-thread'
 import { mockReplies } from '@/mocks/data'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
+
+// Mock onboarding context (required by LikeButton via ReplyCard)
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
+}))
 
 // Mock useAuth (required by ReplyCard)
 vi.mock('@/hooks/use-auth', () => ({

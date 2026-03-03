@@ -6,6 +6,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import TopicPage from './page'
 import { mockTopics, mockReplies, mockCategories } from '@/mocks/data'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
+}))
 
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({ toast: vi.fn() }),
