@@ -1,10 +1,33 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import tailwindcss from 'eslint-plugin-better-tailwindcss'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Tailwind CSS correctness rules (v4-compatible)
+  {
+    plugins: { 'better-tailwindcss': tailwindcss },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/app/globals.css',
+      },
+    },
+    rules: {
+      // warn only: false positives from tailwindcss-animate and prose classes
+      'better-tailwindcss/no-unknown-classes': 'warn',
+      'better-tailwindcss/no-conflicting-classes': 'error',
+      'better-tailwindcss/no-duplicate-classes': 'warn',
+    },
+  },
+  // Disable Tailwind rules for test files (intentional fake class names)
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'off',
+    },
+  },
   // Configure jsx-a11y rules without redefining the plugin
   // (eslint-config-next already includes jsx-a11y plugin)
   {
@@ -55,7 +78,16 @@ const eslintConfig = defineConfig([
     },
   },
   // Override default ignores of eslint-config-next.
-  globalIgnores(['.next/**', 'dist/**', 'out/**', 'build/**', 'next-env.d.ts', 'node_modules/**']),
+  globalIgnores([
+    '.next/**',
+    'dist/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    'node_modules/**',
+    'playwright-report/**',
+    'test-results/**',
+  ]),
 ])
 
 export default eslintConfig
