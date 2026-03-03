@@ -131,6 +131,12 @@ export interface RepliesResponse {
   cursor: string | null
 }
 
+export interface CreateReplyInput {
+  content: string
+  parentUri?: string
+  labels?: string[]
+}
+
 // --- Reactions ---
 
 export interface Reaction {
