@@ -9,6 +9,27 @@ import { axe } from 'vitest-axe'
 import { ReplyCard } from './reply-card'
 import { mockReplies, mockAuthorDeletedReply, mockModDeletedReply } from '@/mocks/data'
 
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: { did: 'did:plc:user-test-001', handle: 'test.bsky.social' },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: () => 'mock-access-token',
+    authFetch: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    crossPostScopesGranted: false,
+    requestCrossPostAuth: vi.fn(),
+  }),
+}))
+
+vi.mock('@/lib/api/client', () => ({
+  getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
+  createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
+  deleteReaction: vi.fn().mockResolvedValue(undefined),
+}))
+
 const reply = mockReplies[0]!
 const nestedReply = mockReplies[1]! // depth 1
 

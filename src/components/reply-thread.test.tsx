@@ -2,11 +2,32 @@
  * Tests for ReplyThread component.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import { ReplyThread } from './reply-thread'
 import { mockReplies } from '@/mocks/data'
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: { did: 'did:plc:user-test-001', handle: 'test.bsky.social' },
+    isAuthenticated: true,
+    isLoading: false,
+    getAccessToken: () => 'mock-access-token',
+    authFetch: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    crossPostScopesGranted: false,
+    requestCrossPostAuth: vi.fn(),
+  }),
+}))
+
+vi.mock('@/lib/api/client', () => ({
+  getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
+  createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
+  deleteReaction: vi.fn().mockResolvedValue(undefined),
+}))
 
 describe('ReplyThread', () => {
   it('renders all replies', () => {
