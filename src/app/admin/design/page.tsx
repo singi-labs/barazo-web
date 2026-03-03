@@ -76,10 +76,7 @@ export default function AdminDesignPage() {
 
   const handleFaviconRemove = useCallback(async () => {
     try {
-      const updated = await updateCommunitySettings(
-        { faviconUrl: null },
-        getAccessToken() ?? ''
-      )
+      const updated = await updateCommunitySettings({ faviconUrl: null }, getAccessToken() ?? '')
       setSettings(updated)
     } catch {
       setSaveError('Failed to remove favicon.')
