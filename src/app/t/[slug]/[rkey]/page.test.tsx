@@ -13,12 +13,19 @@ vi.mock('@/hooks/use-auth', () => ({
     user: null,
     isAuthenticated: false,
     isLoading: false,
+    crossPostScopesGranted: false,
     getAccessToken: () => null,
     login: vi.fn(),
     logout: vi.fn(),
     setSessionFromCallback: vi.fn(),
+    requestCrossPostAuth: vi.fn(),
     authFetch: vi.fn(),
   }),
+}))
+
+// Mock useToast (required by ReplyCard)
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
 }))
 
 // Mock notFound

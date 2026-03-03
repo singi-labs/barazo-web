@@ -103,7 +103,11 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
 
       {/* Reply thread with reply buttons */}
       <div className="mt-8 pb-16">
-        <ReplyThread replies={replies} onReply={isLocked ? undefined : handleReply} />
+        <ReplyThread
+          replies={replies}
+          onReply={isLocked ? undefined : handleReply}
+          currentUserDid={user?.did}
+        />
       </div>
 
       {/* Composer or auth gate */}

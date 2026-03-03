@@ -2,11 +2,37 @@
  * Tests for ReplyThread component.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import { ReplyThread } from './reply-thread'
 import { mockReplies } from '@/mocks/data'
+
+// Mock useAuth (required by ReplyCard)
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    crossPostScopesGranted: false,
+    getAccessToken: () => null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setSessionFromCallback: vi.fn(),
+    requestCrossPostAuth: vi.fn(),
+    authFetch: vi.fn(),
+  }),
+}))
+
+// Mock useToast (required by ReplyCard)
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
+}))
+
+// Mock updateReply (imported by ReplyCard)
+vi.mock('@/lib/api/client', () => ({
+  updateReply: vi.fn(),
+}))
 
 describe('ReplyThread', () => {
   it('renders all replies', () => {
