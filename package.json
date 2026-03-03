@@ -94,7 +94,7 @@
     "jsdom": "28.1.0",
     "lint-staged": "catalog:",
     "msw": "2.12.10",
-    "pa11y-ci": "4.0.1",
+    "pa11y-ci": "4.1.0",
     "prettier": "catalog:",
     "tailwindcss": "4.2.1",
     "typescript": "catalog:",
