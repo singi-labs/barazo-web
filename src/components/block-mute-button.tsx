@@ -150,7 +150,7 @@ export function BlockMuteButton({
           aria-labelledby="block-mute-dialog-title"
           aria-describedby="block-mute-dialog-description"
           className={cn(
-            'm-auto w-full max-w-md rounded-lg border border-border bg-background p-0 shadow-lg',
+            'w-full max-w-md rounded-lg border border-border bg-background p-0 shadow-lg',
             'backdrop:bg-black/50'
           )}
         >

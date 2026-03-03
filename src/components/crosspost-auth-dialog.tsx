@@ -35,7 +35,7 @@ export function CrossPostAuthDialog({ open, onAuthorize, onCancel }: CrossPostAu
       aria-labelledby="crosspost-auth-title"
       aria-describedby="crosspost-auth-description"
       className={cn(
-        'm-auto w-full max-w-md rounded-lg border border-border bg-background p-0 shadow-lg',
+        'w-full max-w-md rounded-lg border border-border bg-background p-0 shadow-lg',
         'backdrop:bg-black/50'
       )}
     >
