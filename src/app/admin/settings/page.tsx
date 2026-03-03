@@ -20,9 +20,11 @@ import {
 } from '@/lib/api/client'
 import type { CommunitySettings, PdsTrustFactor } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 export default function AdminSettingsPage() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [settings, setSettings] = useState<CommunitySettings | null>(null)
   const [pdsProviders, setPdsProviders] = useState<PdsTrustFactor[]>([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +70,7 @@ export default function AdminSettingsPage() {
         getAccessToken() ?? ''
       )
       setSettings(updated)
+      toast({ title: 'Settings saved' })
     } catch {
       setSaveError('Failed to save settings. Please try again.')
     } finally {
@@ -86,6 +89,7 @@ export default function AdminSettingsPage() {
         }
         return [...prev, updated]
       })
+      toast({ title: 'PDS trust factor updated' })
     } catch {
       setPdsError('Failed to update PDS trust factor.')
     }

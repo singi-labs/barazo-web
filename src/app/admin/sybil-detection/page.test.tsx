@@ -52,6 +52,10 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
+}))
+
 describe('AdminSybilDetectionPage', () => {
   it('renders heading and explanation text', async () => {
     render(<AdminSybilDetectionPage />)

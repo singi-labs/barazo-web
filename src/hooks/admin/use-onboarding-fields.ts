@@ -16,9 +16,11 @@ import type { OnboardingField, CreateOnboardingFieldInput } from '@/lib/api/type
 import { EMPTY_FIELD } from '@/components/admin/onboarding/onboarding-field-form'
 import type { EditingField } from '@/components/admin/onboarding/onboarding-field-form'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 
 export function useOnboardingFields() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const [fields, setFields] = useState<OnboardingField[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingField | null>(null)
@@ -65,6 +67,7 @@ export function useOnboardingFields() {
     try {
       await deleteOnboardingField(id, getAccessToken() ?? '')
       void fetchFields()
+      toast({ title: 'Field deleted' })
     } catch {
       setActionError('Failed to delete field. Please try again.')
     }
@@ -104,6 +107,7 @@ export function useOnboardingFields() {
       }
       setEditing(null)
       void fetchFields()
+      toast({ title: editing.id ? 'Field updated' : 'Field created' })
     } catch {
       setError('Failed to save field')
     } finally {
