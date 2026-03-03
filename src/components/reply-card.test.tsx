@@ -121,9 +121,7 @@ describe('ReplyCard', () => {
     })
 
     it('does not show Reply button on deleted replies', () => {
-      render(
-        <ReplyCard reply={mockAuthorDeletedReply} postNumber={4} onReply={vi.fn()} />
-      )
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} onReply={vi.fn()} />)
       expect(screen.queryByRole('button', { name: /reply to/i })).not.toBeInTheDocument()
     })
 

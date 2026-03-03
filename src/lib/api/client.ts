@@ -269,18 +269,15 @@ export function createReply(
   accessToken: string,
   options?: FetchOptions
 ): Promise<Reply> {
-  return apiFetch<Reply>(
-    `/api/topics/${encodeURIComponent(topicUri)}/replies`,
-    {
-      ...options,
-      method: 'POST',
-      headers: {
-        ...options?.headers,
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: input,
-    }
-  )
+  return apiFetch<Reply>(`/api/topics/${encodeURIComponent(topicUri)}/replies`, {
+    ...options,
+    method: 'POST',
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: input,
+  })
 }
 
 // --- Search endpoints ---

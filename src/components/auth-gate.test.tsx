@@ -28,16 +28,12 @@ describe('AuthGate', () => {
   })
 
   it('applies custom className', () => {
-    const { container } = render(
-      <AuthGate message="Sign in" className="custom-class" />
-    )
+    const { container } = render(<AuthGate message="Sign in" className="custom-class" />)
     expect(container.firstChild).toHaveClass('custom-class')
   })
 
   it('passes axe accessibility check', async () => {
-    const { container } = render(
-      <AuthGate message="Sign in to join the discussion" />
-    )
+    const { container } = render(<AuthGate message="Sign in to join the discussion" />)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })

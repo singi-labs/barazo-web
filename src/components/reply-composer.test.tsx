@@ -404,7 +404,9 @@ describe('ReplyComposer', () => {
 
   describe('imperative handle', () => {
     it('expands composer when expand() is called via ref', async () => {
-      const ref = { current: null } as React.RefObject<import('./reply-composer').ReplyComposerHandle | null>
+      const ref = { current: null } as React.RefObject<
+        import('./reply-composer').ReplyComposerHandle | null
+      >
       render(<ReplyComposer {...defaultProps} ref={ref} />)
 
       expect(screen.getByText('Write a reply...')).toBeInTheDocument()

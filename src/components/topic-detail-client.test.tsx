@@ -349,9 +349,7 @@ describe('TopicDetailClient', () => {
 
   describe('accessibility', () => {
     it('passes axe accessibility check when authenticated', async () => {
-      const { container } = render(
-        <TopicDetailClient topic={topic} replies={replies} />
-      )
+      const { container } = render(<TopicDetailClient topic={topic} replies={replies} />)
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
@@ -370,17 +368,13 @@ describe('TopicDetailClient', () => {
         requestCrossPostAuth: vi.fn(),
       })
 
-      const { container } = render(
-        <TopicDetailClient topic={topic} replies={replies} />
-      )
+      const { container } = render(<TopicDetailClient topic={topic} replies={replies} />)
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
 
     it('passes axe accessibility check when locked', async () => {
-      const { container } = render(
-        <TopicDetailClient topic={topic} replies={replies} isLocked />
-      )
+      const { container } = render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })

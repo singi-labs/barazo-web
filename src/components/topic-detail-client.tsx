@@ -10,7 +10,11 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import type { Reply, Topic } from '@/lib/api/types'
 import { ReplyThread } from '@/components/reply-thread'
-import { ReplyComposer, type ReplyTarget, type ReplyComposerHandle } from '@/components/reply-composer'
+import {
+  ReplyComposer,
+  type ReplyTarget,
+  type ReplyComposerHandle,
+} from '@/components/reply-composer'
 import { AuthGate } from '@/components/auth-gate'
 
 interface TopicDetailClientProps {
@@ -32,11 +36,7 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return
       }
       if (e.key === 'r' && !e.metaKey && !e.ctrlKey && !e.altKey) {
@@ -55,9 +55,8 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
       let quotedText = ''
       if (selection && selection.toString().trim()) {
         const range = selection.getRangeAt(0)
-        const replyContent = range.commonAncestorContainer.parentElement?.closest(
-          '[data-reply-content]'
-        )
+        const replyContent =
+          range.commonAncestorContainer.parentElement?.closest('[data-reply-content]')
         if (replyContent) {
           quotedText = selection.toString().trim()
         }

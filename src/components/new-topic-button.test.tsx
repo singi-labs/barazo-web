@@ -60,13 +60,7 @@ describe('NewTopicButton', () => {
 
   describe('category variant', () => {
     it('renders a link with category query param', () => {
-      render(
-        <NewTopicButton
-          variant="category"
-          categorySlug="general"
-          categoryName="General"
-        />
-      )
+      render(<NewTopicButton variant="category" categorySlug="general" categoryName="General" />)
       const link = screen.getByRole('link', { name: /new in general/i })
       expect(link).toHaveAttribute('href', '/new?category=general')
     })
@@ -91,35 +85,24 @@ describe('NewTopicButton', () => {
         />
       )
       const link = screen.getByRole('link')
-      expect(link).toHaveAttribute(
-        'href',
-        '/new?category=help%20%26%20support'
-      )
+      expect(link).toHaveAttribute('href', '/new?category=help%20%26%20support')
     })
 
     it('falls back to header variant when categorySlug is missing', () => {
-      render(
-        <NewTopicButton variant="category" categoryName="General" />
-      )
+      render(<NewTopicButton variant="category" categoryName="General" />)
       const link = screen.getByRole('link', { name: /new discussion/i })
       expect(link).toHaveAttribute('href', '/new')
     })
 
     it('falls back to header variant when categoryName is missing', () => {
-      render(
-        <NewTopicButton variant="category" categorySlug="general" />
-      )
+      render(<NewTopicButton variant="category" categorySlug="general" />)
       const link = screen.getByRole('link', { name: /new discussion/i })
       expect(link).toHaveAttribute('href', '/new')
     })
 
     it('passes axe accessibility check', async () => {
       const { container } = render(
-        <NewTopicButton
-          variant="category"
-          categorySlug="general"
-          categoryName="General"
-        />
+        <NewTopicButton variant="category" categorySlug="general" categoryName="General" />
       )
       const results = await axe(container)
       expect(results).toHaveNoViolations()
