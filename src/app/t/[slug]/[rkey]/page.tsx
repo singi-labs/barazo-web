@@ -207,12 +207,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       {/* Breadcrumbs */}
       <Breadcrumbs items={breadcrumbItems} />
 
-      {/* Topic */}
-      <div className="mt-4">
-        <TopicView topic={topic} />
-      </div>
-
-      {/* Replies + Composer */}
+      {/* Topic + Replies + Composer (client-side for auth context) */}
       <TopicDetailClient topic={topic} replies={repliesResult.replies} />
     </ForumLayout>
   )
