@@ -100,3 +100,13 @@ export function slugify(text: string): string {
 export function getTopicUrl(topic: { title: string; rkey: string }): string {
   return `/t/${slugify(topic.title)}/${topic.rkey}`
 }
+
+/**
+ * Returns true if a post was edited (indexedAt differs from createdAt by more than 30 seconds).
+ */
+export function isEdited(createdAt: string, indexedAt: string): boolean {
+  const created = new Date(createdAt).getTime()
+  const indexed = new Date(indexedAt).getTime()
+  if (Number.isNaN(created) || Number.isNaN(indexed)) return false
+  return indexed - created > 30_000
+}
