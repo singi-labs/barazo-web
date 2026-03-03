@@ -4,6 +4,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/auth-context'
 import { AppToastProvider } from '@/context/toast-context'
+import { OnboardingProvider } from '@/context/onboarding-context'
 import { SetupGuard } from '@/components/setup-guard'
 
 const sourceCodePro = Source_Code_Pro({
@@ -55,7 +56,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             <AppToastProvider>
-              <SetupGuard>{children}</SetupGuard>
+              <OnboardingProvider>
+                <SetupGuard>{children}</SetupGuard>
+              </OnboardingProvider>
             </AppToastProvider>
           </AuthProvider>
         </ThemeProvider>

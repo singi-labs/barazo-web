@@ -6,7 +6,12 @@ import { describe, it, expect, vi, beforeAll, beforeEach, afterAll, afterEach } 
 import { render, screen, cleanup } from '@testing-library/react'
 import { setupServer } from 'msw/node'
 import { handlers } from '@/mocks/handlers'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
 import NewTopicPage from './page'
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => createMockOnboardingContext(),
+}))
 
 const server = setupServer(...handlers)
 

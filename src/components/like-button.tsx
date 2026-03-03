@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Heart } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
+import { useOnboardingContext } from '@/context/onboarding-context'
 import { useToast } from '@/hooks/use-toast'
 import { getReactions, createReaction, deleteReaction } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
@@ -30,6 +31,7 @@ export function LikeButton({
   className,
 }: LikeButtonProps) {
   const { user, isAuthenticated, getAccessToken } = useAuth()
+  const { ensureOnboarded } = useOnboardingContext()
   const { toast } = useToast()
   const [liked, setLiked] = useState(false)
   const [count, setCount] = useState(initialCount)
@@ -73,6 +75,7 @@ export function LikeButton({
   }, [subjectUri, isAuthenticated, user, getAccessToken])
 
   const handleToggle = useCallback(async () => {
+    if (!ensureOnboarded()) return
     const token = getAccessToken()
     if (!token || pending) return
 
@@ -109,7 +112,7 @@ export function LikeButton({
     } finally {
       setPending(false)
     }
-  }, [liked, count, pending, subjectUri, subjectCid, getAccessToken, toast])
+  }, [liked, count, pending, subjectUri, subjectCid, getAccessToken, ensureOnboarded, toast])
 
   const iconSize = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4'
 

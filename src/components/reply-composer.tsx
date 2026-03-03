@@ -9,6 +9,7 @@
 import { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { PaperPlaneRight, X, Lock } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
+import { useOnboardingContext } from '@/context/onboarding-context'
 import { useToast } from '@/hooks/use-toast'
 import { createReply } from '@/lib/api/client'
 import { MarkdownEditor } from '@/components/markdown-editor'
@@ -53,6 +54,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
     ref
   ) {
     const { getAccessToken } = useAuth()
+    const { ensureOnboarded } = useOnboardingContext()
     const { toast } = useToast()
     const [isExpanded, setIsExpanded] = useState(false)
     const [content, setContent] = useState(initialContent)
@@ -124,6 +126,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
     }, [])
 
     const handleSubmit = useCallback(async () => {
+      if (!ensureOnboarded()) return
       const trimmed = content.trim()
       if (!trimmed) return
 
@@ -148,7 +151,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
       } finally {
         setSubmitting(false)
       }
-    }, [content, topicUri, replyTarget, getAccessToken, onReplyCreated, toast])
+    }, [content, topicUri, replyTarget, getAccessToken, ensureOnboarded, onReplyCreated, toast])
 
     if (isLocked) {
       return (

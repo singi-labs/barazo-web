@@ -8,6 +8,8 @@ import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { ReplyComposer } from './reply-composer'
 import type { ReplyTarget } from './reply-composer'
+import { createMockOnboardingContext } from '@/test/mock-onboarding'
+import type { OnboardingContextValue } from '@/context/onboarding-context'
 
 const mockGetAccessToken = vi.fn<() => string | null>(() => 'mock-access-token')
 const mockToast = vi.fn()
@@ -43,6 +45,12 @@ vi.mock('@/lib/api/client', () => ({
   createReply: (...args: unknown[]) => mockCreateReply(...args),
 }))
 
+let mockOnboardingContext: OnboardingContextValue = createMockOnboardingContext()
+
+vi.mock('@/context/onboarding-context', () => ({
+  useOnboardingContext: () => mockOnboardingContext,
+}))
+
 const defaultProps = {
   topicUri: 'at://did:plc:abc/forum.barazo.topic/123',
   topicCid: 'bafyreiabc123',
@@ -59,6 +67,7 @@ const mockReplyTarget: ReplyTarget = {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mockOnboardingContext = createMockOnboardingContext()
   mockCreateReply.mockResolvedValue({
     uri: 'at://did:plc:user-test-001/forum.barazo.reply/789',
     cid: 'bafyrei789',
@@ -325,6 +334,59 @@ describe('ReplyComposer', () => {
       })
       // Should still be expanded with content intact
       expect(screen.getByRole('textbox', { name: 'Reply' })).toBeInTheDocument()
+    })
+  })
+
+  describe('onboarding gate', () => {
+    it('does not call createReply when ensureOnboarded returns false', async () => {
+      mockOnboardingContext = createMockOnboardingContext({
+        ensureOnboarded: vi.fn(() => false),
+      })
+
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      await user.click(screen.getByText('Write a reply...'))
+      const textarea = screen.getByRole('textbox', { name: 'Reply' })
+      await user.type(textarea, 'My test reply')
+      await user.click(screen.getByRole('button', { name: 'Reply' }))
+
+      expect(mockCreateReply).not.toHaveBeenCalled()
+    })
+
+    it('preserves content when ensureOnboarded returns false', async () => {
+      mockOnboardingContext = createMockOnboardingContext({
+        ensureOnboarded: vi.fn(() => false),
+      })
+
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      await user.click(screen.getByText('Write a reply...'))
+      const textarea = screen.getByRole('textbox', { name: 'Reply' })
+      await user.type(textarea, 'My test reply')
+      await user.click(screen.getByRole('button', { name: 'Reply' }))
+
+      // Content should still be there
+      expect(screen.getByRole('textbox', { name: 'Reply' })).toHaveValue('My test reply')
+    })
+
+    it('proceeds normally when ensureOnboarded returns true', async () => {
+      mockOnboardingContext = createMockOnboardingContext({
+        ensureOnboarded: vi.fn(() => true),
+      })
+
+      const user = userEvent.setup()
+      render(<ReplyComposer {...defaultProps} />)
+
+      await user.click(screen.getByText('Write a reply...'))
+      const textarea = screen.getByRole('textbox', { name: 'Reply' })
+      await user.type(textarea, 'My test reply')
+      await user.click(screen.getByRole('button', { name: 'Reply' }))
+
+      await waitFor(() => {
+        expect(mockCreateReply).toHaveBeenCalled()
+      })
     })
   })
 
