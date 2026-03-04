@@ -17,7 +17,12 @@ interface TopicContentEditorProps {
   required?: boolean
 }
 
-export function TopicContentEditor({ content, onChange, error, required }: TopicContentEditorProps) {
+export function TopicContentEditor({
+  content,
+  onChange,
+  error,
+  required,
+}: TopicContentEditorProps) {
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write')
 
   return (

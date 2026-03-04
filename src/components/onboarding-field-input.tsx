@@ -27,7 +27,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
           <FormLabel htmlFor={labelId} required={required} optional={!required}>
             {field.label}
           </FormLabel>
-          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+          {field.description && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+          )}
           <select
             id={labelId}
             value={value !== undefined ? String(value) : ''}
@@ -61,7 +63,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
             <FormLabel htmlFor={labelId} required={required} optional={!required} block={false}>
               {field.label}
             </FormLabel>
-            {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+            {field.description && (
+              <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+            )}
             {tosUrl && (
               <a
                 href={tosUrl}
@@ -92,7 +96,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
             <FormLabel htmlFor={labelId} required={required} optional={!required} block={false}>
               {field.label}
             </FormLabel>
-            {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+            {field.description && (
+              <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+            )}
           </div>
         </div>
       )
@@ -103,7 +109,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
           <FormLabel htmlFor={labelId} required={required} optional={!required}>
             {field.label}
           </FormLabel>
-          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+          {field.description && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+          )}
           <input
             id={labelId}
             type="email"
@@ -122,7 +130,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
           <FormLabel htmlFor={labelId} required={required} optional={!required}>
             {field.label}
           </FormLabel>
-          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+          {field.description && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+          )}
           <textarea
             id={labelId}
             value={typeof value === 'string' ? value : ''}
@@ -141,7 +151,9 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
           <FormLabel htmlFor={labelId} required={required} optional={!required}>
             {field.label}
           </FormLabel>
-          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
+          {field.description && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>
+          )}
           <select
             id={labelId}
             value={typeof value === 'string' ? value : ''}

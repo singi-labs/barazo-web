@@ -236,7 +236,10 @@ describe('AdminOnboardingPage', () => {
     // Default type is custom_text -- no ToS URL input yet
     expect(screen.queryByRole('textbox', { name: /terms of service url/i })).not.toBeInTheDocument()
     // Switch to tos_acceptance
-    await user.selectOptions(screen.getByRole('combobox', { name: /field type/i }), 'tos_acceptance')
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: /field type/i }),
+      'tos_acceptance'
+    )
     expect(screen.getByRole('textbox', { name: /terms of service url/i })).toBeInTheDocument()
   })
 
@@ -274,9 +277,15 @@ describe('AdminOnboardingPage', () => {
     const user = userEvent.setup()
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
-    await user.selectOptions(screen.getByRole('combobox', { name: /field type/i }), 'tos_acceptance')
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: /field type/i }),
+      'tos_acceptance'
+    )
     await user.type(screen.getByRole('textbox', { name: /^label$/i }), 'Accept ToS')
-    await user.type(screen.getByRole('textbox', { name: /terms of service url/i }), 'https://example.com/tos')
+    await user.type(
+      screen.getByRole('textbox', { name: /terms of service url/i }),
+      'https://example.com/tos'
+    )
     await user.click(screen.getByRole('button', { name: /^save$/i }))
     await waitFor(() => {
       expect(capturedBody).not.toBeNull()

@@ -48,7 +48,9 @@ export function ReportFormContent({
         <fieldset disabled={submitting}>
           <legend className="text-sm font-medium text-foreground">
             Reason
-            <span aria-hidden="true" className="ml-1 text-destructive">*</span>
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              *
+            </span>
           </legend>
           <div className="mt-2 space-y-2">
             {REPORT_REASONS.map((r) => (
