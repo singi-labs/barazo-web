@@ -12,7 +12,7 @@
 
 import { useState, useCallback } from 'react'
 import type { Reply } from '@/lib/api/types'
-import type { ReplyTreeNode } from '@/lib/build-reply-tree'
+import { type ReplyTreeNode, countDescendants } from '@/lib/build-reply-tree'
 import {
   DEFAULT_EXPANDED_LEVELS,
   AUTO_COLLAPSE_SIBLING_THRESHOLD,
@@ -160,11 +160,14 @@ export function ReplyBranch({
                   />
                 </div>
               ))}
-            {hasChildren && isCollapsed && (
-              <p className="ml-12 mt-1 text-xs text-muted-foreground" aria-live="polite">
-                {node.children.length} {node.children.length === 1 ? 'reply' : 'replies'} hidden
-              </p>
-            )}
+            {hasChildren && isCollapsed && (() => {
+              const totalHidden = countDescendants(node)
+              return (
+                <p className="ml-12 mt-1 text-xs text-muted-foreground" aria-live="polite">
+                  {totalHidden} {totalHidden === 1 ? 'reply' : 'replies'} hidden
+                </p>
+              )
+            })()}
           </li>
         )
       })}

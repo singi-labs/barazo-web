@@ -48,6 +48,17 @@ export function buildReplyTree(replies: Reply[], topicUri: string): ReplyTreeNod
 }
 
 /**
+ * Count all descendants (children, grandchildren, etc.) of a node.
+ */
+export function countDescendants(node: ReplyTreeNode): number {
+  let count = node.children.length
+  for (const child of node.children) {
+    count += countDescendants(child)
+  }
+  return count
+}
+
+/**
  * Flatten a reply tree into depth-first order.
  * Useful for rendering a flat list with indentation or for counting.
  */

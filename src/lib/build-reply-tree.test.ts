@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from 'vitest'
 import type { Reply } from '@/lib/api/types'
-import { buildReplyTree, flattenReplyTree } from './build-reply-tree'
+import { buildReplyTree, flattenReplyTree, countDescendants } from './build-reply-tree'
 
 const TOPIC_URI = 'at://did:plc:user-001/forum.barazo.topic.post/abc123'
 const TOPIC_CID = 'bafyreib1'
@@ -149,6 +149,41 @@ describe('buildReplyTree', () => {
     expect(result[0]!.reply.uri).toBe(parent.uri)
     expect(result[0]!.children).toHaveLength(1)
     expect(result[0]!.children[0]!.reply.uri).toBe(child.uri)
+  })
+})
+
+describe('countDescendants', () => {
+  it('returns 0 for a leaf node', () => {
+    const leaf = makeReply({ uri: 'at://user/reply/aaa', parentUri: TOPIC_URI, depth: 1 })
+    expect(countDescendants({ reply: leaf, children: [] })).toBe(0)
+  })
+
+  it('counts all descendants recursively', () => {
+    const replies = [
+      makeReply({ uri: 'at://user/reply/a', parentUri: TOPIC_URI, depth: 1 }),
+      makeReply({ uri: 'at://user/reply/b', parentUri: 'at://user/reply/a', depth: 2 }),
+      makeReply({ uri: 'at://user/reply/c', parentUri: 'at://user/reply/b', depth: 3 }),
+      makeReply({ uri: 'at://user/reply/d', parentUri: 'at://user/reply/c', depth: 4 }),
+    ]
+    const tree = buildReplyTree(replies, TOPIC_URI)
+    // Root node has 3 descendants: b, c, d
+    expect(countDescendants(tree[0]!)).toBe(3)
+    // Node b has 2 descendants: c, d
+    expect(countDescendants(tree[0]!.children[0]!)).toBe(2)
+    // Node c has 1 descendant: d
+    expect(countDescendants(tree[0]!.children[0]!.children[0]!)).toBe(1)
+  })
+
+  it('counts branching descendants', () => {
+    const replies = [
+      makeReply({ uri: 'at://user/reply/a', parentUri: TOPIC_URI, depth: 1 }),
+      makeReply({ uri: 'at://user/reply/b', parentUri: 'at://user/reply/a', depth: 2 }),
+      makeReply({ uri: 'at://user/reply/c', parentUri: 'at://user/reply/a', depth: 2 }),
+      makeReply({ uri: 'at://user/reply/d', parentUri: 'at://user/reply/b', depth: 3 }),
+    ]
+    const tree = buildReplyTree(replies, TOPIC_URI)
+    // Root has 3 descendants: b, c, d
+    expect(countDescendants(tree[0]!)).toBe(3)
   })
 })
 
