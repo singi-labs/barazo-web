@@ -4,6 +4,7 @@
  */
 
 import type { OnboardingFieldType } from '@/lib/api/types'
+import { FormLabel } from '@/components/ui/form-label'
 
 const FIELD_TYPE_LABELS: Record<OnboardingFieldType, string> = {
   age_confirmation: 'Age Confirmation',
@@ -57,15 +58,16 @@ export function OnboardingFieldForm({
       <div className="space-y-4">
         {!editing.id && (
           <div>
-            <label htmlFor="field-type" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="field-type" required>
               Field Type
-            </label>
+            </FormLabel>
             <select
               id="field-type"
               value={editing.fieldType}
               onChange={(e) =>
                 onChange({ ...editing, fieldType: e.target.value as OnboardingFieldType })
               }
+              required
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
             >
               {Object.entries(FIELD_TYPE_LABELS).map(([value, label]) => (
@@ -77,22 +79,23 @@ export function OnboardingFieldForm({
           </div>
         )}
         <div>
-          <label htmlFor="field-label" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="field-label" required>
             Label
-          </label>
+          </FormLabel>
           <input
             id="field-label"
             type="text"
             value={editing.label}
             onChange={(e) => onChange({ ...editing, label: e.target.value })}
+            required
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
             placeholder="e.g., Accept our community rules"
           />
         </div>
         <div>
-          <label htmlFor="field-description" className="block text-sm font-medium text-foreground">
-            Description (optional)
-          </label>
+          <FormLabel htmlFor="field-description" optional>
+            Description
+          </FormLabel>
           <textarea
             id="field-description"
             value={editing.description}
@@ -104,9 +107,9 @@ export function OnboardingFieldForm({
         </div>
         {editing.fieldType === 'tos_acceptance' && (
           <div>
-            <label htmlFor="field-tos-url" className="block text-sm font-medium text-foreground">
-              Terms of Service URL (optional)
-            </label>
+            <FormLabel htmlFor="field-tos-url" optional>
+              Terms of Service URL
+            </FormLabel>
             <input
               id="field-tos-url"
               type="url"

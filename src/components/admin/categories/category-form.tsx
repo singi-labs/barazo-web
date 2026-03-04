@@ -4,6 +4,7 @@
  */
 
 import type { MaturityRating } from '@/lib/api/types'
+import { FormLabel } from '@/components/ui/form-label'
 
 export interface EditingCategory {
   id: string | null
@@ -29,33 +30,35 @@ export function CategoryForm({ editing, onChange, onSave, onCancel }: CategoryFo
       </h2>
       <div className="space-y-4">
         <div>
-          <label htmlFor="cat-name" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="cat-name" required>
             Category Name
-          </label>
+          </FormLabel>
           <input
             id="cat-name"
             type="text"
             value={editing.name}
             onChange={(e) => onChange({ ...editing, name: e.target.value })}
+            required
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
           />
         </div>
         <div>
-          <label htmlFor="cat-slug" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="cat-slug" required>
             Slug
-          </label>
+          </FormLabel>
           <input
             id="cat-slug"
             type="text"
             value={editing.slug}
             onChange={(e) => onChange({ ...editing, slug: e.target.value })}
+            required
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
           />
         </div>
         <div>
-          <label htmlFor="cat-desc" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="cat-desc" optional>
             Description
-          </label>
+          </FormLabel>
           <textarea
             id="cat-desc"
             value={editing.description}
@@ -65,15 +68,16 @@ export function CategoryForm({ editing, onChange, onSave, onCancel }: CategoryFo
           />
         </div>
         <div>
-          <label htmlFor="cat-maturity" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="cat-maturity" required>
             Maturity Rating
-          </label>
+          </FormLabel>
           <select
             id="cat-maturity"
             value={editing.maturityRating}
             onChange={(e) =>
               onChange({ ...editing, maturityRating: e.target.value as MaturityRating })
             }
+            required
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
           >
             <option value="safe">Safe</option>

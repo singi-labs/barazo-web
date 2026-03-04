@@ -14,9 +14,10 @@ interface TopicContentEditorProps {
   content: string
   onChange: (content: string) => void
   error?: string
+  required?: boolean
 }
 
-export function TopicContentEditor({ content, onChange, error }: TopicContentEditorProps) {
+export function TopicContentEditor({ content, onChange, error, required }: TopicContentEditorProps) {
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write')
 
   return (
@@ -67,6 +68,7 @@ export function TopicContentEditor({ content, onChange, error }: TopicContentEdi
           onChange={onChange}
           id="topic-content"
           label="Content"
+          required={required}
           error={error}
         />
       </div>

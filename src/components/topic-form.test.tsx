@@ -26,22 +26,22 @@ afterAll(() => server.close())
 describe('TopicForm', () => {
   it('renders title input', () => {
     render(<TopicForm onSubmit={vi.fn()} />)
-    expect(screen.getByLabelText('Title')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Title' })).toBeInTheDocument()
   })
 
   it('renders category select', () => {
     render(<TopicForm onSubmit={vi.fn()} />)
-    expect(screen.getByLabelText('Category')).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Category' })).toBeInTheDocument()
   })
 
   it('renders tag input', () => {
     render(<TopicForm onSubmit={vi.fn()} />)
-    expect(screen.getByLabelText('Tags')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /Tags/ })).toBeInTheDocument()
   })
 
   it('renders content editor', () => {
     render(<TopicForm onSubmit={vi.fn()} />)
-    expect(screen.getByLabelText('Content')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Content' })).toBeInTheDocument()
   })
 
   it('renders cross-post checkboxes', () => {
@@ -95,7 +95,7 @@ describe('TopicForm', () => {
     const onSubmit = vi.fn()
     render(<TopicForm onSubmit={onSubmit} />)
 
-    await user.type(screen.getByLabelText('Title'), 'Test Title')
+    await user.type(screen.getByRole('textbox', { name: 'Title' }), 'Test Title')
     await user.click(screen.getByRole('button', { name: 'Create Topic' }))
     expect(screen.getByText('Content is required')).toBeInTheDocument()
     expect(onSubmit).not.toHaveBeenCalled()
@@ -106,8 +106,8 @@ describe('TopicForm', () => {
     const onSubmit = vi.fn()
     render(<TopicForm onSubmit={onSubmit} />)
 
-    await user.type(screen.getByLabelText('Title'), 'Test Title')
-    await user.type(screen.getByLabelText('Content'), 'Test content')
+    await user.type(screen.getByRole('textbox', { name: 'Title' }), 'Test Title')
+    await user.type(screen.getByRole('textbox', { name: 'Content' }), 'Test content')
     await user.click(screen.getByRole('button', { name: 'Create Topic' }))
     expect(screen.getByText('Category is required')).toBeInTheDocument()
     expect(onSubmit).not.toHaveBeenCalled()
@@ -118,7 +118,7 @@ describe('TopicForm', () => {
     const onSubmit = vi.fn()
     render(<TopicForm onSubmit={onSubmit} />)
 
-    await user.type(screen.getByLabelText('Title'), 'AB')
+    await user.type(screen.getByRole('textbox', { name: 'Title' }), 'AB')
     await user.click(screen.getByRole('button', { name: 'Create Topic' }))
     expect(screen.getByText('Title must be at least 3 characters')).toBeInTheDocument()
     expect(onSubmit).not.toHaveBeenCalled()
@@ -148,8 +148,8 @@ describe('TopicForm', () => {
         mode="edit"
       />
     )
-    expect(screen.getByLabelText('Title')).toHaveValue('Existing Topic')
-    expect(screen.getByLabelText('Content')).toHaveValue('Existing content')
+    expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue('Existing Topic')
+    expect(screen.getByRole('textbox', { name: 'Content' })).toHaveValue('Existing content')
   })
 
   it('passes axe accessibility check', async () => {

@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 interface PdsOverrideDialogProps {
   open: boolean
@@ -65,9 +66,9 @@ export function PdsOverrideDialog({
         </h3>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label htmlFor="pds-hostname" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="pds-hostname" required>
               PDS Hostname
-            </label>
+            </FormLabel>
             <input
               ref={hostnameRef}
               id="pds-hostname"
@@ -84,9 +85,9 @@ export function PdsOverrideDialog({
             />
           </div>
           <div>
-            <label htmlFor="pds-trust-factor" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="pds-trust-factor" required>
               Trust Factor: {trustFactor.toFixed(1)}
-            </label>
+            </FormLabel>
             <input
               id="pds-trust-factor"
               type="range"

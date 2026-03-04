@@ -6,6 +6,7 @@
 'use client'
 
 import { ErrorAlert } from '@/components/error-alert'
+import { FormLabel } from '@/components/ui/form-label'
 import type { CommunitySettings, MaturityRating } from '@/lib/api/types'
 
 interface CommunitySettingsFormProps {
@@ -28,22 +29,23 @@ export function CommunitySettingsForm({
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <label htmlFor="settings-name" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="settings-name" required>
           Community Name
-        </label>
+        </FormLabel>
         <input
           id="settings-name"
           type="text"
           value={settings.communityName}
           onChange={(e) => onChange({ ...settings, communityName: e.target.value })}
+          required
           className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
         />
       </div>
 
       <div>
-        <label htmlFor="settings-desc" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="settings-desc" optional>
           Description
-        </label>
+        </FormLabel>
         <textarea
           id="settings-desc"
           value={settings.communityDescription ?? ''}
@@ -54,15 +56,16 @@ export function CommunitySettingsForm({
       </div>
 
       <div>
-        <label htmlFor="settings-maturity" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="settings-maturity" required>
           Community Maturity Rating
-        </label>
+        </FormLabel>
         <select
           id="settings-maturity"
           value={settings.maturityRating}
           onChange={(e) =>
             onChange({ ...settings, maturityRating: e.target.value as MaturityRating })
           }
+          required
           className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
         >
           <option value="safe">Safe (default)</option>
@@ -75,9 +78,9 @@ export function CommunitySettingsForm({
       </div>
 
       <div>
-        <label htmlFor="settings-reactions" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="settings-reactions" optional>
           Reaction Set
-        </label>
+        </FormLabel>
         <input
           id="settings-reactions"
           type="text"
@@ -99,12 +102,9 @@ export function CommunitySettingsForm({
       </div>
 
       <div>
-        <label
-          htmlFor="settings-max-reply-depth"
-          className="block text-sm font-medium text-foreground"
-        >
+        <FormLabel htmlFor="settings-max-reply-depth" optional>
           Max Reply Depth
-        </label>
+        </FormLabel>
         <input
           id="settings-max-reply-depth"
           type="number"

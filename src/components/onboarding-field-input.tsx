@@ -5,36 +5,10 @@
 
 import type { OnboardingField } from '@/lib/api/types'
 import { AGE_OPTIONS } from '@/lib/constants'
+import { FormLabel } from '@/components/ui/form-label'
 
 const INPUT_CLASS =
   'mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground'
-
-function FieldLabel({
-  htmlFor,
-  label,
-  required,
-  description,
-  block = true,
-}: {
-  htmlFor: string
-  label: string
-  required: boolean
-  description?: string | null
-  block?: boolean
-}) {
-  return (
-    <>
-      <label
-        htmlFor={htmlFor}
-        className={`${block ? 'block ' : ''}text-sm font-medium text-foreground`}
-      >
-        {label}
-        {required && <span className="ml-1 text-destructive">*</span>}
-      </label>
-      {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
-    </>
-  )
-}
 
 interface OnboardingFieldInputProps {
   field: OnboardingField
@@ -50,16 +24,15 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
     case 'age_confirmation':
       return (
         <div>
-          <FieldLabel
-            htmlFor={labelId}
-            label={field.label}
-            required={required}
-            description={field.description}
-          />
+          <FormLabel htmlFor={labelId} required={required} optional={!required}>
+            {field.label}
+          </FormLabel>
+          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
           <select
             id={labelId}
             value={value !== undefined ? String(value) : ''}
             onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+            required={required}
             className={INPUT_CLASS}
           >
             <option value="">Select age bracket...</option>
@@ -81,16 +54,14 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
             type="checkbox"
             checked={value === true}
             onChange={(e) => onChange(e.target.checked)}
+            required={required}
             className="mt-1 h-4 w-4 rounded border-border"
           />
           <div>
-            <FieldLabel
-              htmlFor={labelId}
-              label={field.label}
-              required={required}
-              description={field.description}
-              block={false}
-            />
+            <FormLabel htmlFor={labelId} required={required} optional={!required} block={false}>
+              {field.label}
+            </FormLabel>
+            {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
             {tosUrl && (
               <a
                 href={tosUrl}
@@ -114,16 +85,14 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
             type="checkbox"
             checked={value === true}
             onChange={(e) => onChange(e.target.checked)}
+            required={required}
             className="mt-1 h-4 w-4 rounded border-border"
           />
           <div>
-            <FieldLabel
-              htmlFor={labelId}
-              label={field.label}
-              required={required}
-              description={field.description}
-              block={false}
-            />
+            <FormLabel htmlFor={labelId} required={required} optional={!required} block={false}>
+              {field.label}
+            </FormLabel>
+            {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
           </div>
         </div>
       )
@@ -131,18 +100,17 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
     case 'newsletter_email':
       return (
         <div>
-          <FieldLabel
-            htmlFor={labelId}
-            label={field.label}
-            required={required}
-            description={field.description}
-          />
+          <FormLabel htmlFor={labelId} required={required} optional={!required}>
+            {field.label}
+          </FormLabel>
+          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
           <input
             id={labelId}
             type="email"
             value={typeof value === 'string' ? value : ''}
             onChange={(e) => onChange(e.target.value || undefined)}
             placeholder="your@email.com"
+            required={required}
             className={INPUT_CLASS}
           />
         </div>
@@ -151,17 +119,16 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
     case 'custom_text':
       return (
         <div>
-          <FieldLabel
-            htmlFor={labelId}
-            label={field.label}
-            required={required}
-            description={field.description}
-          />
+          <FormLabel htmlFor={labelId} required={required} optional={!required}>
+            {field.label}
+          </FormLabel>
+          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
           <textarea
             id={labelId}
             value={typeof value === 'string' ? value : ''}
             onChange={(e) => onChange(e.target.value || undefined)}
             rows={3}
+            required={required}
             className={INPUT_CLASS}
           />
         </div>
@@ -171,16 +138,15 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
       const options = (field.config?.options ?? []) as string[]
       return (
         <div>
-          <FieldLabel
-            htmlFor={labelId}
-            label={field.label}
-            required={required}
-            description={field.description}
-          />
+          <FormLabel htmlFor={labelId} required={required} optional={!required}>
+            {field.label}
+          </FormLabel>
+          {field.description && <p className="mt-0.5 text-xs text-muted-foreground">{field.description}</p>}
           <select
             id={labelId}
             value={typeof value === 'string' ? value : ''}
             onChange={(e) => onChange(e.target.value || undefined)}
+            required={required}
             className={INPUT_CLASS}
           >
             <option value="">Select...</option>

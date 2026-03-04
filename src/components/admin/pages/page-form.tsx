@@ -5,6 +5,7 @@
  */
 
 import { TopicContentEditor } from '@/components/topic-content-editor'
+import { FormLabel } from '@/components/ui/form-label'
 import type { PageStatus, PageTreeNode } from '@/lib/api/types'
 
 export interface PageFormProps {
@@ -52,41 +53,44 @@ export function PageForm({
     <>
       <div className="space-y-4">
         <div>
-          <label htmlFor="page-title" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="page-title" required>
             Title
-          </label>
+          </FormLabel>
           <input
             id="page-title"
             type="text"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
+            required
             className="mt-1 block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Page title"
           />
         </div>
 
         <div>
-          <label htmlFor="page-slug" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="page-slug" required>
             Slug
-          </label>
+          </FormLabel>
           <input
             id="page-slug"
             type="text"
             value={slug}
             onChange={(e) => onSlugChange(e.target.value)}
+            required
             className="mt-1 block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="url-slug"
           />
         </div>
 
         <div>
-          <label htmlFor="page-status" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="page-status" required>
             Status
-          </label>
+          </FormLabel>
           <select
             id="page-status"
             value={status}
             onChange={(e) => onStatusChange(e.target.value as PageStatus)}
+            required
             className="mt-1 block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="draft">Draft</option>
@@ -95,9 +99,9 @@ export function PageForm({
         </div>
 
         <div>
-          <label htmlFor="page-parent" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="page-parent" optional>
             Parent Page
-          </label>
+          </FormLabel>
           <select
             id="page-parent"
             value={parentId ?? ''}
@@ -114,12 +118,9 @@ export function PageForm({
         </div>
 
         <div>
-          <label
-            htmlFor="page-meta-description"
-            className="block text-sm font-medium text-foreground"
-          >
+          <FormLabel htmlFor="page-meta-description" optional>
             Meta Description
-          </label>
+          </FormLabel>
           <textarea
             id="page-meta-description"
             value={metaDescription}
@@ -132,7 +133,7 @@ export function PageForm({
           <p className="mt-1 text-xs text-muted-foreground">{metaDescription.length}/320</p>
         </div>
 
-        <TopicContentEditor content={content} onChange={onContentChange} />
+        <TopicContentEditor content={content} onChange={onContentChange} required />
       </div>
 
       <div className="flex items-center gap-3">

@@ -100,8 +100,8 @@ describe('AdminOnboardingPage', () => {
     const user = userEvent.setup()
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
-    expect(screen.getByLabelText(/field type/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^label$/i)).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: /field type/i })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /^label$/i })).toBeInTheDocument()
   })
 
   it('shows edit form when edit button is clicked', async () => {
@@ -112,7 +112,7 @@ describe('AdminOnboardingPage', () => {
     })
     const editButtons = screen.getAllByRole('button', { name: /edit/i })
     await user.click(editButtons[0]!)
-    expect(screen.getByLabelText(/^label$/i)).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /^label$/i })).toBeInTheDocument()
   })
 
   it('hides field type selector when editing existing field', async () => {
@@ -123,7 +123,7 @@ describe('AdminOnboardingPage', () => {
     })
     const editButtons = screen.getAllByRole('button', { name: /edit/i })
     await user.click(editButtons[0]!)
-    expect(screen.queryByLabelText(/field type/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: /field type/i })).not.toBeInTheDocument()
   })
 
   it('shows validation error when saving with empty label', async () => {
@@ -138,9 +138,9 @@ describe('AdminOnboardingPage', () => {
     const user = userEvent.setup()
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
-    expect(screen.getByLabelText(/^label$/i)).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /^label$/i })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /cancel/i }))
-    expect(screen.queryByLabelText(/^label$/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: /^label$/i })).not.toBeInTheDocument()
   })
 
   it('renders reorder buttons for each field', async () => {
@@ -234,18 +234,18 @@ describe('AdminOnboardingPage', () => {
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
     // Default type is custom_text -- no ToS URL input yet
-    expect(screen.queryByLabelText(/terms of service url/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: /terms of service url/i })).not.toBeInTheDocument()
     // Switch to tos_acceptance
-    await user.selectOptions(screen.getByLabelText(/field type/i), 'tos_acceptance')
-    expect(screen.getByLabelText(/terms of service url/i)).toBeInTheDocument()
+    await user.selectOptions(screen.getByRole('combobox', { name: /field type/i }), 'tos_acceptance')
+    expect(screen.getByRole('textbox', { name: /terms of service url/i })).toBeInTheDocument()
   })
 
   it('hides ToS URL input for other field types', async () => {
     const user = userEvent.setup()
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
-    await user.selectOptions(screen.getByLabelText(/field type/i), 'custom_text')
-    expect(screen.queryByLabelText(/terms of service url/i)).not.toBeInTheDocument()
+    await user.selectOptions(screen.getByRole('combobox', { name: /field type/i }), 'custom_text')
+    expect(screen.queryByRole('textbox', { name: /terms of service url/i })).not.toBeInTheDocument()
   })
 
   it('saves tosUrl in config when provided', async () => {
@@ -274,9 +274,9 @@ describe('AdminOnboardingPage', () => {
     const user = userEvent.setup()
     render(<AdminOnboardingPage />)
     await user.click(screen.getByRole('button', { name: /add field/i }))
-    await user.selectOptions(screen.getByLabelText(/field type/i), 'tos_acceptance')
-    await user.type(screen.getByLabelText(/^label$/i), 'Accept ToS')
-    await user.type(screen.getByLabelText(/terms of service url/i), 'https://example.com/tos')
+    await user.selectOptions(screen.getByRole('combobox', { name: /field type/i }), 'tos_acceptance')
+    await user.type(screen.getByRole('textbox', { name: /^label$/i }), 'Accept ToS')
+    await user.type(screen.getByRole('textbox', { name: /terms of service url/i }), 'https://example.com/tos')
     await user.click(screen.getByRole('button', { name: /^save$/i }))
     await waitFor(() => {
       expect(capturedBody).not.toBeNull()
