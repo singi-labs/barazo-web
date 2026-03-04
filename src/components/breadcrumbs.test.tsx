@@ -20,13 +20,13 @@ describe('Breadcrumbs', () => {
 
   it('renders links for non-last items in desktop layout', () => {
     render(<Breadcrumbs items={items} />)
-    const homeLink = screen.getByRole('link', { name: 'Home' })
-    expect(homeLink).toHaveAttribute('href', '/')
+    const homeLinks = screen.getAllByRole('link', { name: 'Home' })
+    expect(homeLinks.length).toBeGreaterThanOrEqual(1)
+    expect(homeLinks[0]).toHaveAttribute('href', '/')
   })
 
   it('renders mobile back-link with last navigable item', () => {
     render(<Breadcrumbs items={items} />)
-    // Mobile link uses the last item with an href ("Development")
     const devLinks = screen.getAllByRole('link', { name: /Development/i })
     const mobileLink = devLinks.find((el) => el.classList.contains('md:hidden'))
     expect(mobileLink).toBeDefined()

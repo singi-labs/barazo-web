@@ -83,7 +83,8 @@ describe('NewTopicPage', () => {
 
   it('renders breadcrumbs', () => {
     render(<NewTopicPage />)
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('New topic')).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(nav).toHaveTextContent('Home')
+    expect(nav).toHaveTextContent('New topic')
   })
 })

@@ -50,10 +50,10 @@ describe('UserProfilePage', () => {
   it('renders breadcrumbs', async () => {
     render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
-      expect(screen.getByText('Home')).toBeInTheDocument()
+      expect(screen.getByRole('navigation', { name: /breadcrumb/i })).toBeInTheDocument()
     })
-    const breadcrumb = screen.getByRole('navigation', { name: /breadcrumb/i })
-    expect(breadcrumb).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(nav).toHaveTextContent('Home')
   })
 
   it('renders profile sections', async () => {

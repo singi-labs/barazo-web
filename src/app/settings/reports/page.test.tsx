@@ -54,7 +54,8 @@ describe('MyReportsPage', () => {
 
   it('renders breadcrumbs with link to settings', async () => {
     render(<MyReportsPage />)
-    expect(screen.getByText('Account settings')).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(nav).toHaveTextContent('Account settings')
   })
 
   it('loads and displays user reports from API', async () => {
