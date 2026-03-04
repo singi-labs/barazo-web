@@ -5,6 +5,7 @@
  * to replies with children for collapse/expand. Reply-to badges
  * show when a reply's parent isn't visually adjacent.
  * Respects visual indent cap — stops nesting beyond the cap.
+ * Auto-collapses depth 3+ threads and limits 5+ siblings at depth 2+.
  */
 
 'use client'
@@ -12,9 +13,15 @@
 import { useState, useCallback } from 'react'
 import type { Reply } from '@/lib/api/types'
 import type { ReplyTreeNode } from '@/lib/build-reply-tree'
+import {
+  DEFAULT_EXPANDED_LEVELS,
+  AUTO_COLLAPSE_SIBLING_THRESHOLD,
+  AUTO_COLLAPSE_SHOW_COUNT,
+} from '@/lib/threading-constants'
 import { ReplyCard } from './reply-card'
 import { ThreadLine } from './thread-line'
 import { ReplyToBadge } from './reply-to-badge'
+import { ShowMoreReplies } from './show-more-replies'
 
 interface ReplyBranchProps {
   nodes: ReplyTreeNode[]
@@ -40,7 +47,19 @@ export function ReplyBranch({
   onReply,
   currentUserDid,
 }: ReplyBranchProps) {
-  const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set())
+  // Auto-collapse: nodes at depth >= DEFAULT_EXPANDED_LEVELS with children start collapsed
+  const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(() => {
+    const initial = new Set<string>()
+    for (const node of nodes) {
+      if (node.reply.depth >= DEFAULT_EXPANDED_LEVELS && node.children.length > 0) {
+        initial.add(node.reply.uri)
+      }
+    }
+    return initial
+  })
+
+  // Sibling limiting: 5+ siblings at depth 2+ show only first 3
+  const [showAllSiblings, setShowAllSiblings] = useState(false)
 
   const toggleCollapse = useCallback((uri: string) => {
     setCollapsedNodes((prev) => {
@@ -60,9 +79,16 @@ export function ReplyBranch({
   const expectedParentUri = treeParentUri ?? topicUri
   const atVisualCap = currentVisualDepth >= visualIndentCap
 
+  // Determine sibling limiting: depth 1 (direct replies) never limited
+  const siblingDepth = nodes[0]?.reply.depth ?? 1
+  const shouldLimitSiblings =
+    !showAllSiblings && siblingDepth >= 2 && nodes.length >= AUTO_COLLAPSE_SIBLING_THRESHOLD
+  const visibleNodes = shouldLimitSiblings ? nodes.slice(0, AUTO_COLLAPSE_SHOW_COUNT) : nodes
+  const hiddenSiblingCount = nodes.length - visibleNodes.length
+
   return (
     <ol className="list-none space-y-3 pl-0 first:pl-0 [&_&]:mt-3 [&_&]:pl-0">
-      {nodes.map((node) => {
+      {visibleNodes.map((node) => {
         const postNumber = postNumberMap.get(node.reply.uri) ?? 0
         const hasChildren = node.children.length > 0
         const isCollapsed = collapsedNodes.has(node.reply.uri)
@@ -137,6 +163,11 @@ export function ReplyBranch({
           </li>
         )
       })}
+      {hiddenSiblingCount > 0 && (
+        <li>
+          <ShowMoreReplies count={hiddenSiblingCount} onShow={() => setShowAllSiblings(true)} />
+        </li>
+      )}
     </ol>
   )
 }
