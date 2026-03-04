@@ -1,9 +1,9 @@
 /**
- * Tests for admin user management page.
+ * Tests for admin user management page (P3 placeholder).
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import AdminUsersPage from './page'
 
@@ -50,61 +50,20 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
-}))
-
 describe('AdminUsersPage', () => {
   it('renders user management heading', () => {
     render(<AdminUsersPage />)
     expect(screen.getByRole('heading', { name: /user management/i })).toBeInTheDocument()
   })
 
-  it('renders user list from API', async () => {
+  it('shows coming in P3 message', () => {
     render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getByText('Jay Admin')).toBeInTheDocument()
-    })
-    expect(screen.getByText('Alex Moderator')).toBeInTheDocument()
-    expect(screen.getByText('Sam Member')).toBeInTheDocument()
-  })
-
-  it('shows user roles', async () => {
-    render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getByText('admin')).toBeInTheDocument()
-    })
-    expect(screen.getByText('moderator')).toBeInTheDocument()
-  })
-
-  it('shows banned status', async () => {
-    render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getByText('Morgan Banned')).toBeInTheDocument()
-    })
-    // Morgan should show as banned
-    expect(screen.getByText('Banned')).toBeInTheDocument()
-  })
-
-  it('shows cross-community ban warning', async () => {
-    render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getByText(/banned from 2 other communities/i)).toBeInTheDocument()
-    })
-  })
-
-  it('shows ban/unban buttons', async () => {
-    render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getAllByRole('button', { name: /ban/i }).length).toBeGreaterThan(0)
-    })
+    expect(screen.getByRole('heading', { name: /coming in p3/i })).toBeInTheDocument()
+    expect(screen.getByText(/planned for the p3\.2 milestone/i)).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminUsersPage />)
-    await waitFor(() => {
-      expect(screen.getByText('Jay Admin')).toBeInTheDocument()
-    })
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
