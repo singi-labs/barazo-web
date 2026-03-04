@@ -25,7 +25,13 @@ interface CategoryFormProps {
   saveStatus: SaveStatus
 }
 
-export function CategoryForm({ editing, onChange, onSave, onCancel, saveStatus }: CategoryFormProps) {
+export function CategoryForm({
+  editing,
+  onChange,
+  onSave,
+  onCancel,
+  saveStatus,
+}: CategoryFormProps) {
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <h2 className="mb-4 text-lg font-semibold text-foreground">

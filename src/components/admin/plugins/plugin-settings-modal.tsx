@@ -20,7 +20,12 @@ interface PluginSettingsModalProps {
   saveStatus: SaveStatus
 }
 
-export function PluginSettingsModal({ plugin, onClose, onSave, saveStatus }: PluginSettingsModalProps) {
+export function PluginSettingsModal({
+  plugin,
+  onClose,
+  onSave,
+  saveStatus,
+}: PluginSettingsModalProps) {
   const [values, setValues] = useState<Record<string, boolean | string | number>>(() => ({
     ...plugin.settings,
   }))
@@ -68,7 +73,11 @@ export function PluginSettingsModal({ plugin, onClose, onSave, saveStatus }: Plu
             >
               Cancel
             </button>
-            <SaveButton status={saveStatus} onClick={() => onSave(values)} className="px-3 py-1.5" />
+            <SaveButton
+              status={saveStatus}
+              onClick={() => onSave(values)}
+              className="px-3 py-1.5"
+            />
           </div>
         </div>
       </div>

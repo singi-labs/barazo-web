@@ -17,7 +17,11 @@ interface ModerationThresholdsTabProps {
   saveStatus: SaveStatus
 }
 
-export function ModerationThresholdsTab({ thresholds, onSave, saveStatus }: ModerationThresholdsTabProps) {
+export function ModerationThresholdsTab({
+  thresholds,
+  onSave,
+  saveStatus,
+}: ModerationThresholdsTabProps) {
   const [values, setValues] = useState(thresholds)
 
   return (

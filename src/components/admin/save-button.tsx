@@ -48,5 +48,5 @@ export function SaveButton({
         {status === 'saved' ? `${savedLabel}.` : ''}
       </span>
     </>
-  );
+  )
 }
