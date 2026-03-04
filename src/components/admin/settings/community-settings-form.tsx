@@ -6,14 +6,16 @@
 'use client'
 
 import { ErrorAlert } from '@/components/error-alert'
+import { SaveButton } from '@/components/admin/save-button'
 import { FormLabel } from '@/components/ui/form-label'
 import type { CommunitySettings, MaturityRating } from '@/lib/api/types'
+import type { SaveStatus } from '@/hooks/use-save-state'
 
 interface CommunitySettingsFormProps {
   settings: CommunitySettings
   onChange: (updated: CommunitySettings) => void
   onSave: () => void
-  saving: boolean
+  saveStatus: SaveStatus
   saveError: string | null
   onDismissError: () => void
 }
@@ -22,7 +24,7 @@ export function CommunitySettingsForm({
   settings,
   onChange,
   onSave,
-  saving,
+  saveStatus,
   saveError,
   onDismissError,
 }: CommunitySettingsFormProps) {
@@ -126,14 +128,7 @@ export function CommunitySettingsForm({
 
       {saveError && <ErrorAlert message={saveError} onDismiss={onDismissError} />}
 
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={saving}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-      >
-        {saving ? 'Saving...' : 'Save Settings'}
-      </button>
+      <SaveButton status={saveStatus} onClick={onSave} label="Save Settings" />
     </div>
   )
 }

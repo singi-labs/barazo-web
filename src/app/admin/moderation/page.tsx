@@ -35,6 +35,7 @@ export default function AdminModerationPage() {
     handleResolveFirstPost,
     handleBatchResolveFirstPost,
     handleSaveThresholds,
+    thresholdsSaveStatus,
   } = useModerationData()
 
   return (
@@ -135,6 +136,7 @@ export default function AdminModerationPage() {
                 <ModerationThresholdsTab
                   thresholds={thresholds}
                   onSave={(updated) => void handleSaveThresholds(updated)}
+                  saveStatus={thresholdsSaveStatus}
                 />
               )}
             </div>

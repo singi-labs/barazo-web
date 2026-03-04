@@ -23,11 +23,11 @@ import type {
   BehavioralFlag,
 } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
-import { useToast } from '@/hooks/use-toast'
+import { useSaveState } from '@/hooks/use-save-state'
 
 export function useSybilData() {
   const { getAccessToken } = useAuth()
-  const { toast } = useToast()
+  const recomputeSave = useSaveState()
   const [clusters, setClusters] = useState<SybilCluster[]>([])
   const [graphStatus, setGraphStatus] = useState<TrustGraphStatus | null>(null)
   const [flags, setFlags] = useState<BehavioralFlag[]>([])
@@ -36,7 +36,6 @@ export function useSybilData() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
-  const [recomputing, setRecomputing] = useState(false)
   const [confirmAction, setConfirmAction] = useState<{
     title: string
     message: string
@@ -96,7 +95,7 @@ export function useSybilData() {
           )
           setClusters((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
           setSelectedDetail({ ...selectedDetail, ...updated })
-          toast({ title: 'Cluster status updated' })
+          // Visual change (cluster status badge update) is the feedback
         } catch {
           setActionError('Failed to update cluster status.')
         }
@@ -105,14 +104,13 @@ export function useSybilData() {
   }
 
   const handleRecompute = async () => {
-    setRecomputing(true)
+    recomputeSave.startSaving()
     try {
       await recomputeTrustGraph(getAccessToken() ?? '')
-      toast({ title: 'Trust graph recomputation started' })
+      recomputeSave.onSaved()
     } catch {
+      recomputeSave.reset()
       setActionError('Failed to start recomputation.')
-    } finally {
-      setRecomputing(false)
     }
   }
 
@@ -121,7 +119,6 @@ export function useSybilData() {
     try {
       const updated = await updateBehavioralFlag(id, 'dismissed', getAccessToken() ?? '')
       setFlags((prev) => prev.map((f) => (f.id === updated.id ? updated : f)))
-      toast({ title: 'Flag dismissed' })
     } catch {
       setActionError('Failed to dismiss flag.')
     }
@@ -139,7 +136,7 @@ export function useSybilData() {
     loadError,
     actionError,
     setActionError,
-    recomputing,
+    recomputeStatus: recomputeSave.status,
     confirmAction,
     setConfirmAction,
     fetchData,

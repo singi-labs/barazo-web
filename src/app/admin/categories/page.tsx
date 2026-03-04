@@ -17,11 +17,11 @@ import type { EditingCategory } from '@/components/admin/categories/category-for
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/lib/api/client'
 import type { CategoryTreeNode } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
-import { useToast } from '@/hooks/use-toast'
+import { useSaveState } from '@/hooks/use-save-state'
 
 export default function AdminCategoriesPage() {
   const { getAccessToken } = useAuth()
-  const { toast } = useToast()
+  const saveMachine = useSaveState()
   const [categories, setCategories] = useState<CategoryTreeNode[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingCategory | null>(null)
@@ -71,7 +71,6 @@ export default function AdminCategoriesPage() {
     try {
       await deleteCategory(id, getAccessToken() ?? '')
       void fetchCategories()
-      toast({ title: 'Category deleted' })
     } catch {
       setActionError('Failed to delete category. Please try again.')
     }
@@ -79,7 +78,7 @@ export default function AdminCategoriesPage() {
 
   const handleSave = async () => {
     if (!editing) return
-
+    saveMachine.startSaving()
     try {
       if (editing.id) {
         await updateCategory(
@@ -108,8 +107,9 @@ export default function AdminCategoriesPage() {
       }
       setEditing(null)
       void fetchCategories()
-      toast({ title: editing.id ? 'Category updated' : 'Category created' })
+      saveMachine.reset()
     } catch {
+      saveMachine.reset()
       setActionError('Failed to save category. Please try again.')
     }
   }
@@ -137,6 +137,7 @@ export default function AdminCategoriesPage() {
             onChange={setEditing}
             onSave={() => void handleSave()}
             onCancel={() => setEditing(null)}
+            saveStatus={saveMachine.status}
           />
         )}
 

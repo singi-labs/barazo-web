@@ -52,10 +52,6 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
-}))
-
 describe('AdminSybilDetectionPage', () => {
   it('renders heading and explanation text', async () => {
     render(<AdminSybilDetectionPage />)
@@ -190,7 +186,7 @@ describe('AdminSybilDetectionPage', () => {
     })
   })
 
-  it('recompute button sends POST and re-enables after completion', async () => {
+  it('recompute button shows started state after completion', async () => {
     const user = userEvent.setup()
     render(<AdminSybilDetectionPage />)
     await waitFor(() => {
@@ -199,9 +195,9 @@ describe('AdminSybilDetectionPage', () => {
     const recomputeBtn = screen.getByRole('button', { name: /recompute now/i })
     expect(recomputeBtn).toBeEnabled()
     await user.click(recomputeBtn)
-    // After the mock resolves, the button should re-enable
+    // After the mock resolves, button shows "Started" state
     await waitFor(() => {
-      const btn = screen.getByRole('button', { name: /recompute now/i })
+      const btn = screen.getByRole('button', { name: /started/i })
       expect(btn).toBeEnabled()
     })
   })

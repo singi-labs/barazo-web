@@ -25,7 +25,7 @@ import type {
   ReportResolution,
 } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
-import { useToast } from '@/hooks/use-toast'
+import { useSaveState } from '@/hooks/use-save-state'
 
 export type ModerationTabId =
   | 'reports'
@@ -44,7 +44,7 @@ export const MODERATION_TABS: { id: ModerationTabId; label: string }[] = [
 
 export function useModerationData() {
   const { getAccessToken } = useAuth()
-  const { toast } = useToast()
+  const thresholdsSave = useSaveState()
   const [activeTab, setActiveTab] = useState<ModerationTabId>('reports')
   const [reports, setReports] = useState<ModerationReport[]>([])
   const [firstPostQueue, setFirstPostQueue] = useState<FirstPostQueueItem[]>([])
@@ -86,7 +86,6 @@ export function useModerationData() {
     try {
       await resolveReport(id, resolution, getAccessToken() ?? '')
       setReports((prev) => prev.filter((r) => r.id !== id))
-      toast({ title: 'Report resolved' })
     } catch {
       setActionError('Failed to resolve report. Please try again.')
     }
@@ -97,7 +96,6 @@ export function useModerationData() {
     try {
       await resolveFirstPost(id, action, getAccessToken() ?? '')
       setFirstPostQueue((prev) => prev.filter((item) => item.id !== id))
-      toast({ title: action === 'approved' ? 'Post approved' : 'Post rejected' })
     } catch {
       setActionError(
         `Failed to ${action === 'approved' ? 'approve' : 'reject'} post. Please try again.`
@@ -110,7 +108,6 @@ export function useModerationData() {
     try {
       await Promise.all(ids.map((id) => resolveFirstPost(id, action, getAccessToken() ?? '')))
       setFirstPostQueue((prev) => prev.filter((item) => !ids.includes(item.id)))
-      toast({ title: action === 'approved' ? 'Posts approved' : 'Posts rejected' })
     } catch {
       setActionError('Failed to process batch action. Some items may not have been updated.')
     }
@@ -118,11 +115,13 @@ export function useModerationData() {
 
   const handleSaveThresholds = async (updated: Partial<ModerationThresholds>) => {
     setActionError(null)
+    thresholdsSave.startSaving()
     try {
       const result = await updateModerationThresholds(updated, getAccessToken() ?? '')
       setThresholds(result)
-      toast({ title: 'Thresholds saved' })
+      thresholdsSave.onSaved()
     } catch {
+      thresholdsSave.reset()
       setActionError('Failed to save thresholds. Please try again.')
     }
   }
@@ -144,5 +143,6 @@ export function useModerationData() {
     handleResolveFirstPost,
     handleBatchResolveFirstPost,
     handleSaveThresholds,
+    thresholdsSaveStatus: thresholdsSave.status,
   }
 }

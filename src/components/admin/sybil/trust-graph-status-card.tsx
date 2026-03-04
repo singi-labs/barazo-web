@@ -4,7 +4,8 @@
  */
 
 import { formatRelativeTime, formatNumber } from '@/lib/format'
-import { cn } from '@/lib/utils'
+import { SaveButton } from '@/components/admin/save-button'
+import type { SaveStatus } from '@/hooks/use-save-state'
 
 interface TrustGraphStatusCardProps {
   status: {
@@ -14,13 +15,13 @@ interface TrustGraphStatusCardProps {
     clustersFlagged: number
   }
   onRecompute: () => void
-  recomputing: boolean
+  saveStatus: SaveStatus
 }
 
 export function TrustGraphStatusCard({
   status,
   onRecompute,
-  recomputing,
+  saveStatus,
 }: TrustGraphStatusCardProps) {
   return (
     <div className="rounded-lg border border-border bg-card p-4">
@@ -38,20 +39,13 @@ export function TrustGraphStatusCard({
             <span>{status.clustersFlagged} clusters flagged</span>
           </p>
         </div>
-        <button
-          type="button"
+        <SaveButton
+          status={saveStatus}
           onClick={onRecompute}
-          disabled={recomputing}
-          aria-label="Recompute now"
-          className={cn(
-            'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-            recomputing
-              ? 'cursor-not-allowed bg-muted text-muted-foreground'
-              : 'bg-primary text-primary-foreground hover:bg-primary/90'
-          )}
-        >
-          {recomputing ? 'Recomputing...' : 'Recompute Now'}
-        </button>
+          label="Recompute Now"
+          savingLabel="Recomputing..."
+          savedLabel="Started"
+        />
       </div>
     </div>
   )

@@ -20,15 +20,14 @@ import {
 } from '@/lib/api/client'
 import type { CommunitySettings, PdsTrustFactor } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
-import { useToast } from '@/hooks/use-toast'
+import { useSaveState } from '@/hooks/use-save-state'
 
 export default function AdminSettingsPage() {
   const { getAccessToken } = useAuth()
-  const { toast } = useToast()
+  const saveMachine = useSaveState()
   const [settings, setSettings] = useState<CommunitySettings | null>(null)
   const [pdsProviders, setPdsProviders] = useState<PdsTrustFactor[]>([])
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [pdsError, setPdsError] = useState<string | null>(null)
@@ -55,7 +54,7 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     if (!settings) return
-    setSaving(true)
+    saveMachine.startSaving()
     setSaveError(null)
     try {
       const updated = await updateCommunitySettings(
@@ -69,11 +68,10 @@ export default function AdminSettingsPage() {
         getAccessToken() ?? ''
       )
       setSettings(updated)
-      toast({ title: 'Settings saved' })
+      saveMachine.onSaved()
     } catch {
+      saveMachine.reset()
       setSaveError('Failed to save settings. Please try again.')
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -88,7 +86,7 @@ export default function AdminSettingsPage() {
         }
         return [...prev, updated]
       })
-      toast({ title: 'PDS trust factor updated' })
+      // Dialog closes = visual feedback
     } catch {
       setPdsError('Failed to update PDS trust factor.')
     }
@@ -115,7 +113,7 @@ export default function AdminSettingsPage() {
             settings={settings}
             onChange={setSettings}
             onSave={() => void handleSave()}
-            saving={saving}
+            saveStatus={saveMachine.status}
             saveError={saveError}
             onDismissError={() => setSaveError(null)}
           />

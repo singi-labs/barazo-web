@@ -8,27 +8,30 @@
 
 import { useState } from 'react'
 import { X } from '@phosphor-icons/react'
+import { SaveButton } from '@/components/admin/save-button'
 import { SettingsField } from '@/components/admin/plugins/settings-field'
 import type { Plugin } from '@/lib/api/types'
+import type { SaveStatus } from '@/hooks/use-save-state'
 
 interface PluginSettingsModalProps {
   plugin: Plugin
   onClose: () => void
   onSave: (settings: Record<string, boolean | string | number>) => void
+  saveStatus: SaveStatus
 }
 
-export function PluginSettingsModal({ plugin, onClose, onSave }: PluginSettingsModalProps) {
+export function PluginSettingsModal({
+  plugin,
+  onClose,
+  onSave,
+  saveStatus,
+}: PluginSettingsModalProps) {
   const [values, setValues] = useState<Record<string, boolean | string | number>>(() => ({
     ...plugin.settings,
   }))
 
   const handleChange = (key: string, value: boolean | string | number) => {
     setValues((prev) => ({ ...prev, [key]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSave(values)
   }
 
   return (
@@ -51,7 +54,7 @@ export function PluginSettingsModal({ plugin, onClose, onSave }: PluginSettingsM
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           {Object.entries(plugin.settingsSchema).map(([key, schema]) => (
             <SettingsField
               key={key}
@@ -70,14 +73,13 @@ export function PluginSettingsModal({ plugin, onClose, onSave }: PluginSettingsM
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              Save
-            </button>
+            <SaveButton
+              status={saveStatus}
+              onClick={() => onSave(values)}
+              className="px-3 py-1.5"
+            />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )

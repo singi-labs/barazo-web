@@ -51,10 +51,6 @@ vi.mock('@/hooks/use-auth', () => {
   return { useAuth: () => mockAuth }
 })
 
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({ toast: vi.fn(), dismiss: vi.fn() }),
-}))
-
 describe('AdminCategoriesPage', () => {
   it('renders categories heading', () => {
     render(<AdminCategoriesPage />)
