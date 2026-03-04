@@ -33,6 +33,7 @@ interface TopicViewProps {
   onModerationAction?: (action: ModerationAction) => void
   canEdit?: boolean
   onEdit?: () => void
+  onReply?: () => void
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
@@ -49,6 +50,7 @@ export function TopicView({
   onModerationAction,
   canEdit,
   onEdit,
+  onReply,
   canReport,
   onReport,
   selfLabels,
@@ -161,13 +163,25 @@ export function TopicView({
         {reactions && onReactionToggle && (
           <ReactionBar reactions={reactions} onToggle={onReactionToggle} />
         )}
-        <span
-          className="flex items-center gap-1.5"
-          aria-label={`${formatCompactNumber(topic.replyCount)} replies`}
-        >
-          <ChatCircle className="h-4 w-4" weight="regular" aria-hidden="true" />
-          {formatCompactNumber(topic.replyCount)}
-        </span>
+        {onReply ? (
+          <button
+            type="button"
+            className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            aria-label={`Reply to this topic (${formatCompactNumber(topic.replyCount)} replies)`}
+            onClick={onReply}
+          >
+            <ChatCircle className="h-4 w-4" weight="regular" aria-hidden="true" />
+            {formatCompactNumber(topic.replyCount)}
+          </button>
+        ) : (
+          <span
+            className="flex items-center gap-1.5"
+            aria-label={`${formatCompactNumber(topic.replyCount)} replies`}
+          >
+            <ChatCircle className="h-4 w-4" weight="regular" aria-hidden="true" />
+            {formatCompactNumber(topic.replyCount)}
+          </span>
+        )}
         <LikeButton
           subjectUri={topic.uri}
           subjectCid={topic.cid}
