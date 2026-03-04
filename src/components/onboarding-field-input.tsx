@@ -72,7 +72,40 @@ export function OnboardingFieldInput({ field, value, onChange }: OnboardingField
         </div>
       )
 
-    case 'tos_acceptance':
+    case 'tos_acceptance': {
+      const tosUrl = typeof field.config?.tosUrl === 'string' ? field.config.tosUrl : null
+      return (
+        <div className="flex items-start gap-2">
+          <input
+            id={labelId}
+            type="checkbox"
+            checked={value === true}
+            onChange={(e) => onChange(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-border"
+          />
+          <div>
+            <FieldLabel
+              htmlFor={labelId}
+              label={field.label}
+              required={required}
+              description={field.description}
+              block={false}
+            />
+            {tosUrl && (
+              <a
+                href={tosUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-0.5 block text-xs text-primary hover:underline"
+              >
+                Read full Terms of Service
+              </a>
+            )}
+          </div>
+        </div>
+      )
+    }
+
     case 'custom_checkbox':
       return (
         <div className="flex items-start gap-2">
