@@ -135,7 +135,7 @@ export function ForumLayout({ children, sidebar, publicSettings }: ForumLayoutPr
           <nav aria-label="Footer">
             <ul className="flex gap-4">
               <li>
-                <Link href="/accessibility" className="transition-colors hover:text-foreground">
+                <Link href="/p/accessibility" className="transition-colors hover:text-foreground">
                   Accessibility
                 </Link>
               </li>
