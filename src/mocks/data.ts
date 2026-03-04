@@ -1048,7 +1048,8 @@ export const mockOnboardingFields: OnboardingField[] = [
     communityDid: COMMUNITY_DID,
     fieldType: 'age_confirmation',
     label: 'Age Declaration',
-    description: 'Please select your age bracket. This determines which content is available to you.',
+    description:
+      'Please select your age bracket. This determines which content is available to you.',
     isMandatory: true,
     sortOrder: -1,
     source: 'platform',

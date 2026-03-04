@@ -226,9 +226,7 @@ describe('AdminOnboardingPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Age Declaration')).toBeInTheDocument()
     })
-    expect(
-      screen.getByText(/this field is required by the barazo platform/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/this field is required by the barazo platform/i)).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
