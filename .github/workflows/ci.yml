@@ -70,6 +70,8 @@ jobs:
       - name: Dereference standalone symlinks
         run: |
           # pnpm uses symlinks in node_modules — artifact upload doesn't preserve them
+          # Remove broken symlinks first (pnpm internal refs), then dereference valid ones
+          find .next/standalone -type l ! -exec test -e {} \; -delete
           cp -rL .next/standalone /tmp/standalone-deref
           rm -rf .next/standalone
           mv /tmp/standalone-deref .next/standalone
