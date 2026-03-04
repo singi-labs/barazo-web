@@ -47,13 +47,7 @@ const NAV_ITEMS = [
   { href: '/admin/plugins', label: 'Plugins', icon: PuzzlePiece },
 ]
 
-function AdminNav({
-  pathname,
-  onLinkClick,
-}: {
-  pathname: string
-  onLinkClick?: () => void
-}) {
+function AdminNav({ pathname, onLinkClick }: { pathname: string; onLinkClick?: () => void }) {
   return (
     <>
       <div className="flex h-14 items-center border-b border-border px-4">
@@ -128,7 +122,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             >
               <Dialog.Title className="sr-only">Admin menu</Dialog.Title>
               <div className="flex h-14 items-center justify-between border-b border-border px-4">
-                <span aria-hidden="true" className="text-sm font-medium text-foreground">Admin</span>
+                <span aria-hidden="true" className="text-sm font-medium text-foreground">
+                  Admin
+                </span>
                 <Dialog.Close asChild>
                   <button
                     type="button"
