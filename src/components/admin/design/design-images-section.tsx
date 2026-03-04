@@ -26,23 +26,33 @@ export function DesignImagesSection({
     <fieldset className="space-y-6">
       <legend className="text-sm font-medium text-foreground">Images</legend>
 
-      <ImageUpload
-        currentUrl={settings.communityLogoUrl}
-        onUpload={onLogoUpload}
-        onRemove={onLogoRemove}
-        label="Community Logo"
-        aspectRatio="1/1"
-        className="w-40"
-      />
+      <div>
+        <ImageUpload
+          currentUrl={settings.communityLogoUrl}
+          onUpload={onLogoUpload}
+          onRemove={onLogoRemove}
+          label="Community Logo"
+          aspectRatio="1/1"
+          className="w-40"
+        />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Recommended: 512&times;512px. Accepted formats: JPEG, PNG, WebP, GIF.
+        </p>
+      </div>
 
-      <ImageUpload
-        currentUrl={settings.faviconUrl}
-        onUpload={onFaviconUpload}
-        onRemove={onFaviconRemove}
-        label="Favicon"
-        aspectRatio="1/1"
-        className="w-16"
-      />
+      <div>
+        <ImageUpload
+          currentUrl={settings.faviconUrl}
+          onUpload={onFaviconUpload}
+          onRemove={onFaviconRemove}
+          label="Favicon"
+          aspectRatio="1/1"
+          className="w-16"
+        />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Recommended: 256&times;256px. Accepted formats: JPEG, PNG, WebP, GIF.
+        </p>
+      </div>
     </fieldset>
   )
 }

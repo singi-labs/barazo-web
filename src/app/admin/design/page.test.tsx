@@ -56,18 +56,20 @@ describe('AdminDesignPage', () => {
     expect(screen.getByRole('heading', { name: /design/i })).toBeInTheDocument()
   })
 
-  it('renders logo upload section', async () => {
+  it('renders logo upload section with help text', async () => {
     render(<AdminDesignPage />)
     await waitFor(() => {
       expect(screen.getByText('Community Logo')).toBeInTheDocument()
     })
+    expect(screen.getByText(/512×512px.*JPEG, PNG, WebP, GIF/)).toBeInTheDocument()
   })
 
-  it('renders favicon upload section', async () => {
+  it('renders favicon upload section with help text', async () => {
     render(<AdminDesignPage />)
     await waitFor(() => {
       expect(screen.getByText('Favicon')).toBeInTheDocument()
     })
+    expect(screen.getByText(/256×256px.*JPEG, PNG, WebP, GIF/)).toBeInTheDocument()
   })
 
   it('renders primary color input', async () => {
