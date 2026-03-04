@@ -97,6 +97,25 @@ describe('AdminSettingsPage', () => {
     })
   })
 
+  // --- Max Reply Depth ---
+
+  it('renders max reply depth input with current value', async () => {
+    render(<AdminSettingsPage />)
+    await waitFor(() => {
+      const input = screen.getByLabelText(/max reply depth/i) as HTMLInputElement
+      expect(input.value).toBe('9999')
+    })
+  })
+
+  it('enforces minimum value of 1 for max reply depth', async () => {
+    render(<AdminSettingsPage />)
+    await waitFor(() => {
+      const input = screen.getByLabelText(/max reply depth/i) as HTMLInputElement
+      expect(input).toHaveAttribute('min', '1')
+      expect(input).toHaveAttribute('max', '9999')
+    })
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminSettingsPage />)
     await waitFor(() => {

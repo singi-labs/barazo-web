@@ -66,6 +66,7 @@ export default function AdminSettingsPage() {
           reactionSet: settings.reactionSet,
           primaryColor: settings.primaryColor,
           accentColor: settings.accentColor,
+          maxReplyDepth: settings.maxReplyDepth,
         },
         getAccessToken() ?? ''
       )
