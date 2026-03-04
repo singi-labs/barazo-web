@@ -134,6 +134,7 @@ export default function AdminCategoriesPage() {
         {editing && (
           <CategoryForm
             editing={editing}
+            categories={categories}
             onChange={setEditing}
             onSave={() => void handleSave()}
             onCancel={() => setEditing(null)}
