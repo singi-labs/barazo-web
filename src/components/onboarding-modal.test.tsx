@@ -196,6 +196,61 @@ describe('OnboardingModal', () => {
     expect(screen.getByRole('button', { name: /continue/i })).toBeEnabled()
   })
 
+  it('renders a ToS link when config.tosUrl is set', () => {
+    render(
+      <OnboardingModal
+        {...defaultProps}
+        fields={[
+          makeField({
+            id: 'tos',
+            fieldType: 'tos_acceptance',
+            label: 'Accept Terms',
+            config: { tosUrl: 'https://example.com/tos' },
+          }),
+        ]}
+      />
+    )
+    const link = screen.getByRole('link', { name: /read full terms of service/i })
+    expect(link).toHaveAttribute('href', 'https://example.com/tos')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('does not render a link when config.tosUrl is absent', () => {
+    render(
+      <OnboardingModal
+        {...defaultProps}
+        fields={[
+          makeField({
+            id: 'tos',
+            fieldType: 'tos_acceptance',
+            label: 'Accept Terms',
+            config: null,
+          }),
+        ]}
+      />
+    )
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  })
+
+  it('passes axe accessibility check for tos_acceptance with tosUrl', async () => {
+    const { container } = render(
+      <OnboardingModal
+        {...defaultProps}
+        fields={[
+          makeField({
+            id: 'tos',
+            fieldType: 'tos_acceptance',
+            label: 'Accept Terms',
+            config: { tosUrl: 'https://example.com/tos' },
+          }),
+        ]}
+      />
+    )
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<OnboardingModal {...defaultProps} />)
     const results = await axe(container)

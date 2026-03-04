@@ -229,6 +229,63 @@ describe('AdminOnboardingPage', () => {
     expect(screen.getByText(/this field is required by the barazo platform/i)).toBeInTheDocument()
   })
 
+  it('shows ToS URL input when field type is tos_acceptance', async () => {
+    const user = userEvent.setup()
+    render(<AdminOnboardingPage />)
+    await user.click(screen.getByRole('button', { name: /add field/i }))
+    // Default type is custom_text -- no ToS URL input yet
+    expect(screen.queryByLabelText(/terms of service url/i)).not.toBeInTheDocument()
+    // Switch to tos_acceptance
+    await user.selectOptions(screen.getByLabelText(/field type/i), 'tos_acceptance')
+    expect(screen.getByLabelText(/terms of service url/i)).toBeInTheDocument()
+  })
+
+  it('hides ToS URL input for other field types', async () => {
+    const user = userEvent.setup()
+    render(<AdminOnboardingPage />)
+    await user.click(screen.getByRole('button', { name: /add field/i }))
+    await user.selectOptions(screen.getByLabelText(/field type/i), 'custom_text')
+    expect(screen.queryByLabelText(/terms of service url/i)).not.toBeInTheDocument()
+  })
+
+  it('saves tosUrl in config when provided', async () => {
+    let capturedBody: Record<string, unknown> | null = null
+    server.use(
+      http.post('/api/admin/onboarding-fields', async ({ request }) => {
+        capturedBody = (await request.json()) as Record<string, unknown>
+        return HttpResponse.json(
+          {
+            id: 'new-field-1',
+            communityDid: 'did:plc:test',
+            fieldType: 'tos_acceptance',
+            label: 'Accept ToS',
+            description: '',
+            isMandatory: true,
+            sortOrder: 3,
+            source: 'admin',
+            config: capturedBody?.['config'] ?? null,
+            createdAt: '2026-02-15T12:00:00.000Z',
+            updatedAt: '2026-02-15T12:00:00.000Z',
+          },
+          { status: 201 }
+        )
+      })
+    )
+    const user = userEvent.setup()
+    render(<AdminOnboardingPage />)
+    await user.click(screen.getByRole('button', { name: /add field/i }))
+    await user.selectOptions(screen.getByLabelText(/field type/i), 'tos_acceptance')
+    await user.type(screen.getByLabelText(/^label$/i), 'Accept ToS')
+    await user.type(screen.getByLabelText(/terms of service url/i), 'https://example.com/tos')
+    await user.click(screen.getByRole('button', { name: /^save$/i }))
+    await waitFor(() => {
+      expect(capturedBody).not.toBeNull()
+    })
+    expect(capturedBody).toMatchObject({
+      config: { tosUrl: 'https://example.com/tos' },
+    })
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminOnboardingPage />)
     await waitFor(() => {

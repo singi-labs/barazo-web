@@ -102,6 +102,34 @@ export function OnboardingFieldForm({
             placeholder="Additional context or instructions for users"
           />
         </div>
+        {editing.fieldType === 'tos_acceptance' && (
+          <div>
+            <label htmlFor="field-tos-url" className="block text-sm font-medium text-foreground">
+              Terms of Service URL (optional)
+            </label>
+            <input
+              id="field-tos-url"
+              type="url"
+              value={typeof editing.config?.tosUrl === 'string' ? editing.config.tosUrl : ''}
+              onChange={(e) =>
+                onChange({
+                  ...editing,
+                  config: e.target.value
+                    ? { ...editing.config, tosUrl: e.target.value }
+                    : (() => {
+                        const { tosUrl: _, ...rest } = editing.config ?? {}
+                        return Object.keys(rest).length > 0 ? rest : null
+                      })(),
+                })
+              }
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+              placeholder="https://example.com/terms"
+            />
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Link displayed alongside the checkbox so users can review your terms.
+            </p>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <input
             id="field-mandatory"
