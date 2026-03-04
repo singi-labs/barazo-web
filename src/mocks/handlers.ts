@@ -29,6 +29,7 @@ import {
   mockUserProfiles,
   mockPublicSettings,
   mockCommunityProfile,
+  mockPages,
   mockSybilClusters,
   mockSybilClusterDetail,
   mockTrustSeeds,
@@ -328,6 +329,24 @@ export const handlers = [
     return HttpResponse.json({ ...mockCommunitySettings, ...body })
   }),
 
+  // POST /api/admin/design/logo
+  http.post(`${API_URL}/api/admin/design/logo`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'http://localhost:3000/uploads/logos/mock-logo.webp' })
+  }),
+
+  // POST /api/admin/design/favicon
+  http.post(`${API_URL}/api/admin/design/favicon`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ url: 'http://localhost:3000/uploads/favicons/mock-favicon.webp' })
+  }),
+
   // GET /api/admin/stats
   http.get(`${API_URL}/api/admin/stats`, ({ request }) => {
     const auth = request.headers.get('Authorization')
@@ -623,7 +642,7 @@ export const handlers = [
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return HttpResponse.json(mockOnboardingFields)
+    return HttpResponse.json({ fields: mockOnboardingFields, hostingMode: 'selfhosted' })
   }),
 
   // POST /api/admin/onboarding-fields
@@ -642,6 +661,7 @@ export const handlers = [
       description: body.description ?? null,
       isMandatory: body.isMandatory ?? true,
       sortOrder: body.sortOrder ?? 0,
+      source: 'admin' as const,
       config: body.config ?? null,
       createdAt: now,
       updatedAt: now,
@@ -808,6 +828,127 @@ export const handlers = [
       appealStatus: 'pending',
       status: 'pending',
     })
+  }),
+
+  // --- Page endpoints (public) ---
+
+  // GET /api/pages
+  http.get(`${API_URL}/api/pages`, () => {
+    const published = mockPages.filter((p) => p.status === 'published')
+    return HttpResponse.json({ pages: published })
+  }),
+
+  // GET /api/pages/:slug
+  http.get(`${API_URL}/api/pages/:slug`, ({ params }) => {
+    const slug = params['slug'] as string
+    const findPage = (nodes: typeof mockPages): (typeof mockPages)[number] | undefined => {
+      for (const node of nodes) {
+        if (node.slug === slug) return node
+        const found = findPage(node.children)
+        if (found) return found
+      }
+      return undefined
+    }
+    const page = findPage(mockPages)
+    if (!page || page.status !== 'published') {
+      return HttpResponse.json({ error: 'Page not found' }, { status: 404 })
+    }
+    return HttpResponse.json(page)
+  }),
+
+  // --- Admin page endpoints ---
+
+  // GET /api/admin/pages
+  http.get(`${API_URL}/api/admin/pages`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ pages: mockPages })
+  }),
+
+  // GET /api/admin/pages/:id
+  http.get(`${API_URL}/api/admin/pages/:id`, ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = params['id'] as string
+    const findPage = (nodes: typeof mockPages): (typeof mockPages)[number] | undefined => {
+      for (const node of nodes) {
+        if (node.id === id) return node
+        const found = findPage(node.children)
+        if (found) return found
+      }
+      return undefined
+    }
+    const page = findPage(mockPages)
+    if (!page) {
+      return HttpResponse.json({ error: 'Page not found' }, { status: 404 })
+    }
+    return HttpResponse.json(page)
+  }),
+
+  // POST /api/admin/pages
+  http.post(`${API_URL}/api/admin/pages`, async ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    const now = new Date().toISOString()
+    const newPage = {
+      id: `page-${Date.now()}`,
+      slug: body.slug ?? 'new-page',
+      title: body.title ?? 'New Page',
+      content: body.content ?? '',
+      status: body.status ?? 'draft',
+      metaDescription: body.metaDescription ?? null,
+      parentId: body.parentId ?? null,
+      sortOrder: body.sortOrder ?? 0,
+      communityDid: 'did:plc:test-community-123',
+      createdAt: now,
+      updatedAt: now,
+      children: [],
+    }
+    return HttpResponse.json(newPage, { status: 201 })
+  }),
+
+  // PUT /api/admin/pages/:id
+  http.put(`${API_URL}/api/admin/pages/:id`, async ({ request, params }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const id = params['id'] as string
+    const findPage = (nodes: typeof mockPages): (typeof mockPages)[number] | undefined => {
+      for (const node of nodes) {
+        if (node.id === id) return node
+        const found = findPage(node.children)
+        if (found) return found
+      }
+      return undefined
+    }
+    const existing = findPage(mockPages)
+    if (!existing) {
+      return HttpResponse.json({ error: 'Page not found' }, { status: 404 })
+    }
+    const body = (await request.json()) as Record<string, unknown>
+    return HttpResponse.json({
+      ...existing,
+      ...body,
+      children: [],
+      updatedAt: new Date().toISOString(),
+    })
+  }),
+
+  // DELETE /api/admin/pages/:id
+  http.delete(`${API_URL}/api/admin/pages/:id`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return new HttpResponse(null, { status: 204 })
   }),
 
   // --- Sybil Detection endpoints ---

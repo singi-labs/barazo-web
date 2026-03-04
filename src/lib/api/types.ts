@@ -49,6 +49,52 @@ export interface CategoriesResponse {
   categories: CategoryTreeNode[]
 }
 
+// --- Pages ---
+
+export type PageStatus = 'draft' | 'published'
+
+export interface Page {
+  id: string
+  slug: string
+  title: string
+  content: string
+  status: PageStatus
+  metaDescription: string | null
+  parentId: string | null
+  sortOrder: number
+  communityDid: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PageTreeNode extends Page {
+  children: PageTreeNode[]
+}
+
+export interface PagesResponse {
+  pages: PageTreeNode[]
+}
+
+export interface CreatePageInput {
+  title: string
+  slug: string
+  content?: string
+  status?: PageStatus
+  metaDescription?: string | null
+  parentId?: string | null
+  sortOrder?: number
+}
+
+export interface UpdatePageInput {
+  title?: string
+  slug?: string
+  content?: string
+  status?: PageStatus
+  metaDescription?: string | null
+  parentId?: string | null
+  sortOrder?: number
+}
+
 // --- Author Profile (enriched by AppView) ---
 
 export interface AuthorProfile {
@@ -200,6 +246,7 @@ export interface CommunitySettings {
   reactionSet: string[]
   communityDescription: string | null
   communityLogoUrl: string | null
+  faviconUrl: string | null
   primaryColor: string | null
   accentColor: string | null
   jurisdictionCountry: string | null
@@ -217,6 +264,7 @@ export interface PublicSettings {
   maxReplyDepth: number
   communityDescription: string | null
   communityLogoUrl: string | null
+  faviconUrl: string | null
 }
 
 export interface CommunityStats {
@@ -550,6 +598,10 @@ export type OnboardingFieldType =
   | 'custom_select'
   | 'custom_checkbox'
 
+export type OnboardingFieldSource = 'platform' | 'admin'
+
+export type HostingMode = 'saas' | 'selfhosted'
+
 export interface OnboardingField {
   id: string
   communityDid: string
@@ -558,13 +610,15 @@ export interface OnboardingField {
   description: string | null
   isMandatory: boolean
   sortOrder: number
+  source: OnboardingFieldSource
   config: Record<string, unknown> | null
   createdAt: string
   updatedAt: string
 }
 
-export interface OnboardingFieldsResponse {
+export interface AdminOnboardingFieldsResponse {
   fields: OnboardingField[]
+  hostingMode: HostingMode
 }
 
 export interface CreateOnboardingFieldInput {

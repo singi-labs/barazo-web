@@ -1,7 +1,7 @@
 /**
  * Admin community settings page.
  * URL: /admin/settings
- * Community name, description, branding, reaction config, maturity rating.
+ * Community name, description, reaction config, maturity rating.
  * @see specs/prd-web.md Section M11
  */
 
@@ -64,8 +64,6 @@ export default function AdminSettingsPage() {
           communityDescription: settings.communityDescription,
           maturityRating: settings.maturityRating,
           reactionSet: settings.reactionSet,
-          primaryColor: settings.primaryColor,
-          accentColor: settings.accentColor,
           maxReplyDepth: settings.maxReplyDepth,
         },
         getAccessToken() ?? ''

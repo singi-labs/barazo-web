@@ -16,6 +16,7 @@ import { useOnboardingFields } from '@/hooks/admin/use-onboarding-fields'
 export default function AdminOnboardingPage() {
   const {
     fields,
+    hostingMode,
     loading,
     editing,
     setEditing,
@@ -87,6 +88,7 @@ export default function AdminOnboardingPage() {
                 field={field}
                 index={index}
                 totalCount={fields.length}
+                hostingMode={hostingMode}
                 onMoveUp={(i) => void handleMoveUp(i)}
                 onMoveDown={(i) => void handleMoveDown(i)}
                 onEdit={handleEdit}

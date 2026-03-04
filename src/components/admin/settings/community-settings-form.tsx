@@ -1,5 +1,5 @@
 /**
- * CommunitySettingsForm - Form for community name, description, maturity, reactions, branding.
+ * CommunitySettingsForm - Form for community name, description, maturity, and reactions.
  * @see specs/prd-web.md Section M11
  */
 
@@ -123,36 +123,6 @@ export function CommunitySettingsForm({
           How deep replies can nest. 1 = flat (no threading), 9999 = unlimited.
         </p>
       </div>
-
-      <fieldset className="space-y-4">
-        <legend className="text-sm font-medium text-foreground">Branding</legend>
-        <div>
-          <label htmlFor="settings-primary-color" className="block text-sm text-muted-foreground">
-            Primary Color
-          </label>
-          <input
-            id="settings-primary-color"
-            type="text"
-            value={settings.primaryColor ?? ''}
-            onChange={(e) => onChange({ ...settings, primaryColor: e.target.value || null })}
-            placeholder="#31748f"
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          />
-        </div>
-        <div>
-          <label htmlFor="settings-accent-color" className="block text-sm text-muted-foreground">
-            Accent Color
-          </label>
-          <input
-            id="settings-accent-color"
-            type="text"
-            value={settings.accentColor ?? ''}
-            onChange={(e) => onChange({ ...settings, accentColor: e.target.value || null })}
-            placeholder="#c4a7e7"
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-          />
-        </div>
-      </fieldset>
 
       {saveError && <ErrorAlert message={saveError} onDismiss={onDismissError} />}
 

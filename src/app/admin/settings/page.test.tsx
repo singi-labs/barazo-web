@@ -224,6 +224,15 @@ describe('AdminSettingsPage', () => {
     })
   })
 
+  it('does not render color fields (moved to /admin/design)', async () => {
+    render(<AdminSettingsPage />)
+    await waitFor(() => {
+      expect(screen.getByLabelText(/community name/i)).toBeInTheDocument()
+    })
+    expect(screen.queryByLabelText(/primary color/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/accent color/i)).not.toBeInTheDocument()
+  })
+
   it('PDS Provider Trust section passes axe accessibility check', async () => {
     const { container } = render(<AdminSettingsPage />)
     await waitFor(() => {

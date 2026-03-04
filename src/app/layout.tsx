@@ -6,6 +6,7 @@ import { AuthProvider } from '@/context/auth-context'
 import { AppToastProvider } from '@/context/toast-context'
 import { OnboardingProvider } from '@/context/onboarding-context'
 import { SetupGuard } from '@/components/setup-guard'
+import { DynamicFavicon } from '@/components/dynamic-favicon'
 
 const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
@@ -47,6 +48,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={sourceCodePro.variable} suppressHydrationWarning>
+      <head>
+        <DynamicFavicon />
+      </head>
       <body className="min-h-screen font-sans antialiased">
         <ThemeProvider
           attribute="class"

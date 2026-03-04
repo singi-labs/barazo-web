@@ -16,14 +16,18 @@ import type {
   CommunitySettings,
   CommunityStats,
   CommunityPreferenceOverride,
+  CreatePageInput,
   CreateTopicInput,
   InitializeCommunityInput,
   InitializeResponse,
+  Page,
+  PagesResponse,
   PublicSettings,
   SetupStatus,
   Topic,
   TopicsResponse,
   UpdateCommunityPreferenceInput,
+  UpdatePageInput,
   UpdatePreferencesInput,
   UpdateTopicInput,
   UserPreferences,
@@ -43,6 +47,7 @@ import type {
   MaturityRating,
   PluginsResponse,
   OnboardingField,
+  AdminOnboardingFieldsResponse,
   CreateOnboardingFieldInput,
   UpdateOnboardingFieldInput,
   OnboardingStatus,
@@ -774,8 +779,8 @@ export function unmuteUser(
 export function getOnboardingFields(
   accessToken: string,
   options?: FetchOptions
-): Promise<OnboardingField[]> {
-  return apiFetch<OnboardingField[]>('/api/admin/onboarding-fields', {
+): Promise<AdminOnboardingFieldsResponse> {
+  return apiFetch<AdminOnboardingFieldsResponse>('/api/admin/onboarding-fields', {
     ...options,
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })
@@ -972,6 +977,46 @@ export async function uploadCommunityBanner(
   const form = new FormData()
   form.append('file', file)
   const url = `${API_URL}/api/communities/${encodeURIComponent(communityDid)}/profile/banner`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
+}
+
+// --- Admin design upload endpoints (use FormData, not JSON) ---
+
+export async function uploadCommunityLogo(
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/admin/design/logo`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
+}
+
+export async function uploadCommunityFavicon(
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/admin/design/favicon`
   const response = await fetch(url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -1201,6 +1246,71 @@ export function getReactions(
     limit: params.limit,
   })
   return apiFetch<ReactionsResponse>(`/api/reactions${query}`, options)
+}
+
+// --- Page endpoints (public) ---
+
+export function getPages(options?: FetchOptions): Promise<PagesResponse> {
+  return apiFetch<PagesResponse>('/api/pages', options)
+}
+
+export function getPageBySlug(slug: string, options?: FetchOptions): Promise<Page> {
+  return apiFetch<Page>(`/api/pages/${encodeURIComponent(slug)}`, options)
+}
+
+// --- Admin page endpoints ---
+
+export function getAdminPages(accessToken: string, options?: FetchOptions): Promise<PagesResponse> {
+  return apiFetch<PagesResponse>('/api/admin/pages', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getAdminPage(
+  id: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function createPage(
+  input: CreatePageInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>('/api/admin/pages', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function updatePage(
+  id: string,
+  input: UpdatePageInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function deletePage(id: string, accessToken: string, options?: FetchOptions): Promise<void> {
+  return apiFetch<void>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
 }
 
 export { ApiError }
