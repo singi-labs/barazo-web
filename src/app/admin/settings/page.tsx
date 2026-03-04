@@ -64,6 +64,7 @@ export default function AdminSettingsPage() {
           communityDescription: settings.communityDescription,
           maturityRating: settings.maturityRating,
           reactionSet: settings.reactionSet,
+          maxReplyDepth: settings.maxReplyDepth,
         },
         getAccessToken() ?? ''
       )

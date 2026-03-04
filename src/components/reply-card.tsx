@@ -1,7 +1,7 @@
 /**
- * ReplyCard - Displays a single reply with depth indication.
+ * ReplyCard - Displays a single reply.
  * Includes reactions, report button, and inline editing for authors.
- * Depth is shown via left margin indentation.
+ * Indentation is structural via nested <ol> in ReplyBranch.
  * Deleted replies render as tombstone placeholders.
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
@@ -13,7 +13,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Link as LinkIcon, ChatCircle, PencilSimple } from '@phosphor-icons/react'
 import type { Reply } from '@/lib/api/types'
-import { cn } from '@/lib/utils'
 import { formatRelativeTime, isEdited } from '@/lib/format'
 import { updateReply } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
@@ -42,13 +41,6 @@ interface ReplyCardProps {
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
   className?: string
-}
-
-const DEPTH_INDENT: Record<number, string> = {
-  0: '',
-  1: 'ml-6 sm:ml-8',
-  2: 'ml-12 sm:ml-16',
-  3: 'ml-16 sm:ml-20',
 }
 
 export function ReplyCard({
@@ -90,7 +82,6 @@ export function ReplyCard({
   }, [editContent, reply.uri, getAccessToken, toast])
 
   const headingId = `reply-heading-${reply.rkey}`
-  const indent = DEPTH_INDENT[Math.min(reply.depth, 3)] ?? DEPTH_INDENT[3]
   const isDeleted = reply.isAuthorDeleted || reply.isModDeleted
 
   if (isDeleted) {
@@ -99,7 +90,7 @@ export function ReplyCard({
       : 'This post was removed by the author.'
 
     return (
-      <div className={cn(indent, className)}>
+      <div className={className}>
         <article
           id={`post-${postNumber}`}
           className="rounded-lg border border-border bg-muted/50"
@@ -134,7 +125,7 @@ export function ReplyCard({
   }
 
   return (
-    <div className={cn(indent, className)}>
+    <div className={className}>
       <article
         id={`post-${postNumber}`}
         className="rounded-lg border border-border bg-card"

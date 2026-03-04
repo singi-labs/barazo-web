@@ -105,6 +105,7 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
       <div className="mt-8 pb-16">
         <ReplyThread
           replies={replies}
+          topicUri={topic.uri}
           onReply={isLocked ? undefined : handleReply}
           currentUserDid={user?.did}
         />

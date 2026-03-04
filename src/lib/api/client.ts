@@ -257,12 +257,13 @@ export function updateTopic(
 
 export function getReplies(
   topicUri: string,
-  params: PaginationParams = {},
+  params: PaginationParams & { depth?: number } = {},
   options?: FetchOptions
 ): Promise<RepliesResponse> {
   const query = buildQuery({
     limit: params.limit,
     cursor: params.cursor,
+    depth: params.depth,
   })
   return apiFetch<RepliesResponse>(
     `/api/topics/${encodeURIComponent(topicUri)}/replies${query}`,

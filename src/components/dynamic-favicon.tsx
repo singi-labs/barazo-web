@@ -28,8 +28,5 @@ export function DynamicFavicon() {
 
   if (!faviconUrl) return null
 
-  return (
-    // eslint-disable-next-line @next/next/no-head-element -- needed to override static favicon at runtime
-    <link rel="icon" href={faviconUrl} />
-  )
+  return <link rel="icon" href={faviconUrl} />
 }

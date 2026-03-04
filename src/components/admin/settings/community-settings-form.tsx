@@ -98,6 +98,32 @@ export function CommunitySettingsForm({
         </p>
       </div>
 
+      <div>
+        <label
+          htmlFor="settings-max-reply-depth"
+          className="block text-sm font-medium text-foreground"
+        >
+          Max Reply Depth
+        </label>
+        <input
+          id="settings-max-reply-depth"
+          type="number"
+          min={1}
+          max={9999}
+          value={settings.maxReplyDepth}
+          onChange={(e) => {
+            const val = parseInt(e.target.value, 10)
+            if (!Number.isNaN(val)) {
+              onChange({ ...settings, maxReplyDepth: Math.max(1, Math.min(9999, val)) })
+            }
+          }}
+          className="mt-1 w-32 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          How deep replies can nest. 1 = flat (no threading), 9999 = unlimited.
+        </p>
+      </div>
+
       {saveError && <ErrorAlert message={saveError} onDismiss={onDismissError} />}
 
       <button
