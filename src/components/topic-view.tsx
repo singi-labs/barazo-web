@@ -6,6 +6,7 @@
  */
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ChatCircle,
   Clock,
@@ -108,7 +109,28 @@ export function TopicView({
 
         {/* Author + timestamp */}
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-          <span>{topic.authorDid}</span>
+          <Link
+            href={`/u/${topic.author?.handle ?? topic.authorDid}`}
+            className="flex items-center gap-1.5 hover:text-foreground"
+          >
+            {topic.author?.avatarUrl ? (
+              <Image
+                src={topic.author.avatarUrl}
+                alt=""
+                width={24}
+                height={24}
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <span
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium"
+                aria-hidden="true"
+              >
+                {(topic.author?.displayName ?? topic.author?.handle ?? '?')[0]?.toUpperCase()}
+              </span>
+            )}
+            <span>{topic.author?.displayName ?? topic.author?.handle ?? topic.authorDid}</span>
+          </Link>
           <span aria-hidden="true">·</span>
           <time dateTime={topic.createdAt}>{formatRelativeTime(topic.createdAt)}</time>
           {isEdited(topic.createdAt, topic.indexedAt) && (

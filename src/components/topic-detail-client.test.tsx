@@ -234,7 +234,8 @@ describe('TopicDetailClient', () => {
       await user.click(screen.getByRole('button', { name: /reply to this topic/i }))
 
       // The composer should expand and show the reply target banner with the topic author
-      expect(screen.getByText(`Replying to @${topic.authorDid}`)).toBeInTheDocument()
+      const expectedHandle = topic.author?.handle ?? topic.authorDid
+      expect(screen.getByText(`Replying to @${expectedHandle}`)).toBeInTheDocument()
     })
 
     it('clears reply target when dismiss button is clicked', async () => {
