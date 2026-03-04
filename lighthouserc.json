@@ -5,8 +5,7 @@
         "http://localhost:3000/",
         "http://localhost:3000/search/",
         "http://localhost:3000/admin/",
-        "http://localhost:3000/settings/",
-        "http://localhost:3000/accessibility/"
+        "http://localhost:3000/settings/"
       ],
       "settings": {
         "onlyCategories": ["accessibility"],
