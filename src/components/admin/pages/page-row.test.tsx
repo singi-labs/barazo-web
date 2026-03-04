@@ -66,10 +66,17 @@ describe('PageRow', () => {
     expect(screen.getByText('Draft')).toBeInTheDocument()
   })
 
-  it('renders edit link to admin page editor', () => {
+  it('makes the whole card a link to the edit page', () => {
     render(<PageRow page={mockPage} depth={0} onDelete={vi.fn()} />)
     const editLink = screen.getByRole('link', { name: /edit about this community/i })
     expect(editLink).toHaveAttribute('href', '/admin/pages/page-about')
+  })
+
+  it('renders view link that opens public page in new tab', () => {
+    render(<PageRow page={mockPage} depth={0} onDelete={vi.fn()} />)
+    const viewLink = screen.getByRole('link', { name: /view about this community/i })
+    expect(viewLink).toHaveAttribute('href', '/p/about')
+    expect(viewLink).toHaveAttribute('target', '_blank')
   })
 
   it('renders delete button', () => {
