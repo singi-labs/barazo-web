@@ -111,6 +111,24 @@ describe('ForumLayout', () => {
     expect(logos.length).toBeGreaterThan(0)
   })
 
+  it('links footer privacy to /p/privacy-policy', () => {
+    render(<ForumLayout>Content</ForumLayout>)
+    const privacyLink = screen.getByRole('link', { name: /privacy/i })
+    expect(privacyLink).toHaveAttribute('href', '/p/privacy-policy')
+  })
+
+  it('links footer terms to /p/terms-of-service', () => {
+    render(<ForumLayout>Content</ForumLayout>)
+    const termsLink = screen.getByRole('link', { name: /terms/i })
+    expect(termsLink).toHaveAttribute('href', '/p/terms-of-service')
+  })
+
+  it('links footer cookies to /p/cookie-policy', () => {
+    render(<ForumLayout>Content</ForumLayout>)
+    const cookiesLink = screen.getByRole('link', { name: /cookies/i })
+    expect(cookiesLink).toHaveAttribute('href', '/p/cookie-policy')
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(
       <ForumLayout>

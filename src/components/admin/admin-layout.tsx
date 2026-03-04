@@ -9,6 +9,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
+  Article,
   ChartBar,
   FolderSimple,
   ShieldCheck,
@@ -30,6 +31,7 @@ interface AdminLayoutProps {
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: ChartBar },
   { href: '/admin/categories', label: 'Categories', icon: FolderSimple },
+  { href: '/admin/pages', label: 'Pages', icon: Article },
   { href: '/admin/moderation', label: 'Moderation', icon: ShieldCheck },
   { href: '/admin/sybil-detection', label: 'Sybil Detection', icon: ShieldWarning },
   { href: '/admin/trust-seeds', label: 'Trust Seeds', icon: SealCheck },

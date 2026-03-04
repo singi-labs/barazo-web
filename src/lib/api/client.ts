@@ -16,14 +16,18 @@ import type {
   CommunitySettings,
   CommunityStats,
   CommunityPreferenceOverride,
+  CreatePageInput,
   CreateTopicInput,
   InitializeCommunityInput,
   InitializeResponse,
+  Page,
+  PagesResponse,
   PublicSettings,
   SetupStatus,
   Topic,
   TopicsResponse,
   UpdateCommunityPreferenceInput,
+  UpdatePageInput,
   UpdatePreferencesInput,
   UpdateTopicInput,
   UserPreferences,
@@ -1200,6 +1204,75 @@ export function getReactions(
     limit: params.limit,
   })
   return apiFetch<ReactionsResponse>(`/api/reactions${query}`, options)
+}
+
+// --- Page endpoints (public) ---
+
+export function getPages(options?: FetchOptions): Promise<PagesResponse> {
+  return apiFetch<PagesResponse>('/api/pages', options)
+}
+
+export function getPageBySlug(slug: string, options?: FetchOptions): Promise<Page> {
+  return apiFetch<Page>(`/api/pages/${encodeURIComponent(slug)}`, options)
+}
+
+// --- Admin page endpoints ---
+
+export function getAdminPages(accessToken: string, options?: FetchOptions): Promise<PagesResponse> {
+  return apiFetch<PagesResponse>('/api/admin/pages', {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function getAdminPage(
+  id: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function createPage(
+  input: CreatePageInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>('/api/admin/pages', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function updatePage(
+  id: string,
+  input: UpdatePageInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<Page> {
+  return apiFetch<Page>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'PUT',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function deletePage(
+  id: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  return apiFetch<void>(`/api/admin/pages/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
 }
 
 export { ApiError }
