@@ -4,6 +4,7 @@
  * a nested <ReplyBranch> for children. Thread lines appear next
  * to replies with children for collapse/expand. Reply-to badges
  * show when a reply's parent isn't visually adjacent.
+ * Respects visual indent cap — stops nesting beyond the cap.
  */
 
 'use client'
@@ -20,6 +21,8 @@ interface ReplyBranchProps {
   postNumberMap: Map<string, number>
   topicUri: string
   allReplies: Map<string, Reply>
+  visualIndentCap: number
+  currentVisualDepth: number
   /** URI of the parent node in the tree (topicUri for root level) */
   treeParentUri?: string
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
@@ -31,6 +34,8 @@ export function ReplyBranch({
   postNumberMap,
   topicUri,
   allReplies,
+  visualIndentCap,
+  currentVisualDepth,
   treeParentUri,
   onReply,
   currentUserDid,
@@ -53,6 +58,7 @@ export function ReplyBranch({
 
   // At root level, the expected parent is the topic itself
   const expectedParentUri = treeParentUri ?? topicUri
+  const atVisualCap = currentVisualDepth >= visualIndentCap
 
   return (
     <ol className="list-none space-y-3 pl-0 first:pl-0 [&_&]:mt-3 [&_&]:pl-0">
@@ -92,19 +98,37 @@ export function ReplyBranch({
                 />
               </div>
             </div>
-            {hasChildren && !isCollapsed && (
-              <div className="ml-5 border-l border-border pl-3 sm:ml-[22px] sm:pl-4">
+            {hasChildren &&
+              !isCollapsed &&
+              (atVisualCap ? (
+                /* At the visual indent cap: render children flat at this level */
                 <ReplyBranch
                   nodes={node.children}
                   postNumberMap={postNumberMap}
                   topicUri={topicUri}
                   allReplies={allReplies}
+                  visualIndentCap={visualIndentCap}
+                  currentVisualDepth={currentVisualDepth}
                   treeParentUri={node.reply.uri}
                   onReply={onReply}
                   currentUserDid={currentUserDid}
                 />
-              </div>
-            )}
+              ) : (
+                /* Below the cap: nest normally with indentation */
+                <div className="ml-5 border-l border-border pl-3 sm:ml-[22px] sm:pl-4">
+                  <ReplyBranch
+                    nodes={node.children}
+                    postNumberMap={postNumberMap}
+                    topicUri={topicUri}
+                    allReplies={allReplies}
+                    visualIndentCap={visualIndentCap}
+                    currentVisualDepth={currentVisualDepth + 1}
+                    treeParentUri={node.reply.uri}
+                    onReply={onReply}
+                    currentUserDid={currentUserDid}
+                  />
+                </div>
+              ))}
             {hasChildren && isCollapsed && (
               <p className="ml-12 mt-1 text-xs text-muted-foreground" aria-live="polite">
                 {node.children.length} {node.children.length === 1 ? 'reply' : 'replies'} hidden

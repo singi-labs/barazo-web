@@ -2,13 +2,17 @@
  * ReplyThread - Displays a threaded tree of replies.
  * Reconstructs tree from flat API response, assigns depth-first post numbers.
  * Post numbers start at 2 (post #1 is the topic itself).
+ * Responsive visual indent caps limit nesting on smaller screens.
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
+
+'use client'
 
 import { useMemo } from 'react'
 import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { buildReplyTree, flattenReplyTree } from '@/lib/build-reply-tree'
+import { useVisualIndentCap } from '@/hooks/use-visual-indent-cap'
 import { ReplyBranch } from './reply-branch'
 
 interface ReplyThreadProps {
@@ -29,6 +33,8 @@ export function ReplyThread({
   const replyCount = replies.length
   const heading =
     replyCount === 0 ? 'Replies' : replyCount === 1 ? '1 Reply' : `${replyCount} Replies`
+
+  const visualIndentCap = useVisualIndentCap()
 
   const { tree, postNumberMap, allReplies } = useMemo(() => {
     const builtTree = buildReplyTree(replies, topicUri)
@@ -55,6 +61,8 @@ export function ReplyThread({
           postNumberMap={postNumberMap}
           topicUri={topicUri}
           allReplies={allReplies}
+          visualIndentCap={visualIndentCap}
+          currentVisualDepth={1}
           onReply={onReply}
           currentUserDid={currentUserDid}
         />
