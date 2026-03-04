@@ -15,7 +15,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ErrorAlert } from '@/components/error-alert'
 import { ReportCard } from '@/components/settings/report-card'
 import { getMyReports, submitAppeal, getPublicSettings } from '@/lib/api/client'
-import type { MyReport } from '@/lib/api/types'
+import type { MyReport, PublicSettings } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 
 export default function MyReportsPage() {
@@ -23,11 +23,11 @@ export default function MyReportsPage() {
   const [reports, setReports] = useState<MyReport[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
   const [appealingId, setAppealingId] = useState<number | null>(null)
@@ -103,7 +103,7 @@ export default function MyReportsPage() {
   )
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs
           items={[

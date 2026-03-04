@@ -15,7 +15,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ErrorAlert } from '@/components/error-alert'
 import { getNotifications, markNotificationsRead, getPublicSettings } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
-import type { Notification, NotificationType } from '@/lib/api/types'
+import type { Notification, NotificationType, PublicSettings } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 import { ProtectedRoute } from '@/components/auth/protected-route'
 
@@ -40,11 +40,11 @@ function NotificationsContent() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
@@ -91,7 +91,7 @@ function NotificationsContent() {
   const hasUnread = notifications.some((n) => !n.read)
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Notifications' }]} />
 

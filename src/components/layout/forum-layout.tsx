@@ -14,14 +14,20 @@ import { NotificationBell } from '@/components/notification-bell'
 import { UserMenu } from '@/components/auth/user-menu'
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { NewTopicButton } from '@/components/new-topic-button'
+import type { PublicSettings } from '@/lib/api/types'
 
 interface ForumLayoutProps {
   children: React.ReactNode
   sidebar?: React.ReactNode
-  communityName?: string
+  publicSettings?: PublicSettings | null
 }
 
-export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayoutProps) {
+export function ForumLayout({ children, sidebar, publicSettings }: ForumLayoutProps) {
+  const communityName = publicSettings?.communityName ?? ''
+  const headerLogoUrl = publicSettings?.headerLogoUrl ?? null
+  const communityLogoUrl = publicSettings?.communityLogoUrl ?? null
+  const showCommunityName = publicSettings?.showCommunityName ?? true
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
       <SkipLinks />
@@ -31,25 +37,45 @@ export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayo
         <div className="container flex h-14 items-center justify-between gap-2 sm:gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/barazo-logo-light.svg"
-              alt="Barazo"
-              width={120}
-              height={32}
-              className="h-8 dark:hidden"
-              style={{ width: 'auto' }}
-              priority
-            />
-            <Image
-              src="/barazo-logo-dark.svg"
-              alt="Barazo"
-              width={120}
-              height={32}
-              className="hidden h-8 dark:block"
-              style={{ width: 'auto' }}
-              priority
-            />
-            {communityName && (
+            {headerLogoUrl ? (
+              <Image
+                src={headerLogoUrl}
+                alt={communityName || 'Community'}
+                width={200}
+                height={32}
+                className="h-8 w-auto"
+                priority
+              />
+            ) : communityLogoUrl ? (
+              <Image
+                src={communityLogoUrl}
+                alt={communityName || 'Community'}
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded"
+                priority
+              />
+            ) : (
+              <>
+                <Image
+                  src="/barazo-logo-light.svg"
+                  alt="Barazo"
+                  width={120}
+                  height={32}
+                  className="h-8 w-auto dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/barazo-logo-dark.svg"
+                  alt="Barazo"
+                  width={120}
+                  height={32}
+                  className="hidden h-8 w-auto dark:block"
+                  priority
+                />
+              </>
+            )}
+            {showCommunityName && communityName && (
               <span className="hidden text-lg font-semibold text-foreground sm:inline">
                 {communityName}
               </span>

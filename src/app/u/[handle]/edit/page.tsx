@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getPublicSettings } from '@/lib/api/client'
+import type { PublicSettings } from '@/lib/api/types'
 import { ArrowCounterClockwise } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -41,7 +42,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
     handleSave,
   } = useCommunityProfile()
 
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
   const [handle, setHandle] = useState<string | null>(null)
 
   // Resolve Next.js async params
@@ -55,7 +56,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
@@ -78,7 +79,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
   // Don't render until we know the user is authenticated and it's their profile
   if (authLoading || !user || !handle) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <p className="text-sm text-muted-foreground">Loading...</p>
       </ForumLayout>
     )
@@ -90,7 +91,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
 
   if (loading) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <p className="text-sm text-muted-foreground">Loading...</p>
       </ForumLayout>
     )
@@ -98,7 +99,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
 
   if (error) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">{error}</p>
         </div>
@@ -119,7 +120,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
   )
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="mx-auto max-w-2xl space-y-6">
         <Breadcrumbs
           items={[

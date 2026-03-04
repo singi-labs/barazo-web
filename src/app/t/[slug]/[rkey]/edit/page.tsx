@@ -10,7 +10,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import type { CreateTopicInput, Topic } from '@/lib/api/types'
+import type { CreateTopicInput, PublicSettings, Topic } from '@/lib/api/types'
 import { getTopicByRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { useAuth } from '@/hooks/use-auth'
@@ -30,11 +30,11 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
@@ -98,7 +98,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
 
   if (loading || authLoading) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="space-y-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Loading...' }]} />
           <p className="text-muted-foreground" aria-busy="true">
@@ -111,7 +111,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
 
   if (!topic) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="space-y-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Error' }]} />
           <p className="text-destructive" role="alert">
@@ -124,7 +124,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
 
   if (!authLoading && (!user || user.did !== topic.authorDid)) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="space-y-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Edit' }]} />
           <div className="py-8 text-center">
@@ -139,7 +139,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   }
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs
           items={[

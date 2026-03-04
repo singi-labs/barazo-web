@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { getPublicSettings } from '@/lib/api/client'
+import type { PublicSettings } from '@/lib/api/types'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { AgeGateDialog } from '@/components/age-gate-dialog'
@@ -26,11 +27,11 @@ import { cn } from '@/lib/utils'
 import { useSettingsForm } from '@/hooks/use-settings-form'
 
 export default function SettingsPage() {
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
@@ -59,10 +60,11 @@ export default function SettingsPage() {
     handleCrossPostAuthorize,
   } = useSettingsForm()
 
+  const communityName = publicSettings?.communityName ?? ''
   const displayName = communityName || 'This Community'
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Account settings' }]} />
 

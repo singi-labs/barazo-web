@@ -247,6 +247,8 @@ export interface CommunitySettings {
   communityDescription: string | null
   communityLogoUrl: string | null
   faviconUrl: string | null
+  headerLogoUrl: string | null
+  showCommunityName: boolean
   primaryColor: string | null
   accentColor: string | null
   jurisdictionCountry: string | null
@@ -265,6 +267,8 @@ export interface PublicSettings {
   communityDescription: string | null
   communityLogoUrl: string | null
   faviconUrl: string | null
+  headerLogoUrl: string | null
+  showCommunityName: boolean
 }
 
 export interface CommunityStats {

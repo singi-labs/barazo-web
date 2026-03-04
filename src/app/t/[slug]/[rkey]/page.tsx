@@ -102,7 +102,6 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   // Fetch community settings for maturity context
   const publicSettings = await getPublicSettings().catch(() => null)
-  const communityName = publicSettings?.communityName ?? ''
 
   // Deleted topics: minimal page with tombstone, no replies/JSON-LD
   if (isDeleted) {
@@ -115,7 +114,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
     return (
       <ForumLayout
-        communityName={communityName}
+        publicSettings={publicSettings}
         sidebar={
           categoriesResult.categories.length > 0 ? (
             <CategoryNav categories={categoriesResult.categories} />
@@ -189,7 +188,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   return (
     <ForumLayout
-      communityName={communityName}
+      publicSettings={publicSettings}
       sidebar={
         categoriesResult.categories.length > 0 ? (
           <CategoryNav categories={categoriesResult.categories} />

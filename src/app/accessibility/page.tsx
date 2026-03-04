@@ -20,16 +20,15 @@ export const metadata: Metadata = {
 }
 
 export default async function AccessibilityPage() {
-  let communityName = ''
+  let publicSettings = null
   try {
-    const settings = await getPublicSettings()
-    communityName = settings.communityName
+    publicSettings = await getPublicSettings()
   } catch {
     // silently degrade
   }
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="mx-auto max-w-2xl space-y-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Accessibility' }]} />
 

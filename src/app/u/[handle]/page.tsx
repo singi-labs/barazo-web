@@ -16,7 +16,7 @@ import { ProfileSkeleton } from '@/components/profile/profile-skeleton'
 import { getUserProfile, getPublicSettings } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatDateLong } from '@/lib/format'
-import type { UserProfile } from '@/lib/api/types'
+import type { PublicSettings, UserProfile } from '@/lib/api/types'
 
 interface UserProfilePageProps {
   params: Promise<{ handle: string }> | { handle: string }
@@ -34,7 +34,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const [error, setError] = useState<string | null>(null)
   const [isBlocked, setIsBlocked] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
   const { user } = useAuth()
 
   // Resolve Next.js async params
@@ -60,8 +60,8 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
         const publicSettings = await getPublicSettings({
           signal: controller.signal,
         }).catch(() => null)
-        if (!cancelled && publicSettings?.communityName) {
-          setCommunityName(publicSettings.communityName)
+        if (!cancelled && publicSettings) {
+          setPublicSettings(publicSettings)
         }
         const communityDid = publicSettings?.communityDid ?? undefined
         const data = await getUserProfile(handle!, communityDid, {
@@ -93,7 +93,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // Loading state: show skeleton while params resolve or data loads
   if (!handle || loading) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <ProfileSkeleton />
       </ForumLayout>
     )
@@ -102,7 +102,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // Error state
   if (error) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">{error}</p>
         </div>
@@ -113,7 +113,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   // No profile loaded (shouldn't happen if no error, but guard)
   if (!profile) {
     return (
-      <ForumLayout communityName={communityName}>
+      <ForumLayout publicSettings={publicSettings}>
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
           <p className="text-sm text-destructive">Profile not found.</p>
         </div>
@@ -127,7 +127,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const joinDate = formatDateLong(profile.firstSeenAt)
 
   return (
-    <ForumLayout>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: handle }]} />
 

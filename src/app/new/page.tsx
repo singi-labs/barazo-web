@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import type { CreateTopicInput } from '@/lib/api/types'
+import type { CreateTopicInput, PublicSettings } from '@/lib/api/types'
 import { createTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -26,11 +26,11 @@ export default function NewTopicPage() {
   const { ensureOnboarded } = useOnboardingContext()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
@@ -51,7 +51,7 @@ export default function NewTopicPage() {
   }
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'New topic' }]} />
 

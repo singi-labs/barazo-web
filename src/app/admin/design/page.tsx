@@ -1,7 +1,7 @@
 /**
  * Admin design page.
  * URL: /admin/design
- * Logo upload, favicon upload, primary/accent color configuration.
+ * Header logo upload, community logo upload, favicon upload, primary/accent color configuration.
  */
 
 'use client'
@@ -16,6 +16,7 @@ import {
   updateCommunitySettings,
   uploadCommunityLogo,
   uploadCommunityFavicon,
+  uploadHeaderLogo,
 } from '@/lib/api/client'
 import type { CommunitySettings } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
@@ -43,6 +44,39 @@ export default function AdminDesignPage() {
   useEffect(() => {
     void fetchSettings()
   }, [fetchSettings])
+
+  const handleHeaderLogoUpload = useCallback(
+    async (file: File) => {
+      const result = await uploadHeaderLogo(file, getAccessToken() ?? '')
+      setSettings((prev) => (prev ? { ...prev, headerLogoUrl: result.url } : prev))
+      return result
+    },
+    [getAccessToken]
+  )
+
+  const handleHeaderLogoRemove = useCallback(async () => {
+    try {
+      const updated = await updateCommunitySettings({ headerLogoUrl: null }, getAccessToken() ?? '')
+      setSettings(updated)
+    } catch {
+      setSaveError('Failed to remove header logo.')
+    }
+  }, [getAccessToken])
+
+  const handleShowCommunityNameChange = useCallback(
+    async (value: boolean) => {
+      try {
+        const updated = await updateCommunitySettings(
+          { showCommunityName: value },
+          getAccessToken() ?? ''
+        )
+        setSettings(updated)
+      } catch {
+        setSaveError('Failed to update community name visibility.')
+      }
+    },
+    [getAccessToken]
+  )
 
   const handleLogoUpload = useCallback(
     async (file: File) => {
@@ -118,6 +152,9 @@ export default function AdminDesignPage() {
           <div className="max-w-lg space-y-8">
             <DesignImagesSection
               settings={settings}
+              onHeaderLogoUpload={handleHeaderLogoUpload}
+              onHeaderLogoRemove={() => void handleHeaderLogoRemove()}
+              onShowCommunityNameChange={(v) => void handleShowCommunityNameChange(v)}
               onLogoUpload={handleLogoUpload}
               onLogoRemove={() => void handleLogoRemove()}
               onFaviconUpload={handleFaviconUpload}

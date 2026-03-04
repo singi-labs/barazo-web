@@ -56,6 +56,14 @@ describe('AdminDesignPage', () => {
     expect(screen.getByRole('heading', { name: /design/i })).toBeInTheDocument()
   })
 
+  it('renders header logo upload with help text', async () => {
+    render(<AdminDesignPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Header Logo')).toBeInTheDocument()
+    })
+    expect(screen.getByText(/Wide logo or wordmark for the forum header/)).toBeInTheDocument()
+  })
+
   it('renders logo upload section with help text', async () => {
     render(<AdminDesignPage />)
     await waitFor(() => {
@@ -70,6 +78,15 @@ describe('AdminDesignPage', () => {
       expect(screen.getByText('Favicon')).toBeInTheDocument()
     })
     expect(screen.getByText(/256×256px.*JPEG, PNG, WebP, GIF/)).toBeInTheDocument()
+  })
+
+  it('renders "Show community name" toggle, defaults to checked', async () => {
+    render(<AdminDesignPage />)
+    await waitFor(() => {
+      const toggle = screen.getByRole('checkbox', { name: /show community name/i })
+      expect(toggle).toBeInTheDocument()
+      expect(toggle).toBeChecked()
+    })
   })
 
   it('renders primary color input', async () => {

@@ -338,6 +338,17 @@ export const handlers = [
     return HttpResponse.json({ url: 'http://localhost:3000/uploads/logos/mock-logo.webp' })
   }),
 
+  // POST /api/admin/design/header-logo
+  http.post(`${API_URL}/api/admin/design/header-logo`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({
+      url: 'http://localhost:3000/uploads/header-logos/mock-header-logo.webp',
+    })
+  }),
+
   // POST /api/admin/design/favicon
   http.post(`${API_URL}/api/admin/design/favicon`, ({ request }) => {
     const auth = request.headers.get('Authorization')
