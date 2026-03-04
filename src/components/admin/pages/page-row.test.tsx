@@ -74,9 +74,7 @@ describe('PageRow', () => {
 
   it('renders delete button', () => {
     render(<PageRow page={mockPage} depth={0} onDelete={vi.fn()} />)
-    expect(
-      screen.getByRole('button', { name: /delete about this community/i })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /delete about this community/i })).toBeInTheDocument()
   })
 
   it('calls onDelete when delete button is clicked', async () => {

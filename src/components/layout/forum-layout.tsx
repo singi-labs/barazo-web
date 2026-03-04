@@ -119,7 +119,10 @@ export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayo
                 </Link>
               </li>
               <li>
-                <Link href="/p/terms-of-service" className="transition-colors hover:text-foreground">
+                <Link
+                  href="/p/terms-of-service"
+                  className="transition-colors hover:text-foreground"
+                >
                   Terms
                 </Link>
               </li>

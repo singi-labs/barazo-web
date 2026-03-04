@@ -1263,11 +1263,7 @@ export function updatePage(
   })
 }
 
-export function deletePage(
-  id: string,
-  accessToken: string,
-  options?: FetchOptions
-): Promise<void> {
+export function deletePage(id: string, accessToken: string, options?: FetchOptions): Promise<void> {
   return apiFetch<void>(`/api/admin/pages/${encodeURIComponent(id)}`, {
     ...options,
     method: 'DELETE',

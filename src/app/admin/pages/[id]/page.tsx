@@ -11,13 +11,7 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import { ErrorAlert } from '@/components/error-alert'
 import { PageForm } from '@/components/admin/pages/page-form'
 import { generateSlug } from '@/components/admin/pages/slug-generator'
-import {
-  getAdminPage,
-  getAdminPages,
-  createPage,
-  updatePage,
-  deletePage,
-} from '@/lib/api/client'
+import { getAdminPage, getAdminPages, createPage, updatePage, deletePage } from '@/lib/api/client'
 import type { PageStatus, PageTreeNode } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
