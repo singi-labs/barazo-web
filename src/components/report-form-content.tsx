@@ -4,6 +4,7 @@
  */
 
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
@@ -45,7 +46,12 @@ export function ReportFormContent({
 
       <form onSubmit={onSubmit} className="mt-4 space-y-4" noValidate>
         <fieldset disabled={submitting}>
-          <legend className="text-sm font-medium text-foreground">Reason</legend>
+          <legend className="text-sm font-medium text-foreground">
+            Reason
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              *
+            </span>
+          </legend>
           <div className="mt-2 space-y-2">
             {REPORT_REASONS.map((r) => (
               <label key={r.value} className="flex items-center gap-2">
@@ -72,14 +78,14 @@ export function ReportFormContent({
         </fieldset>
 
         <div className="space-y-1">
-          <label htmlFor="report-details" className="block text-sm font-medium text-foreground">
+          <FormLabel htmlFor="report-details" optional>
             Additional details
-          </label>
+          </FormLabel>
           <textarea
             id="report-details"
             value={details}
             onChange={(e) => onDetailsChange(e.target.value)}
-            placeholder="Optional: provide more context"
+            placeholder="Provide more context"
             rows={3}
             disabled={submitting}
             className={cn(

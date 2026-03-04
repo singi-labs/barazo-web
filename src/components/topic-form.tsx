@@ -103,7 +103,7 @@ export function TopicForm({
         onTagInputChange={setTagInput}
       />
 
-      <TopicContentEditor content={content} onChange={setContent} error={errors.content} />
+      <TopicContentEditor content={content} onChange={setContent} error={errors.content} required />
 
       {mode === 'create' && (
         <TopicCrossPostSection

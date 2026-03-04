@@ -9,6 +9,7 @@
 
 import { useRef, useState, useCallback } from 'react'
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 import { TOOLBAR_ACTIONS } from '@/components/markdown-toolbar-actions'
 import type { ToolbarAction } from '@/components/markdown-toolbar-actions'
 
@@ -17,6 +18,8 @@ interface MarkdownEditorProps {
   onChange: (value: string) => void
   id: string
   label: string
+  required?: boolean
+  optional?: boolean
   error?: string
   className?: string
   placeholder?: string
@@ -27,6 +30,8 @@ export function MarkdownEditor({
   onChange,
   id,
   label,
+  required,
+  optional,
   error,
   className,
   placeholder,
@@ -87,9 +92,9 @@ export function MarkdownEditor({
 
   return (
     <div className={cn('space-y-1', className)}>
-      <label htmlFor={id} className="block text-sm font-medium text-foreground">
+      <FormLabel htmlFor={id} required={required} optional={optional}>
         {label}
-      </label>
+      </FormLabel>
 
       <div
         ref={toolbarRef}
@@ -123,6 +128,7 @@ export function MarkdownEditor({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? 'Write your content using Markdown...'}
+        required={required}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={errorId}
         className={cn(

@@ -4,6 +4,7 @@
  */
 
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 const DISPLAY_NAME_MAX = 256
 const BIO_MAX = 2048
@@ -28,12 +29,9 @@ export function CommunityProfileFormFields({
   return (
     <>
       <div className="space-y-1">
-        <label
-          htmlFor="community-display-name"
-          className="block text-sm font-medium text-foreground"
-        >
+        <FormLabel htmlFor="community-display-name" optional>
           Display name
-        </label>
+        </FormLabel>
         <input
           id="community-display-name"
           type="text"
@@ -53,9 +51,9 @@ export function CommunityProfileFormFields({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="community-bio" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="community-bio" optional>
           Bio
-        </label>
+        </FormLabel>
         <textarea
           id="community-bio"
           value={bio}

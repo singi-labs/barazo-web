@@ -76,8 +76,8 @@ describe('NewTopicPage', () => {
 
   it('renders topic form', () => {
     render(<NewTopicPage />)
-    expect(screen.getByLabelText('Title')).toBeInTheDocument()
-    expect(screen.getByLabelText('Content')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Title' })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Content' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Create Topic' })).toBeInTheDocument()
   })
 

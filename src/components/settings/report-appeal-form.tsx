@@ -4,6 +4,7 @@
  */
 
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 interface ReportAppealFormProps {
   reportId: number
@@ -27,19 +28,19 @@ export function ReportAppealForm({
   return (
     <form onSubmit={onAppealSubmit} className="space-y-3" noValidate>
       <div className="space-y-1">
-        <label
-          htmlFor={`appeal-reason-${reportId}`}
-          className="block text-sm font-medium text-foreground"
-        >
+        <FormLabel htmlFor={`appeal-reason-${reportId}`} required>
           Reason for appeal
-        </label>
+        </FormLabel>
         <textarea
           id={`appeal-reason-${reportId}`}
           value={appealReason}
           onChange={(e) => onAppealReasonChange(e.target.value)}
           placeholder="Explain why you believe this report should be reconsidered"
           rows={3}
+          required
           disabled={appealSubmitting}
+          aria-invalid={appealError ? 'true' : undefined}
+          aria-describedby={appealError ? `appeal-error-${reportId}` : undefined}
           className={cn(
             'block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -47,7 +48,7 @@ export function ReportAppealForm({
           )}
         />
         {appealError && (
-          <p className="text-sm text-destructive" role="alert">
+          <p id={`appeal-error-${reportId}`} className="text-sm text-destructive" role="alert">
             {appealError}
           </p>
         )}

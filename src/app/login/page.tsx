@@ -14,6 +14,7 @@ import Image from 'next/image'
 import { useAuth } from '@/hooks/use-auth'
 import { ApiError } from '@/lib/api/client'
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 function LoginContent() {
   const { login, isAuthenticated, isLoading } = useAuth()
@@ -110,9 +111,9 @@ function LoginContent() {
           )}
 
           <div className="space-y-1">
-            <label htmlFor="handle" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="handle" required>
               Handle
-            </label>
+            </FormLabel>
             <input
               id="handle"
               name="handle"
@@ -121,6 +122,7 @@ function LoginContent() {
               onChange={(e) => setHandle(e.target.value)}
               placeholder="jay.bsky.team"
               autoComplete="username"
+              required
               disabled={submitting}
               className={cn(
                 'block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground',

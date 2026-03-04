@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { FormLabel } from '@/components/ui/form-label'
 
 interface AddSeedDialogProps {
   open: boolean
@@ -55,9 +56,9 @@ export function AddSeedDialog({ open, onClose, onSubmit }: AddSeedDialogProps) {
         <h3 className="text-lg font-semibold text-foreground">Add trust seed</h3>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label htmlFor="seed-handle" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="seed-handle" required>
               Handle
-            </label>
+            </FormLabel>
             <input
               ref={handleRef}
               id="seed-handle"
@@ -70,15 +71,15 @@ export function AddSeedDialog({ open, onClose, onSubmit }: AddSeedDialogProps) {
             />
           </div>
           <div>
-            <label htmlFor="seed-reason" className="block text-sm font-medium text-foreground">
+            <FormLabel htmlFor="seed-reason" optional>
               Reason
-            </label>
+            </FormLabel>
             <input
               id="seed-reason"
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Optional: why this account is trusted"
+              placeholder="Why this account is trusted"
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
             />
           </div>

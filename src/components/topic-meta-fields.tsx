@@ -4,6 +4,7 @@
  */
 
 import { cn } from '@/lib/utils'
+import { FormLabel } from '@/components/ui/form-label'
 
 interface TopicMetaFieldsProps {
   title: string
@@ -29,15 +30,16 @@ export function TopicMetaFields({
   return (
     <>
       <div className="space-y-1">
-        <label htmlFor="topic-title" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="topic-title" required>
           Title
-        </label>
+        </FormLabel>
         <input
           id="topic-title"
           type="text"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="Enter a descriptive title"
+          required
           aria-invalid={errors.title ? 'true' : undefined}
           aria-describedby={errors.title ? 'topic-title-error' : undefined}
           className={cn(
@@ -54,13 +56,14 @@ export function TopicMetaFields({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="topic-category" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="topic-category" required>
           Category
-        </label>
+        </FormLabel>
         <select
           id="topic-category"
           value={category}
           onChange={(e) => onCategoryChange(e.target.value)}
+          required
           aria-invalid={errors.category ? 'true' : undefined}
           aria-describedby={errors.category ? 'topic-category-error' : undefined}
           className={cn(
@@ -84,9 +87,9 @@ export function TopicMetaFields({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="topic-tags" className="block text-sm font-medium text-foreground">
+        <FormLabel htmlFor="topic-tags" optional>
           Tags
-        </label>
+        </FormLabel>
         <input
           id="topic-tags"
           type="text"
