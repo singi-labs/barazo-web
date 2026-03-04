@@ -88,6 +88,10 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
     setReplyTarget(null)
   }, [])
 
+  const handleDeleteReply = useCallback(() => {
+    router.refresh()
+  }, [router])
+
   const handleReplyCreated = useCallback(() => {
     setReplyTarget(null)
     setComposerContent('')
@@ -122,6 +126,7 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
           replies={replies}
           topicUri={topic.uri}
           onReply={isLocked ? undefined : handleReply}
+          onDeleteReply={handleDeleteReply}
           currentUserDid={user?.did}
         />
       </div>

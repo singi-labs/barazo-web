@@ -11,10 +11,10 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Clock, Link as LinkIcon, ChatCircle, PencilSimple } from '@phosphor-icons/react'
+import { Clock, Link as LinkIcon, ChatCircle, PencilSimple, Trash } from '@phosphor-icons/react'
 import type { Reply } from '@/lib/api/types'
 import { formatRelativeTime, isEdited } from '@/lib/format'
-import { updateReply } from '@/lib/api/client'
+import { updateReply, deleteReply } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
 import { MarkdownContent } from './markdown-content'
@@ -22,6 +22,7 @@ import { MarkdownEditor } from './markdown-editor'
 import { LikeButton } from './like-button'
 import { ReactionBar } from './reaction-bar'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
+import { ConfirmDialog } from './confirm-dialog'
 import { SelfLabelIndicator } from './self-label-indicator'
 
 interface ReactionData {
@@ -37,6 +38,8 @@ interface ReplyCardProps {
   onReactionToggle?: (type: string) => void
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
   canEdit?: boolean
+  canDelete?: boolean
+  onDelete?: () => void
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
   selfLabels?: string[]
@@ -50,6 +53,8 @@ export function ReplyCard({
   onReactionToggle,
   onReply,
   canEdit,
+  canDelete,
+  onDelete,
   canReport,
   onReport,
   selfLabels,
@@ -59,6 +64,7 @@ export function ReplyCard({
   const [editContent, setEditContent] = useState(reply.content)
   const [displayContent, setDisplayContent] = useState(reply.content)
   const [saving, setSaving] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const { getAccessToken } = useAuth()
   const { toast } = useToast()
 
@@ -80,6 +86,19 @@ export function ReplyCard({
       setSaving(false)
     }
   }, [editContent, reply.uri, getAccessToken, toast])
+
+  const handleConfirmDelete = useCallback(async () => {
+    try {
+      const accessToken = getAccessToken() ?? ''
+      await deleteReply(reply.uri, accessToken)
+      setShowDeleteConfirm(false)
+      toast({ title: 'Reply deleted' })
+      onDelete?.()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete reply'
+      toast({ title: 'Error', description: message, variant: 'destructive' })
+    }
+  }, [reply.uri, getAccessToken, toast, onDelete])
 
   const headingId = `reply-heading-${reply.rkey}`
   const isDeleted = reply.isAuthorDeleted || reply.isModDeleted
@@ -259,6 +278,18 @@ export function ReplyCard({
             </button>
           )}
 
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-destructive"
+              aria-label={`Delete reply by ${reply.author?.handle ?? reply.authorDid}`}
+            >
+              <Trash className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
+              Delete
+            </button>
+          )}
+
           {onReply && (
             <button
               type="button"
@@ -281,6 +312,17 @@ export function ReplyCard({
           {canReport && onReport && <ReportDialog subjectUri={reply.uri} onSubmit={onReport} />}
         </div>
       </article>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete reply?"
+        description="This will permanently remove your reply. This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="destructive"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   )
 }
