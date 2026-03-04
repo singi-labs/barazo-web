@@ -10,7 +10,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { CreateTopicInput, PublicSettings } from '@/lib/api/types'
-import { createTopic, getPublicSettings } from '@/lib/api/client'
+import { ApiError, createTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -26,6 +26,7 @@ export default function NewTopicPage() {
   const { ensureOnboarded } = useOnboardingContext()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [heldMessage, setHeldMessage] = useState<string | null>(null)
   const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
@@ -43,8 +44,22 @@ export default function NewTopicPage() {
     try {
       const accessToken = getAccessToken() ?? ''
       const topic = await createTopic(values, accessToken)
+
+      if (topic.moderationStatus === 'held') {
+        setHeldMessage(
+          'Your topic has been submitted and is pending moderator review. It will appear once approved.'
+        )
+        setSubmitting(false)
+        return
+      }
+
       router.push(getTopicUrl(topic))
     } catch (err) {
+      if (err instanceof ApiError && err.errorCode === 'Onboarding required') {
+        ensureOnboarded()
+        setSubmitting(false)
+        return
+      }
       setError(err instanceof Error ? err.message : 'Failed to create topic')
       setSubmitting(false)
     }
@@ -63,6 +78,15 @@ export default function NewTopicPage() {
             role="alert"
           >
             <p className="text-sm text-destructive">{error}</p>
+          </div>
+        )}
+
+        {heldMessage && (
+          <div
+            className="rounded-md border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950"
+            role="status"
+          >
+            <p className="text-sm text-blue-800 dark:text-blue-200">{heldMessage}</p>
           </div>
         )}
 

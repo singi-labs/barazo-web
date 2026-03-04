@@ -49,7 +49,7 @@ describe('initiateLogin', () => {
       })
     )
 
-    await expect(initiateLogin('bad.handle')).rejects.toThrow('API 502')
+    await expect(initiateLogin('bad.handle')).rejects.toThrow('Failed to initiate login')
   })
 
   it('throws on invalid handle', async () => {
@@ -59,7 +59,7 @@ describe('initiateLogin', () => {
       })
     )
 
-    await expect(initiateLogin('')).rejects.toThrow('API 400')
+    await expect(initiateLogin('')).rejects.toThrow('Invalid handle')
   })
 })
 
@@ -78,7 +78,7 @@ describe('refreshSession', () => {
       })
     )
 
-    await expect(refreshSession()).rejects.toThrow('API 401')
+    await expect(refreshSession()).rejects.toThrow('No refresh token')
   })
 })
 

@@ -11,7 +11,7 @@ import { PaperPlaneRight, X, Lock } from '@phosphor-icons/react'
 import { useAuth } from '@/hooks/use-auth'
 import { useOnboardingContext } from '@/context/onboarding-context'
 import { useToast } from '@/hooks/use-toast'
-import { createReply } from '@/lib/api/client'
+import { ApiError, createReply } from '@/lib/api/client'
 import { MarkdownEditor } from '@/components/markdown-editor'
 import { cn } from '@/lib/utils'
 
@@ -133,7 +133,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
       setSubmitting(true)
       try {
         const accessToken = getAccessToken() ?? ''
-        await createReply(
+        const result = await createReply(
           topicUri,
           {
             content: trimmed,
@@ -141,13 +141,26 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
           },
           accessToken
         )
+
         setContent('')
         setIsExpanded(false)
-        onReplyCreated()
-        toast({ title: 'Reply posted' })
+
+        if (result.moderationStatus === 'held') {
+          toast({
+            title: 'Reply submitted',
+            description: 'Your reply is pending moderator review and will appear once approved.',
+          })
+        } else {
+          onReplyCreated()
+          toast({ title: 'Reply posted' })
+        }
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to post reply'
-        toast({ title: 'Error', description: message, variant: 'destructive' })
+        if (err instanceof ApiError && err.errorCode === 'Onboarding required') {
+          ensureOnboarded()
+        } else {
+          const message = err instanceof Error ? err.message : 'Failed to post reply'
+          toast({ title: 'Error', description: message, variant: 'destructive' })
+        }
       } finally {
         setSubmitting(false)
       }
