@@ -112,7 +112,7 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
                   handleReply({
                     uri: topic.uri,
                     cid: topic.cid,
-                    authorHandle: topic.authorDid,
+                    authorHandle: topic.author?.handle ?? topic.authorDid,
                     snippet: topic.content.slice(0, 100),
                   })
               : undefined

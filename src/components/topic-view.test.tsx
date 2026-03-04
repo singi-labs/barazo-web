@@ -63,8 +63,16 @@ describe('TopicView', () => {
     expect(screen.getByText(topic.content)).toBeInTheDocument()
   })
 
-  it('renders author handle', () => {
+  it('renders author display name with link', () => {
     render(<TopicView topic={topic} />)
+    expect(screen.getByText('Jay')).toBeInTheDocument()
+    const authorLink = screen.getByRole('link', { name: /Jay/ })
+    expect(authorLink).toHaveAttribute('href', `/u/${mockUsers[0]!.handle}`)
+  })
+
+  it('falls back to DID when author profile is missing', () => {
+    const topicWithoutAuthor = { ...topic, author: undefined }
+    render(<TopicView topic={topicWithoutAuthor} />)
     expect(screen.getByText(mockUsers[0]!.did)).toBeInTheDocument()
   })
 
