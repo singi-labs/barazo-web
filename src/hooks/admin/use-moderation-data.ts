@@ -67,7 +67,7 @@ export function useModerationData() {
       ])
       setReports(reportsRes.reports)
       setFirstPostQueue(queueRes.items)
-      setModerationLog(logRes.entries)
+      setModerationLog(logRes.actions)
       setReportedUsers(usersRes.users)
       setThresholds(thresholdsRes)
     } catch {

@@ -463,9 +463,8 @@ export interface ModerationLogEntry {
 }
 
 export interface ModerationLogResponse {
-  entries: ModerationLogEntry[]
+  actions: ModerationLogEntry[]
   cursor: string | null
-  total: number
 }
 
 export interface ModerationThresholds {
