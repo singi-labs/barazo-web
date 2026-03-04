@@ -44,9 +44,7 @@ describe('flattenCategoryTree', () => {
             id: 'cat-3',
             name: 'Backend',
             parentId: 'cat-1',
-            children: [
-              makeCategory({ id: 'cat-4', name: 'Databases', parentId: 'cat-3' }),
-            ],
+            children: [makeCategory({ id: 'cat-4', name: 'Databases', parentId: 'cat-3' })],
           }),
         ],
       }),
@@ -67,9 +65,7 @@ describe('flattenCategoryTree', () => {
       makeCategory({
         id: 'cat-1',
         name: 'Dev',
-        children: [
-          makeCategory({ id: 'cat-2', name: 'Frontend', parentId: 'cat-1' }),
-        ],
+        children: [makeCategory({ id: 'cat-2', name: 'Frontend', parentId: 'cat-1' })],
       }),
       makeCategory({ id: 'cat-3', name: 'Meta' }),
     ]

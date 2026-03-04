@@ -86,20 +86,10 @@ export function CategoryRow({ category, depth, onEdit, onDelete }: CategoryRowPr
   )
 }
 
-export function DraggableCategoryRow({
-  category,
-  depth,
-  onEdit,
-  onDelete,
-}: CategoryRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: category.id })
+export function DraggableCategoryRow({ category, depth, onEdit, onDelete }: CategoryRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: category.id,
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),

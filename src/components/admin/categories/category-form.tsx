@@ -86,9 +86,7 @@ export function CategoryForm({
           <select
             id="cat-parent"
             value={editing.parentId ?? ''}
-            onChange={(e) =>
-              onChange({ ...editing, parentId: e.target.value || null })
-            }
+            onChange={(e) => onChange({ ...editing, parentId: e.target.value || null })}
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
           >
             <option value="">None (top level)</option>
@@ -96,7 +94,8 @@ export function CategoryForm({
               excludeId: editing.id ?? undefined,
             }).map(({ category: cat, depth }) => (
               <option key={cat.id} value={cat.id}>
-                {'\u00A0'.repeat(depth * 3)}{cat.name}
+                {'\u00A0'.repeat(depth * 3)}
+                {cat.name}
               </option>
             ))}
           </select>

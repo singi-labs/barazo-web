@@ -77,7 +77,8 @@ export function TopicMetaFields({
           <option value="">Select a category</option>
           {flattenCategoryTree(categories).map(({ category: cat, depth }) => (
             <option key={cat.slug} value={cat.slug}>
-              {'\u00A0'.repeat(depth * 3)}{cat.name}
+              {'\u00A0'.repeat(depth * 3)}
+              {cat.name}
             </option>
           ))}
         </select>

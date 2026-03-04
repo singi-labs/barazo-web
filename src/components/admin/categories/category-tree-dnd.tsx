@@ -17,10 +17,7 @@ import {
   DragOverlay,
   type DragStartEvent,
 } from '@dnd-kit/core'
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { CategoryTreeNode } from '@/lib/api/types'
 import { flattenCategoryTree } from '@/lib/flatten-category-tree'
 import { DraggableCategoryRow } from './category-row'
@@ -32,12 +29,7 @@ interface CategoryTreeDnDProps {
   onDelete: (id: string) => void
 }
 
-export function CategoryTreeDnD({
-  categories,
-  onMove,
-  onEdit,
-  onDelete,
-}: CategoryTreeDnDProps) {
+export function CategoryTreeDnD({ categories, onMove, onEdit, onDelete }: CategoryTreeDnDProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const flatItems = flattenCategoryTree(categories)
   const itemIds = flatItems.map((item) => item.category.id)
@@ -62,12 +54,8 @@ export function CategoryTreeDnD({
       if (!activeItem || !overItem) return
 
       const newParentId = overItem.category.parentId
-      const siblingsAtLevel = flatItems.filter(
-        (i) => i.category.parentId === newParentId
-      )
-      const overIndex = siblingsAtLevel.findIndex(
-        (i) => i.category.id === over.id
-      )
+      const siblingsAtLevel = flatItems.filter((i) => i.category.parentId === newParentId)
+      const overIndex = siblingsAtLevel.findIndex((i) => i.category.id === over.id)
       const newSortOrder = Math.max(0, overIndex)
 
       onMove(String(active.id), newParentId, newSortOrder)
@@ -75,9 +63,7 @@ export function CategoryTreeDnD({
     [flatItems, onMove]
   )
 
-  const activeItem = activeId
-    ? flatItems.find((i) => i.category.id === activeId)
-    : null
+  const activeItem = activeId ? flatItems.find((i) => i.category.id === activeId) : null
 
   return (
     <DndContext
@@ -102,9 +88,7 @@ export function CategoryTreeDnD({
       <DragOverlay>
         {activeItem ? (
           <div className="rounded-md border border-primary bg-card p-3 shadow-lg opacity-90">
-            <p className="text-sm font-medium text-foreground">
-              {activeItem.category.name}
-            </p>
+            <p className="text-sm font-medium text-foreground">{activeItem.category.name}</p>
           </div>
         ) : null}
       </DragOverlay>
