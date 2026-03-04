@@ -67,25 +67,6 @@ jobs:
       - name: Build application
         run: pnpm build
 
-      - name: Dereference standalone symlinks
-        run: |
-          # pnpm uses symlinks in node_modules — artifact upload doesn't preserve them
-          # Remove broken symlinks first (pnpm internal refs), then dereference valid ones
-          find .next/standalone -type l ! -exec test -e {} \; -delete
-          cp -rL .next/standalone /tmp/standalone-deref
-          rm -rf .next/standalone
-          mv /tmp/standalone-deref .next/standalone
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: build
-          path: |
-            .next/standalone/
-            .next/static/
-            public/
-          retention-days: 7
-
   accessibility:
     name: Accessibility Audit
     runs-on: ubuntu-latest
@@ -98,14 +79,20 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+      - name: Cache Next.js build
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          name: build
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'public/**', 'next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            nextjs-${{ runner.os }}-
+
+      - name: Build application
+        run: pnpm build
 
       - name: Prepare standalone server
         run: |
-          mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/public
 
