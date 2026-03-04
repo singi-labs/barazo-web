@@ -49,6 +49,52 @@ export interface CategoriesResponse {
   categories: CategoryTreeNode[]
 }
 
+// --- Pages ---
+
+export type PageStatus = 'draft' | 'published'
+
+export interface Page {
+  id: string
+  slug: string
+  title: string
+  content: string
+  status: PageStatus
+  metaDescription: string | null
+  parentId: string | null
+  sortOrder: number
+  communityDid: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PageTreeNode extends Page {
+  children: PageTreeNode[]
+}
+
+export interface PagesResponse {
+  pages: PageTreeNode[]
+}
+
+export interface CreatePageInput {
+  title: string
+  slug: string
+  content?: string
+  status?: PageStatus
+  metaDescription?: string | null
+  parentId?: string | null
+  sortOrder?: number
+}
+
+export interface UpdatePageInput {
+  title?: string
+  slug?: string
+  content?: string
+  status?: PageStatus
+  metaDescription?: string | null
+  parentId?: string | null
+  sortOrder?: number
+}
+
 // --- Author Profile (enriched by AppView) ---
 
 export interface AuthorProfile {

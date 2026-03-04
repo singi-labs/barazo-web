@@ -114,17 +114,20 @@ export function ForumLayout({ children, sidebar, communityName = '' }: ForumLayo
                 </Link>
               </li>
               <li>
-                <Link href="/legal/privacy" className="transition-colors hover:text-foreground">
+                <Link href="/p/privacy-policy" className="transition-colors hover:text-foreground">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/legal/terms" className="transition-colors hover:text-foreground">
+                <Link
+                  href="/p/terms-of-service"
+                  className="transition-colors hover:text-foreground"
+                >
                   Terms
                 </Link>
               </li>
               <li>
-                <Link href="/legal/cookies" className="transition-colors hover:text-foreground">
+                <Link href="/p/cookie-policy" className="transition-colors hover:text-foreground">
                   Cookies
                 </Link>
               </li>
