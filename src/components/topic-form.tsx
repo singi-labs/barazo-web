@@ -8,7 +8,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { CreateTopicInput } from '@/lib/api/types'
+import type { CreateTopicInput, CategoryTreeNode } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { TopicMetaFields } from '@/components/topic-meta-fields'
 import { TopicContentEditor } from '@/components/topic-content-editor'
@@ -22,18 +22,25 @@ interface TopicFormProps {
   onSubmit: (values: CreateTopicInput) => void | Promise<void>
   initialValues?: Partial<TopicFormValues>
   mode?: 'create' | 'edit'
-  categories?: Array<{ slug: string; name: string }>
+  categories?: CategoryTreeNode[]
   submitting?: boolean
   className?: string
 }
 
-const CATEGORIES_FALLBACK = [
-  { slug: 'general', name: 'General Discussion' },
-  { slug: 'development', name: 'Development' },
-  { slug: 'frontend', name: 'Frontend' },
-  { slug: 'backend', name: 'Backend' },
-  { slug: 'feedback', name: 'Feedback & Ideas' },
-  { slug: 'meta', name: 'Meta' },
+const CATEGORIES_FALLBACK: CategoryTreeNode[] = [
+  {
+    id: 'fallback-general',
+    slug: 'general',
+    name: 'General Discussion',
+    description: null,
+    parentId: null,
+    sortOrder: 0,
+    communityDid: '',
+    maturityRating: 'safe',
+    createdAt: '',
+    updatedAt: '',
+    children: [],
+  },
 ]
 
 export function TopicForm({

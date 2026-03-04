@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Plus } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { ErrorAlert } from '@/components/error-alert'
-import { CategoryRow } from '@/components/admin/categories/category-row'
+import { CategoryTreeDnD } from '@/components/admin/categories/category-tree-dnd'
 import { CategoryForm } from '@/components/admin/categories/category-form'
 import type { EditingCategory } from '@/components/admin/categories/category-form'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/lib/api/client'
@@ -76,6 +76,24 @@ export default function AdminCategoriesPage() {
     }
   }
 
+  const handleMove = async (
+    categoryId: string,
+    newParentId: string | null,
+    newSortOrder: number
+  ) => {
+    setActionError(null)
+    try {
+      await updateCategory(
+        categoryId,
+        { parentId: newParentId, sortOrder: newSortOrder },
+        getAccessToken() ?? ''
+      )
+      void fetchCategories()
+    } catch {
+      setActionError('Failed to move category. Please try again.')
+    }
+  }
+
   const handleSave = async () => {
     if (!editing) return
     saveMachine.startSaving()
@@ -134,6 +152,7 @@ export default function AdminCategoriesPage() {
         {editing && (
           <CategoryForm
             editing={editing}
+            categories={categories}
             onChange={setEditing}
             onSave={() => void handleSave()}
             onCancel={() => setEditing(null)}
@@ -154,17 +173,14 @@ export default function AdminCategoriesPage() {
         )}
 
         {!loading && categories.length > 0 && (
-          <div className="space-y-2">
-            {categories.map((category) => (
-              <CategoryRow
-                key={category.id}
-                category={category}
-                depth={0}
-                onEdit={handleEdit}
-                onDelete={(id) => void handleDelete(id)}
-              />
-            ))}
-          </div>
+          <CategoryTreeDnD
+            categories={categories}
+            onMove={(id, newParentId, newSortOrder) =>
+              void handleMove(id, newParentId, newSortOrder)
+            }
+            onEdit={handleEdit}
+            onDelete={(id) => void handleDelete(id)}
+          />
         )}
       </div>
     </AdminLayout>

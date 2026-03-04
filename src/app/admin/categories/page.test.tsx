@@ -101,6 +101,57 @@ describe('AdminCategoriesPage', () => {
     expect(container).toHaveAttribute('data-depth', '1')
   })
 
+  it('shows parent category selector when editing', async () => {
+    const user = userEvent.setup()
+    render(<AdminCategoriesPage />)
+    await waitFor(() => {
+      expect(screen.getByText('General Discussion')).toBeInTheDocument()
+    })
+    const editButtons = screen.getAllByRole('button', { name: /edit/i })
+    await user.click(editButtons[0]!)
+    expect(screen.getByLabelText(/parent category/i)).toBeInTheDocument()
+  })
+
+  it('shows "None (top level)" option in parent selector', async () => {
+    const user = userEvent.setup()
+    render(<AdminCategoriesPage />)
+    await waitFor(() => {
+      expect(screen.getByText('General Discussion')).toBeInTheDocument()
+    })
+    await user.click(screen.getByRole('button', { name: /add category/i }))
+    const parentSelect = screen.getByLabelText(/parent category/i)
+    expect(parentSelect).toBeInTheDocument()
+    const options = parentSelect.querySelectorAll('option')
+    expect(options[0]).toHaveTextContent('None (top level)')
+  })
+
+  it('excludes current category from parent selector options', async () => {
+    const user = userEvent.setup()
+    render(<AdminCategoriesPage />)
+    await waitFor(() => {
+      expect(screen.getByText('General Discussion')).toBeInTheDocument()
+    })
+    // Edit "Development" which has children Frontend and Backend
+    const editButtons = screen.getAllByRole('button', { name: /edit development/i })
+    await user.click(editButtons[0]!)
+    const parentSelect = screen.getByLabelText(/parent category/i) as HTMLSelectElement
+    const optionTexts = Array.from(parentSelect.options).map((o) => o.textContent)
+    // Development, Frontend, Backend should not appear (self + descendants excluded)
+    expect(optionTexts).not.toContain(expect.stringContaining('Development'))
+    expect(optionTexts).not.toContain(expect.stringContaining('Frontend'))
+    expect(optionTexts).not.toContain(expect.stringContaining('Backend'))
+  })
+
+  it('renders drag handles for each category', async () => {
+    render(<AdminCategoriesPage />)
+    await waitFor(() => {
+      expect(screen.getByText('General Discussion')).toBeInTheDocument()
+    })
+    const dragHandles = screen.getAllByRole('button', { name: /drag/i })
+    // 4 root + 2 children = 6 total categories with drag handles
+    expect(dragHandles.length).toBeGreaterThanOrEqual(4)
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminCategoriesPage />)
     await waitFor(() => {

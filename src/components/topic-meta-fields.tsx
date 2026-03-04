@@ -5,12 +5,14 @@
 
 import { cn } from '@/lib/utils'
 import { FormLabel } from '@/components/ui/form-label'
+import type { CategoryTreeNode } from '@/lib/api/types'
+import { flattenCategoryTree } from '@/lib/flatten-category-tree'
 
 interface TopicMetaFieldsProps {
   title: string
   category: string
   tagInput: string
-  categories: Array<{ slug: string; name: string }>
+  categories: CategoryTreeNode[]
   errors: { title?: string; category?: string }
   onTitleChange: (title: string) => void
   onCategoryChange: (category: string) => void
@@ -73,8 +75,9 @@ export function TopicMetaFields({
           )}
         >
           <option value="">Select a category</option>
-          {categories.map((cat) => (
+          {flattenCategoryTree(categories).map(({ category: cat, depth }) => (
             <option key={cat.slug} value={cat.slug}>
+              {'\u00A0'.repeat(depth * 3)}
               {cat.name}
             </option>
           ))}
