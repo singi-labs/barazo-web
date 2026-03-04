@@ -160,14 +160,16 @@ export function ReplyBranch({
                   />
                 </div>
               ))}
-            {hasChildren && isCollapsed && (() => {
-              const totalHidden = countDescendants(node)
-              return (
-                <p className="ml-12 mt-1 text-xs text-muted-foreground" aria-live="polite">
-                  {totalHidden} {totalHidden === 1 ? 'reply' : 'replies'} hidden
-                </p>
-              )
-            })()}
+            {hasChildren &&
+              isCollapsed &&
+              (() => {
+                const totalHidden = countDescendants(node)
+                return (
+                  <p className="ml-12 mt-1 text-xs text-muted-foreground" aria-live="polite">
+                    {totalHidden} {totalHidden === 1 ? 'reply' : 'replies'} hidden
+                  </p>
+                )
+              })()}
           </li>
         )
       })}
