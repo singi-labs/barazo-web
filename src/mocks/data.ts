@@ -155,7 +155,74 @@ export const mockCategories: CategoryTreeNode[] = [
     maturityRating: 'safe',
     createdAt: TWO_DAYS_AGO,
     updatedAt: TWO_DAYS_AGO,
-    children: [],
+    children: [
+      {
+        id: 'cat-fb-features',
+        slug: 'feature-requests',
+        name: 'Feature Requests',
+        description: 'Suggest new features and improvements',
+        parentId: 'cat-feedback',
+        sortOrder: 0,
+        communityDid: COMMUNITY_DID,
+        maturityRating: 'safe',
+        createdAt: TWO_DAYS_AGO,
+        updatedAt: TWO_DAYS_AGO,
+        children: [],
+      },
+      {
+        id: 'cat-fb-bugs',
+        slug: 'bug-reports',
+        name: 'Bug Reports',
+        description: 'Report bugs and unexpected behavior',
+        parentId: 'cat-feedback',
+        sortOrder: 1,
+        communityDid: COMMUNITY_DID,
+        maturityRating: 'safe',
+        createdAt: TWO_DAYS_AGO,
+        updatedAt: TWO_DAYS_AGO,
+        children: [],
+      },
+    ],
+  },
+  {
+    id: 'cat-atproto',
+    slug: 'atproto',
+    name: 'AT Protocol',
+    description: 'AT Protocol ecosystem, standards, and tooling',
+    parentId: null,
+    sortOrder: 3,
+    communityDid: COMMUNITY_DID,
+    maturityRating: 'safe',
+    createdAt: TWO_DAYS_AGO,
+    updatedAt: TWO_DAYS_AGO,
+    children: [
+      {
+        id: 'cat-atp-lexicons',
+        slug: 'lexicons',
+        name: 'Lexicons',
+        description: 'Schema definitions and data model discussions',
+        parentId: 'cat-atproto',
+        sortOrder: 0,
+        communityDid: COMMUNITY_DID,
+        maturityRating: 'safe',
+        createdAt: TWO_DAYS_AGO,
+        updatedAt: TWO_DAYS_AGO,
+        children: [],
+      },
+      {
+        id: 'cat-atp-identity',
+        slug: 'identity',
+        name: 'Identity',
+        description: 'DIDs, handles, and portable identity',
+        parentId: 'cat-atproto',
+        sortOrder: 1,
+        communityDid: COMMUNITY_DID,
+        maturityRating: 'safe',
+        createdAt: TWO_DAYS_AGO,
+        updatedAt: TWO_DAYS_AGO,
+        children: [],
+      },
+    ],
   },
   {
     id: 'cat-meta',
@@ -163,7 +230,7 @@ export const mockCategories: CategoryTreeNode[] = [
     name: 'Meta',
     description: 'About this community',
     parentId: null,
-    sortOrder: 3,
+    sortOrder: 4,
     communityDid: COMMUNITY_DID,
     maturityRating: 'safe',
     createdAt: TWO_DAYS_AGO,
@@ -590,6 +657,70 @@ export const mockModDeletedReply: Reply = {
   createdAt: NOW,
   indexedAt: NOW,
 }
+
+// --- Deep Thread Replies (15 levels deep, for testing nested threading on mobile) ---
+
+const DEEP_TOPIC_URI = `at://${mockUsers[0]!.did}/forum.barazo.topic.post/3kf1abc`
+const DEEP_TOPIC_CID = 'bafyreit1'
+
+const deepThreadContent: string[] = [
+  'Has anyone tried running Barazo on a Raspberry Pi?',
+  'I actually have it running on a Pi 4 with 8GB RAM. Works surprisingly well.',
+  'What about the database? PostgreSQL on a Pi seems heavy.',
+  'SQLite would be lighter but you lose concurrent writes. PostgreSQL is fine with proper tuning.',
+  'What pg settings did you change? I keep running out of shared memory.',
+  'Set shared_buffers to 256MB and work_mem to 16MB. Also reduce max_connections to 20.',
+  'That helped a lot, thanks! But now the firehose consumer is lagging behind.',
+  'The firehose needs dedicated resources. Consider running it as a separate service.',
+  'Separate service means another container though. The Pi is already running 4.',
+  'You could use a lightweight process manager instead of Docker for some services.',
+  'PM2 or systemd? I tried PM2 but it added 100MB of memory overhead.',
+  'systemd is the way to go. Zero overhead and it handles restarts natively.',
+  'Good call. One more question -- how do you handle SSL termination?',
+  'Caddy is perfect for this. Auto-HTTPS with minimal config and low resource usage.',
+  'This whole thread is gold. Someone should turn this into a self-hosting guide.',
+]
+
+/**
+ * A deeply nested reply thread (15 levels) for testing deep threading behavior,
+ * especially on mobile viewports where indentation becomes a concern.
+ * Each reply is a child of the previous one, forming a single chain.
+ * Uses the same topic as mockReplies (mockTopics[0]).
+ */
+export const mockDeepReplies: Reply[] = deepThreadContent.map((content, i) => {
+  const depth = i + 1
+  const userIndex = i % mockUsers.length
+  const rkey = `3kf7${String(i + 1).padStart(3, '0')}`
+  const prevRkey = i > 0 ? `3kf7${String(i).padStart(3, '0')}` : null
+  const prevUserIndex = i > 0 ? (i - 1) % mockUsers.length : null
+
+  const parentUri =
+    i === 0
+      ? DEEP_TOPIC_URI
+      : `at://${mockUsers[prevUserIndex!]!.did}/forum.barazo.reply.post/${prevRkey}`
+  const parentCid = i === 0 ? DEEP_TOPIC_CID : `bafydeep${i}`
+
+  return {
+    uri: `at://${mockUsers[userIndex]!.did}/forum.barazo.reply.post/${rkey}`,
+    rkey,
+    authorDid: mockUsers[userIndex]!.did,
+    author: mockAuthorProfiles[userIndex]!,
+    content,
+    contentFormat: null,
+    rootUri: DEEP_TOPIC_URI,
+    rootCid: DEEP_TOPIC_CID,
+    parentUri,
+    parentCid,
+    communityDid: COMMUNITY_DID,
+    cid: `bafydeep${depth}`,
+    depth,
+    reactionCount: Math.max(0, 15 - depth),
+    isAuthorDeleted: false,
+    isModDeleted: false,
+    createdAt: new Date(Date.parse(TWO_DAYS_AGO) + i * 3600000).toISOString(),
+    indexedAt: new Date(Date.parse(TWO_DAYS_AGO) + i * 3600000).toISOString(),
+  }
+})
 
 // --- Community Settings ---
 

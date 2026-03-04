@@ -12,6 +12,7 @@ import {
   mockCategoryWithTopicCount,
   mockTopics,
   mockReplies,
+  mockDeepReplies,
   mockSearchResults,
   mockNotifications,
   mockCommunitySettings,
@@ -210,7 +211,7 @@ export const handlers = [
     const limitParam = url.searchParams.get('limit')
     const limit = limitParam ? parseInt(limitParam, 10) : 20
 
-    const replies = mockReplies.filter((r) => r.rootUri === topicUri)
+    const replies = [...mockReplies, ...mockDeepReplies].filter((r) => r.rootUri === topicUri)
     const limited = replies.slice(0, limit)
     const hasMore = replies.length > limit
 
