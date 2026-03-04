@@ -81,9 +81,24 @@ describe('TopicView', () => {
     }
   })
 
-  it('renders reply count', () => {
+  it('renders reply count as static text when onReply is not provided', () => {
     render(<TopicView topic={topic} />)
     expect(screen.getByLabelText(`${topic.replyCount} replies`)).toBeInTheDocument()
+    expect(screen.getByLabelText(`${topic.replyCount} replies`).tagName).toBe('SPAN')
+  })
+
+  it('renders reply count as clickable button when onReply is provided', () => {
+    render(<TopicView topic={topic} onReply={vi.fn()} />)
+    const replyButton = screen.getByRole('button', { name: /reply to this topic/i })
+    expect(replyButton).toBeInTheDocument()
+  })
+
+  it('calls onReply when reply button is clicked', async () => {
+    const user = userEvent.setup()
+    const onReply = vi.fn()
+    render(<TopicView topic={topic} onReply={onReply} />)
+    await user.click(screen.getByRole('button', { name: /reply to this topic/i }))
+    expect(onReply).toHaveBeenCalledTimes(1)
   })
 
   it('renders reaction count', () => {

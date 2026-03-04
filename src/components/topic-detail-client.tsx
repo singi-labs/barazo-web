@@ -98,7 +98,22 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
     <>
       {/* Topic with edit button for author */}
       <div className="mt-4">
-        <TopicView topic={topic} canEdit={canEdit} onEdit={handleEdit} />
+        <TopicView
+          topic={topic}
+          canEdit={canEdit}
+          onEdit={handleEdit}
+          onReply={
+            isAuthenticated && !isLocked
+              ? () =>
+                  handleReply({
+                    uri: topic.uri,
+                    cid: topic.cid,
+                    authorHandle: topic.authorDid,
+                    snippet: topic.content.slice(0, 100),
+                  })
+              : undefined
+          }
+        />
       </div>
 
       {/* Reply thread with reply buttons */}

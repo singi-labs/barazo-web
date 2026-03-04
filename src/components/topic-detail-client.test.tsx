@@ -141,8 +141,14 @@ describe('TopicDetailClient', () => {
 
     it('shows reply buttons on reply cards when authenticated', () => {
       render(<TopicDetailClient topic={topic} replies={replies} />)
-      const replyButtons = screen.getAllByRole('button', { name: /reply to/i })
-      expect(replyButtons.length).toBeGreaterThan(0)
+      // Reply buttons on comment cards (excludes the OP reply button)
+      const replyCardButtons = screen.getAllByRole('button', { name: /^Reply to (?!this topic)/i })
+      expect(replyCardButtons.length).toBeGreaterThan(0)
+    })
+
+    it('shows reply button on the original post when authenticated', () => {
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+      expect(screen.getByRole('button', { name: /reply to this topic/i })).toBeInTheDocument()
     })
   })
 
@@ -211,8 +217,9 @@ describe('TopicDetailClient', () => {
       const user = userEvent.setup()
       render(<TopicDetailClient topic={topic} replies={replies} />)
 
-      const replyButtons = screen.getAllByRole('button', { name: /reply to/i })
-      await user.click(replyButtons[0]!)
+      // Click a reply card button (not the OP reply button)
+      const replyCardButtons = screen.getAllByRole('button', { name: /^Reply to (?!this topic)/i })
+      await user.click(replyCardButtons[0]!)
 
       // The composer should expand and show the reply target banner
       const firstReply = replies[0]!
@@ -220,13 +227,23 @@ describe('TopicDetailClient', () => {
       expect(screen.getByText(`Replying to @${expectedHandle}`)).toBeInTheDocument()
     })
 
+    it('sets reply target when reply button is clicked on the original post', async () => {
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      await user.click(screen.getByRole('button', { name: /reply to this topic/i }))
+
+      // The composer should expand and show the reply target banner with the topic author
+      expect(screen.getByText(`Replying to @${topic.authorDid}`)).toBeInTheDocument()
+    })
+
     it('clears reply target when dismiss button is clicked', async () => {
       const user = userEvent.setup()
       render(<TopicDetailClient topic={topic} replies={replies} />)
 
-      // Click reply to set a target
-      const replyButtons = screen.getAllByRole('button', { name: /reply to/i })
-      await user.click(replyButtons[0]!)
+      // Click reply on a reply card to set a target
+      const replyCardButtons = screen.getAllByRole('button', { name: /^Reply to (?!this topic)/i })
+      await user.click(replyCardButtons[0]!)
 
       const firstReply = replies[0]!
       const expectedHandle = firstReply.author?.handle ?? firstReply.authorDid
@@ -241,7 +258,11 @@ describe('TopicDetailClient', () => {
   describe('locked topic', () => {
     it('hides reply buttons when topic is locked', () => {
       render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
-      expect(screen.queryByRole('button', { name: /reply to/i })).not.toBeInTheDocument()
+      // Neither OP reply button nor reply card buttons should be present
+      expect(screen.queryByRole('button', { name: /reply to this topic/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /^Reply to (?!this topic)/i })
+      ).not.toBeInTheDocument()
     })
 
     it('shows locked notice in composer when topic is locked', () => {
