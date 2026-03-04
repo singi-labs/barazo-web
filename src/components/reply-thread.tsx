@@ -30,14 +30,15 @@ export function ReplyThread({
   const heading =
     replyCount === 0 ? 'Replies' : replyCount === 1 ? '1 Reply' : `${replyCount} Replies`
 
-  const { tree, postNumberMap } = useMemo(() => {
+  const { tree, postNumberMap, allReplies } = useMemo(() => {
     const builtTree = buildReplyTree(replies, topicUri)
     const flat = flattenReplyTree(builtTree)
     const map = new Map<string, number>()
     flat.forEach((reply, index) => {
       map.set(reply.uri, index + 2)
     })
-    return { tree: builtTree, postNumberMap: map }
+    const replyMap = new Map(replies.map((r) => [r.uri, r]))
+    return { tree: builtTree, postNumberMap: map, allReplies: replyMap }
   }, [replies, topicUri])
 
   return (
@@ -52,6 +53,8 @@ export function ReplyThread({
         <ReplyBranch
           nodes={tree}
           postNumberMap={postNumberMap}
+          topicUri={topicUri}
+          allReplies={allReplies}
           onReply={onReply}
           currentUserDid={currentUserDid}
         />

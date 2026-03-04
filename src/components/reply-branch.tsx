@@ -2,24 +2,39 @@
  * ReplyBranch - Recursive tree renderer for threaded replies.
  * Renders an <ol> of replies, each containing a ReplyCard and
  * a nested <ReplyBranch> for children. Thread lines appear next
- * to replies with children for collapse/expand.
+ * to replies with children for collapse/expand. Reply-to badges
+ * show when a reply's parent isn't visually adjacent.
  */
 
 'use client'
 
 import { useState, useCallback } from 'react'
+import type { Reply } from '@/lib/api/types'
 import type { ReplyTreeNode } from '@/lib/build-reply-tree'
 import { ReplyCard } from './reply-card'
 import { ThreadLine } from './thread-line'
+import { ReplyToBadge } from './reply-to-badge'
 
 interface ReplyBranchProps {
   nodes: ReplyTreeNode[]
   postNumberMap: Map<string, number>
+  topicUri: string
+  allReplies: Map<string, Reply>
+  /** URI of the parent node in the tree (topicUri for root level) */
+  treeParentUri?: string
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
   currentUserDid?: string
 }
 
-export function ReplyBranch({ nodes, postNumberMap, onReply, currentUserDid }: ReplyBranchProps) {
+export function ReplyBranch({
+  nodes,
+  postNumberMap,
+  topicUri,
+  allReplies,
+  treeParentUri,
+  onReply,
+  currentUserDid,
+}: ReplyBranchProps) {
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set())
 
   const toggleCollapse = useCallback((uri: string) => {
@@ -36,6 +51,9 @@ export function ReplyBranch({ nodes, postNumberMap, onReply, currentUserDid }: R
 
   if (nodes.length === 0) return null
 
+  // At root level, the expected parent is the topic itself
+  const expectedParentUri = treeParentUri ?? topicUri
+
   return (
     <ol className="list-none space-y-3 pl-0 first:pl-0 [&_&]:mt-3 [&_&]:pl-0">
       {nodes.map((node) => {
@@ -45,8 +63,18 @@ export function ReplyBranch({ nodes, postNumberMap, onReply, currentUserDid }: R
         const authorName =
           node.reply.author?.displayName ?? node.reply.author?.handle ?? node.reply.authorDid
 
+        // Show reply-to badge when the reply's actual parent differs from
+        // the structural parent in the tree (orphan or depth-capped)
+        const needsBadge = node.reply.parentUri !== expectedParentUri
+        const parentReply = needsBadge ? allReplies.get(node.reply.parentUri) : undefined
+        const parentHandle = parentReply?.author?.handle ?? parentReply?.authorDid
+        const parentPostNumber = parentReply ? (postNumberMap.get(parentReply.uri) ?? 0) : 0
+
         return (
           <li key={node.reply.uri} aria-level={node.reply.depth}>
+            {needsBadge && parentHandle && parentPostNumber > 0 && (
+              <ReplyToBadge authorHandle={parentHandle} parentPostNumber={parentPostNumber} />
+            )}
             <div className="flex gap-0">
               {hasChildren && (
                 <ThreadLine
@@ -69,6 +97,9 @@ export function ReplyBranch({ nodes, postNumberMap, onReply, currentUserDid }: R
                 <ReplyBranch
                   nodes={node.children}
                   postNumberMap={postNumberMap}
+                  topicUri={topicUri}
+                  allReplies={allReplies}
+                  treeParentUri={node.reply.uri}
                   onReply={onReply}
                   currentUserDid={currentUserDid}
                 />
