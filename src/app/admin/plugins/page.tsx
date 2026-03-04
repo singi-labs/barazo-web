@@ -2,90 +2,27 @@
  * Admin plugin management page.
  * URL: /admin/plugins
  * Lists installed plugins with enable/disable, settings, and uninstall controls.
- * Phase 1: manage installed plugins. Phase 2: marketplace search/install.
+ * Backend endpoints not yet implemented (planned for P3.2).
  * @see specs/prd-web.md Section M13
  */
 
-'use client'
-
+import { PuzzlePiece } from '@phosphor-icons/react/dist/ssr'
 import { AdminLayout } from '@/components/admin/admin-layout'
-import { ErrorAlert } from '@/components/error-alert'
-import { PluginCard } from '@/components/admin/plugins/plugin-card'
-import { PluginSettingsModal } from '@/components/admin/plugins/plugin-settings-modal'
-import { DependencyWarningDialog } from '@/components/admin/plugins/dependency-warning-dialog'
-import { usePluginManagement } from '@/hooks/admin/use-plugin-management'
 
 export default function AdminPluginsPage() {
-  const {
-    plugins,
-    loading,
-    settingsPlugin,
-    setSettingsPlugin,
-    dependencyWarning,
-    setDependencyWarning,
-    loadError,
-    actionError,
-    setActionError,
-    fetchPlugins,
-    handleToggle,
-    confirmDisable,
-    handleSaveSettings,
-    handleUninstall,
-  } = usePluginManagement()
-
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Plugins</h1>
-          <p className="text-sm text-muted-foreground">
-            {plugins.filter((p) => p.enabled).length} of {plugins.length} enabled
+        <h1 className="text-2xl font-bold text-foreground">Plugins</h1>
+
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+          <PuzzlePiece className="mb-4 h-12 w-12 text-muted-foreground/50" />
+          <h2 className="text-lg font-semibold text-foreground">Coming in P3</h2>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            Plugin management (install, enable/disable, configure) is planned for the P3.2
+            milestone. The plugin API endpoints are not yet available.
           </p>
         </div>
-
-        {loadError && (
-          <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchPlugins()} />
-        )}
-
-        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
-
-        {loading && <p className="text-sm text-muted-foreground">Loading plugins...</p>}
-
-        {!loading && plugins.length === 0 && (
-          <p className="py-8 text-center text-muted-foreground">No plugins installed.</p>
-        )}
-
-        {!loading && plugins.length > 0 && (
-          <div className="space-y-3">
-            {plugins.map((plugin) => (
-              <PluginCard
-                key={plugin.id}
-                plugin={plugin}
-                allPlugins={plugins}
-                onOpenSettings={setSettingsPlugin}
-                onToggle={(p) => void handleToggle(p)}
-                onUninstall={(p) => void handleUninstall(p)}
-              />
-            ))}
-          </div>
-        )}
-
-        {dependencyWarning && (
-          <DependencyWarningDialog
-            pluginName={dependencyWarning.plugin.displayName}
-            dependents={dependencyWarning.dependents}
-            onConfirm={() => void confirmDisable()}
-            onCancel={() => setDependencyWarning(null)}
-          />
-        )}
-
-        {settingsPlugin && (
-          <PluginSettingsModal
-            plugin={settingsPlugin}
-            onClose={() => setSettingsPlugin(null)}
-            onSave={(settings) => void handleSaveSettings(settings)}
-          />
-        )}
       </div>
     </AdminLayout>
   )
