@@ -329,6 +329,21 @@ export function updateReply(
   })
 }
 
+export function deleteReply(
+  uri: string,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<void> {
+  return apiFetch<void>(`/api/replies/${encodeURIComponent(uri)}`, {
+    ...options,
+    method: 'DELETE',
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+}
+
 // --- Search endpoints ---
 
 export interface SearchParams extends PaginationParams {

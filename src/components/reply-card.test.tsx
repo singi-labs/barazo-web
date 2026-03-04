@@ -9,7 +9,7 @@ import { axe } from 'vitest-axe'
 import { ReplyCard } from './reply-card'
 import { mockReplies, mockAuthorDeletedReply, mockModDeletedReply } from '@/mocks/data'
 import { useAuth } from '@/hooks/use-auth'
-import { updateReply } from '@/lib/api/client'
+import { updateReply, deleteReply } from '@/lib/api/client'
 import type { Reply } from '@/lib/api/types'
 import { createMockOnboardingContext } from '@/test/mock-onboarding'
 
@@ -43,6 +43,7 @@ vi.mock('@/context/onboarding-context', () => ({
 // Mock API client
 vi.mock('@/lib/api/client', () => ({
   updateReply: vi.fn(),
+  deleteReply: vi.fn(),
   getReactions: vi.fn().mockResolvedValue({ reactions: [], cursor: null }),
   createReaction: vi.fn().mockResolvedValue({ uri: 'at://test', cid: 'bafyrei-test' }),
   deleteReaction: vi.fn().mockResolvedValue(undefined),
@@ -398,6 +399,138 @@ describe('ReplyCard', () => {
       const user = userEvent.setup()
       const { container } = render(<ReplyCard reply={reply} postNumber={2} canEdit={true} />)
       await user.click(screen.getByRole('button', { name: /edit reply by/i }))
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+  })
+
+  describe('delete mode', () => {
+    beforeEach(() => {
+      vi.mocked(useAuth).mockReturnValue({
+        user: {
+          did: reply.authorDid,
+          handle: reply.author?.handle ?? '',
+          displayName: 'Alex',
+          avatarUrl: null,
+          role: 'user',
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        crossPostScopesGranted: false,
+        getAccessToken: () => 'mock-token',
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        requestCrossPostAuth: vi.fn(),
+        authFetch: vi.fn(),
+      } as ReturnType<typeof useAuth>)
+    })
+
+    it('renders Delete button when canDelete is true', () => {
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} />)
+      expect(
+        screen.getByRole('button', {
+          name: `Delete reply by ${reply.author?.handle ?? reply.authorDid}`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('does not render Delete button when canDelete is false', () => {
+      render(<ReplyCard reply={reply} postNumber={2} />)
+      expect(screen.queryByRole('button', { name: /delete reply by/i })).not.toBeInTheDocument()
+    })
+
+    it('does not render Delete button on deleted replies', () => {
+      render(<ReplyCard reply={mockAuthorDeletedReply} postNumber={4} canDelete={true} />)
+      expect(screen.queryByRole('button', { name: /delete reply by/i })).not.toBeInTheDocument()
+    })
+
+    it('shows confirmation dialog when Delete is clicked', async () => {
+      const user = userEvent.setup()
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      expect(screen.getByRole('alertdialog')).toBeInTheDocument()
+      expect(screen.getByText('Delete reply?')).toBeInTheDocument()
+      expect(
+        screen.getByText('This will permanently remove your reply. This cannot be undone.')
+      ).toBeInTheDocument()
+    })
+
+    it('closes confirmation dialog when Cancel is clicked', async () => {
+      const user = userEvent.setup()
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      expect(screen.getByRole('alertdialog')).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    })
+
+    it('calls deleteReply with correct args on confirm', async () => {
+      const user = userEvent.setup()
+      vi.mocked(deleteReply).mockResolvedValueOnce(undefined)
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} onDelete={vi.fn()} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Delete' }))
+      await waitFor(() => {
+        expect(deleteReply).toHaveBeenCalledWith(reply.uri, 'mock-token')
+      })
+    })
+
+    it('calls onDelete callback after successful deletion', async () => {
+      const user = userEvent.setup()
+      const onDelete = vi.fn()
+      vi.mocked(deleteReply).mockResolvedValueOnce(undefined)
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} onDelete={onDelete} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Delete' }))
+      await waitFor(() => {
+        expect(onDelete).toHaveBeenCalled()
+      })
+    })
+
+    it('shows success toast after deletion', async () => {
+      const user = userEvent.setup()
+      vi.mocked(deleteReply).mockResolvedValueOnce(undefined)
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} onDelete={vi.fn()} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Delete' }))
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({ title: 'Reply deleted' })
+      })
+    })
+
+    it('shows error toast on delete failure', async () => {
+      const user = userEvent.setup()
+      vi.mocked(deleteReply).mockRejectedValueOnce(new Error('Server error'))
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} onDelete={vi.fn()} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Delete' }))
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Error',
+          description: 'Server error',
+          variant: 'destructive',
+        })
+      })
+    })
+
+    it('does not call onDelete on failure', async () => {
+      const user = userEvent.setup()
+      const onDelete = vi.fn()
+      vi.mocked(deleteReply).mockRejectedValueOnce(new Error('Server error'))
+      render(<ReplyCard reply={reply} postNumber={2} canDelete={true} onDelete={onDelete} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
+      await user.click(screen.getByRole('button', { name: 'Delete' }))
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalled()
+      })
+      expect(onDelete).not.toHaveBeenCalled()
+    })
+
+    it('passes axe accessibility check with delete confirmation dialog open', async () => {
+      const user = userEvent.setup()
+      const { container } = render(<ReplyCard reply={reply} postNumber={2} canDelete={true} />)
+      await user.click(screen.getByRole('button', { name: /delete reply by/i }))
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })

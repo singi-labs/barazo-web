@@ -33,6 +33,7 @@ interface ReplyBranchProps {
   /** URI of the parent node in the tree (topicUri for root level) */
   treeParentUri?: string
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
+  onDeleteReply?: () => void
   currentUserDid?: string
 }
 
@@ -45,6 +46,7 @@ export function ReplyBranch({
   currentVisualDepth,
   treeParentUri,
   onReply,
+  onDeleteReply,
   currentUserDid,
 }: ReplyBranchProps) {
   // Auto-collapse: nodes at depth >= DEFAULT_EXPANDED_LEVELS with children start collapsed
@@ -121,6 +123,8 @@ export function ReplyBranch({
                   postNumber={postNumber}
                   onReply={onReply}
                   canEdit={currentUserDid ? node.reply.authorDid === currentUserDid : false}
+                  canDelete={currentUserDid ? node.reply.authorDid === currentUserDid : false}
+                  onDelete={onDeleteReply}
                 />
               </div>
             </div>
@@ -137,6 +141,7 @@ export function ReplyBranch({
                   currentVisualDepth={currentVisualDepth}
                   treeParentUri={node.reply.uri}
                   onReply={onReply}
+                  onDeleteReply={onDeleteReply}
                   currentUserDid={currentUserDid}
                 />
               ) : (

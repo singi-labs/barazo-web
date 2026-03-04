@@ -19,6 +19,7 @@ interface ReplyThreadProps {
   replies: Reply[]
   topicUri: string
   onReply?: (target: { uri: string; cid: string; authorHandle: string; snippet: string }) => void
+  onDeleteReply?: () => void
   currentUserDid?: string
   className?: string
 }
@@ -27,6 +28,7 @@ export function ReplyThread({
   replies,
   topicUri,
   onReply,
+  onDeleteReply,
   currentUserDid,
   className,
 }: ReplyThreadProps) {
@@ -64,6 +66,7 @@ export function ReplyThread({
           visualIndentCap={visualIndentCap}
           currentVisualDepth={1}
           onReply={onReply}
+          onDeleteReply={onDeleteReply}
           currentUserDid={currentUserDid}
         />
       )}
