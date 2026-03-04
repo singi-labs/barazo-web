@@ -455,9 +455,8 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     return HttpResponse.json({
-      entries: mockModerationLog,
+      actions: mockModerationLog,
       cursor: null,
-      total: mockModerationLog.length,
     })
   }),
 
