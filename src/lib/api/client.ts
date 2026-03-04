@@ -47,6 +47,7 @@ import type {
   MaturityRating,
   PluginsResponse,
   OnboardingField,
+  AdminOnboardingFieldsResponse,
   CreateOnboardingFieldInput,
   UpdateOnboardingFieldInput,
   OnboardingStatus,
@@ -777,8 +778,8 @@ export function unmuteUser(
 export function getOnboardingFields(
   accessToken: string,
   options?: FetchOptions
-): Promise<OnboardingField[]> {
-  return apiFetch<OnboardingField[]>('/api/admin/onboarding-fields', {
+): Promise<AdminOnboardingFieldsResponse> {
+  return apiFetch<AdminOnboardingFieldsResponse>('/api/admin/onboarding-fields', {
     ...options,
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })
@@ -975,6 +976,46 @@ export async function uploadCommunityBanner(
   const form = new FormData()
   form.append('file', file)
   const url = `${API_URL}/api/communities/${encodeURIComponent(communityDid)}/profile/banner`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
+}
+
+// --- Admin design upload endpoints (use FormData, not JSON) ---
+
+export async function uploadCommunityLogo(
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/admin/design/logo`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => 'Unknown error')
+    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+  }
+  return response.json() as Promise<UploadResponse>
+}
+
+export async function uploadCommunityFavicon(
+  file: File,
+  accessToken: string
+): Promise<UploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  const url = `${API_URL}/api/admin/design/favicon`
   const response = await fetch(url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}` },

@@ -20,6 +20,7 @@ function makeField(overrides: Partial<OnboardingField> = {}): OnboardingField {
     description: 'A brief introduction.',
     isMandatory: true,
     sortOrder: 0,
+    source: 'admin',
     config: null,
     createdAt: NOW,
     updatedAt: NOW,

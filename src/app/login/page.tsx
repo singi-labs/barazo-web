@@ -115,6 +115,7 @@ function LoginContent() {
             </label>
             <input
               id="handle"
+              name="handle"
               type="text"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}

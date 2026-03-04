@@ -12,7 +12,7 @@ import {
   deleteOnboardingField,
   reorderOnboardingFields,
 } from '@/lib/api/client'
-import type { OnboardingField, CreateOnboardingFieldInput } from '@/lib/api/types'
+import type { OnboardingField, CreateOnboardingFieldInput, HostingMode } from '@/lib/api/types'
 import { EMPTY_FIELD } from '@/components/admin/onboarding/onboarding-field-form'
 import type { EditingField } from '@/components/admin/onboarding/onboarding-field-form'
 import { useAuth } from '@/hooks/use-auth'
@@ -22,6 +22,7 @@ export function useOnboardingFields() {
   const { getAccessToken } = useAuth()
   const { toast } = useToast()
   const [fields, setFields] = useState<OnboardingField[]>([])
+  const [hostingMode, setHostingMode] = useState<HostingMode>('selfhosted')
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingField | null>(null)
   const [saving, setSaving] = useState(false)
@@ -32,8 +33,9 @@ export function useOnboardingFields() {
   const fetchFields = useCallback(async () => {
     setLoadError(null)
     try {
-      const fields = await getOnboardingFields(getAccessToken() ?? '')
+      const { fields, hostingMode } = await getOnboardingFields(getAccessToken() ?? '')
       setFields(fields)
+      setHostingMode(hostingMode)
     } catch {
       setLoadError('Failed to load onboarding fields. The API may be unreachable.')
     } finally {
@@ -143,6 +145,7 @@ export function useOnboardingFields() {
 
   return {
     fields,
+    hostingMode,
     loading,
     editing,
     setEditing,

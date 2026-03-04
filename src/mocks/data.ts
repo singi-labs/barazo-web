@@ -603,6 +603,7 @@ export const mockCommunitySettings: CommunitySettings = {
   reactionSet: ['like', 'love', 'laugh', 'surprise', 'sad'],
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
+  faviconUrl: null,
   primaryColor: '#31748f',
   accentColor: '#c4a7e7',
   jurisdictionCountry: null,
@@ -1026,6 +1027,7 @@ export const mockOnboardingFields: OnboardingField[] = [
     description: 'You must accept our community rules to participate.',
     isMandatory: true,
     sortOrder: 0,
+    source: 'admin',
     config: { tosUrl: 'https://example.com/tos' },
     createdAt: TWO_DAYS_AGO,
     updatedAt: TWO_DAYS_AGO,
@@ -1038,6 +1040,21 @@ export const mockOnboardingFields: OnboardingField[] = [
     description: 'Tell us a bit about yourself and why you joined.',
     isMandatory: false,
     sortOrder: 1,
+    source: 'admin',
+    config: null,
+    createdAt: TWO_DAYS_AGO,
+    updatedAt: TWO_DAYS_AGO,
+  },
+  {
+    id: 'platform:age_confirmation',
+    communityDid: COMMUNITY_DID,
+    fieldType: 'age_confirmation',
+    label: 'Age Declaration',
+    description:
+      'Please select your age bracket. This determines which content is available to you.',
+    isMandatory: true,
+    sortOrder: -1,
+    source: 'platform',
     config: null,
     createdAt: TWO_DAYS_AGO,
     updatedAt: TWO_DAYS_AGO,
@@ -1180,6 +1197,7 @@ export const mockPublicSettings: PublicSettings = {
   maturityRating: 'safe',
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
+  faviconUrl: null,
 }
 
 // --- Community Profile (own profile in a community) ---
