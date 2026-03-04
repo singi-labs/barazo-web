@@ -41,9 +41,13 @@ vi.mock('@/hooks/use-toast', () => ({
   }),
 }))
 
-vi.mock('@/lib/api/client', () => ({
-  createReply: (...args: unknown[]) => mockCreateReply(...args),
-}))
+vi.mock('@/lib/api/client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/api/client')>()
+  return {
+    ...actual,
+    createReply: (...args: unknown[]) => mockCreateReply(...args),
+  }
+})
 
 let mockOnboardingContext: OnboardingContextValue = createMockOnboardingContext()
 

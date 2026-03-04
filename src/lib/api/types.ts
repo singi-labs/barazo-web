@@ -149,6 +149,19 @@ export interface UpdateTopicInput {
   tags?: string[]
 }
 
+export type ModerationStatus = 'approved' | 'held'
+
+/** Slim response from POST /api/topics (differs from full Topic) */
+export interface CreateTopicResponse {
+  uri: string
+  cid: string
+  rkey: string
+  title: string
+  category: string
+  moderationStatus: ModerationStatus
+  createdAt: string
+}
+
 // --- Replies ---
 
 export interface Reply {
@@ -187,6 +200,15 @@ export interface CreateReplyInput {
 export interface UpdateReplyInput {
   content: string
   labels?: string[]
+}
+
+/** Slim response from POST /api/topics/:uri/replies (differs from full Reply) */
+export interface CreateReplyResponse {
+  uri: string
+  cid: string
+  rkey: string
+  moderationStatus: ModerationStatus
+  createdAt: string
 }
 
 // --- Reactions ---

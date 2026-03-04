@@ -18,6 +18,7 @@ import type {
   CommunityPreferenceOverride,
   CreatePageInput,
   CreateTopicInput,
+  CreateTopicResponse,
   InitializeCommunityInput,
   InitializeResponse,
   Page,
@@ -34,6 +35,7 @@ import type {
   Reply,
   RepliesResponse,
   CreateReplyInput,
+  CreateReplyResponse,
   UpdateReplyInput,
   SearchResponse,
   NotificationsResponse,
@@ -84,13 +86,38 @@ interface FetchOptions {
 }
 
 class ApiError extends Error {
+  /** The parsed error code from the API response body (e.g., "Onboarding required") */
+  public readonly errorCode: string | undefined
+
   constructor(
     public readonly status: number,
-    message: string
+    message: string,
+    errorCode?: string
   ) {
     super(message)
     this.name = 'ApiError'
+    this.errorCode = errorCode
   }
+}
+
+async function throwApiError(response: Response): Promise<never> {
+  const body = await response.text().catch(() => 'Unknown error')
+  let message = `Request failed (${response.status})`
+  let errorCode: string | undefined
+
+  try {
+    const parsed = JSON.parse(body) as { error?: string }
+    if (parsed.error) {
+      message = parsed.error
+      errorCode = parsed.error
+    }
+  } catch {
+    if (body && body !== 'Unknown error') {
+      message = body
+    }
+  }
+
+  throw new ApiError(response.status, message, errorCode)
 }
 
 async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
@@ -107,8 +134,7 @@ async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T>
   })
 
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
 
   return response.json() as Promise<T>
@@ -156,8 +182,7 @@ export async function refreshSession(): Promise<AuthSession> {
   })
 
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
 
   return response.json() as Promise<AuthSession>
@@ -172,8 +197,7 @@ export async function logout(accessToken: string): Promise<void> {
   })
 
   if (!response.ok && response.status !== 204) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
 }
 
@@ -224,8 +248,8 @@ export function createTopic(
   input: CreateTopicInput,
   accessToken: string,
   options?: FetchOptions
-): Promise<Topic> {
-  return apiFetch<Topic>('/api/topics', {
+): Promise<CreateTopicResponse> {
+  return apiFetch<CreateTopicResponse>('/api/topics', {
     ...options,
     method: 'POST',
     headers: {
@@ -276,8 +300,8 @@ export function createReply(
   input: CreateReplyInput,
   accessToken: string,
   options?: FetchOptions
-): Promise<Reply> {
-  return apiFetch<Reply>(`/api/topics/${encodeURIComponent(topicUri)}/replies`, {
+): Promise<CreateReplyResponse> {
+  return apiFetch<CreateReplyResponse>(`/api/topics/${encodeURIComponent(topicUri)}/replies`, {
     ...options,
     method: 'POST',
     headers: {
@@ -963,8 +987,7 @@ export async function uploadCommunityAvatar(
     body: form,
   })
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
   return response.json() as Promise<UploadResponse>
 }
@@ -983,8 +1006,7 @@ export async function uploadCommunityBanner(
     body: form,
   })
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
   return response.json() as Promise<UploadResponse>
 }
@@ -1004,8 +1026,7 @@ export async function uploadCommunityLogo(
     body: form,
   })
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
   return response.json() as Promise<UploadResponse>
 }
@@ -1020,8 +1041,7 @@ export async function uploadHeaderLogo(file: File, accessToken: string): Promise
     body: form,
   })
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
   return response.json() as Promise<UploadResponse>
 }
@@ -1039,8 +1059,7 @@ export async function uploadCommunityFavicon(
     body: form,
   })
   if (!response.ok) {
-    const body = await response.text().catch(() => 'Unknown error')
-    throw new ApiError(response.status, `API ${response.status}: ${body}`)
+    await throwApiError(response)
   }
   return response.json() as Promise<UploadResponse>
 }

@@ -81,7 +81,7 @@ describe('UserProfilePage', () => {
   it('shows error for unknown handle', async () => {
     render(<UserProfilePage params={{ handle: 'unknown.user.social' }} />)
     await waitFor(() => {
-      expect(screen.getByText(/api 404/i)).toBeInTheDocument()
+      expect(screen.getByText(/user not found/i)).toBeInTheDocument()
     })
   })
 
