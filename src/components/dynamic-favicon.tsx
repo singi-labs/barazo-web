@@ -28,8 +28,5 @@ export function DynamicFavicon() {
 
   if (!faviconUrl) return null
 
-  return (
-     
-    <link rel="icon" href={faviconUrl} />
-  )
+  return <link rel="icon" href={faviconUrl} />
 }
