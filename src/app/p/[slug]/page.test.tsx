@@ -77,7 +77,8 @@ describe('PublicPage', () => {
       params: Promise.resolve({ slug: 'about' }),
     })
     render(page)
-    expect(screen.getByText('Home')).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(nav).toHaveTextContent('Home')
   })
 
   it('renders JSON-LD structured data with absolute URL', async () => {

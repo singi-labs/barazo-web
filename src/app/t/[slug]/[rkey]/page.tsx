@@ -160,10 +160,16 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const categoryName =
     findCategoryName(categoriesResult.categories, topic.category) ?? topic.category
 
+  const topicSlug = slugify(topic.title)
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
     { label: categoryName, href: `/c/${topic.category}` },
-    { label: topic.title },
+  ]
+
+  const jsonLdItems = [
+    { label: 'Home', href: '/' },
+    { label: categoryName, href: `/c/${topic.category}` },
+    { label: topic.title, href: `/t/${topicSlug}/${rkey}` },
   ]
 
   const jsonLd = {
@@ -204,7 +210,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       )}
 
       {/* Breadcrumbs */}
-      <Breadcrumbs items={breadcrumbItems} />
+      <Breadcrumbs items={breadcrumbItems} jsonLdItems={jsonLdItems} />
 
       {/* Topic + Replies + Composer (client-side for auth context) */}
       <TopicDetailClient topic={topic} replies={repliesResult.replies} />

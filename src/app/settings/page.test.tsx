@@ -139,7 +139,8 @@ describe('SettingsPage', () => {
 
   it('renders breadcrumbs', async () => {
     render(<SettingsPage />)
-    expect(screen.getByText('Home')).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(nav).toHaveTextContent('Home')
   })
 
   it('loads preferences from API when authenticated', async () => {
