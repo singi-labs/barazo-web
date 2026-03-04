@@ -16,16 +16,15 @@ import type { OnboardingField, CreateOnboardingFieldInput, HostingMode } from '@
 import { EMPTY_FIELD } from '@/components/admin/onboarding/onboarding-field-form'
 import type { EditingField } from '@/components/admin/onboarding/onboarding-field-form'
 import { useAuth } from '@/hooks/use-auth'
-import { useToast } from '@/hooks/use-toast'
+import { useSaveState } from '@/hooks/use-save-state'
 
 export function useOnboardingFields() {
   const { getAccessToken } = useAuth()
-  const { toast } = useToast()
+  const saveMachine = useSaveState()
   const [fields, setFields] = useState<OnboardingField[]>([])
   const [hostingMode, setHostingMode] = useState<HostingMode>('selfhosted')
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<EditingField | null>(null)
-  const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -69,7 +68,6 @@ export function useOnboardingFields() {
     try {
       await deleteOnboardingField(id, getAccessToken() ?? '')
       void fetchFields()
-      toast({ title: 'Field deleted' })
     } catch {
       setActionError('Failed to delete field. Please try again.')
     }
@@ -82,7 +80,7 @@ export function useOnboardingFields() {
       return
     }
 
-    setSaving(true)
+    saveMachine.startSaving()
     setError(null)
     try {
       if (editing.id) {
@@ -109,11 +107,10 @@ export function useOnboardingFields() {
       }
       setEditing(null)
       void fetchFields()
-      toast({ title: editing.id ? 'Field updated' : 'Field created' })
+      saveMachine.reset()
     } catch {
+      saveMachine.reset()
       setError('Failed to save field')
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -149,7 +146,7 @@ export function useOnboardingFields() {
     loading,
     editing,
     setEditing,
-    saving,
+    saveStatus: saveMachine.status,
     error,
     loadError,
     actionError,

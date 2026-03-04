@@ -29,7 +29,7 @@ export default function AdminSybilDetectionPage() {
     loadError,
     actionError,
     setActionError,
-    recomputing,
+    recomputeStatus,
     confirmAction,
     setConfirmAction,
     fetchData,
@@ -64,7 +64,7 @@ export default function AdminSybilDetectionPage() {
               <TrustGraphStatusCard
                 status={graphStatus}
                 onRecompute={() => void handleRecompute()}
-                recomputing={recomputing}
+                saveStatus={recomputeStatus}
               />
             )}
 
@@ -128,7 +128,7 @@ export default function AdminSybilDetectionPage() {
 
         {/* Live region for status updates */}
         <div aria-live="polite" className="sr-only">
-          {recomputing && 'Trust graph recomputation started.'}
+          {recomputeStatus === 'saving' && 'Trust graph recomputation started.'}
         </div>
       </div>
     </AdminLayout>

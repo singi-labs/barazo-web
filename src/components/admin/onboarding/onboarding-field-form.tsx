@@ -4,7 +4,9 @@
  */
 
 import type { OnboardingFieldType } from '@/lib/api/types'
+import { SaveButton } from '@/components/admin/save-button'
 import { FormLabel } from '@/components/ui/form-label'
+import type { SaveStatus } from '@/hooks/use-save-state'
 
 const FIELD_TYPE_LABELS: Record<OnboardingFieldType, string> = {
   age_confirmation: 'Age Confirmation',
@@ -35,7 +37,7 @@ export const EMPTY_FIELD: EditingField = {
 
 interface OnboardingFieldFormProps {
   editing: EditingField
-  saving: boolean
+  saveStatus: SaveStatus
   error: string | null
   onChange: (field: EditingField) => void
   onSave: () => void
@@ -44,7 +46,7 @@ interface OnboardingFieldFormProps {
 
 export function OnboardingFieldForm({
   editing,
-  saving,
+  saveStatus,
   error,
   onChange,
   onSave,
@@ -151,14 +153,7 @@ export function OnboardingFieldForm({
           </p>
         )}
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saving}
-            className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </button>
+          <SaveButton status={saveStatus} onClick={onSave} className="px-3 py-1.5" />
           <button
             type="button"
             onClick={onCancel}

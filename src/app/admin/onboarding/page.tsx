@@ -20,7 +20,7 @@ export default function AdminOnboardingPage() {
     loading,
     editing,
     setEditing,
-    saving,
+    saveStatus,
     error,
     loadError,
     actionError,
@@ -59,7 +59,7 @@ export default function AdminOnboardingPage() {
         {editing && (
           <OnboardingFieldForm
             editing={editing}
-            saving={saving}
+            saveStatus={saveStatus}
             error={error}
             onChange={setEditing}
             onSave={() => void handleSave()}

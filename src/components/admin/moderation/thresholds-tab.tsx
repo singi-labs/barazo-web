@@ -7,14 +7,17 @@
 'use client'
 
 import { useState } from 'react'
+import { SaveButton } from '@/components/admin/save-button'
 import type { ModerationThresholds } from '@/lib/api/types'
+import type { SaveStatus } from '@/hooks/use-save-state'
 
 interface ModerationThresholdsTabProps {
   thresholds: ModerationThresholds
   onSave: (updated: Partial<ModerationThresholds>) => void
+  saveStatus: SaveStatus
 }
 
-export function ModerationThresholdsTab({ thresholds, onSave }: ModerationThresholdsTabProps) {
+export function ModerationThresholdsTab({ thresholds, onSave, saveStatus }: ModerationThresholdsTabProps) {
   const [values, setValues] = useState(thresholds)
 
   return (
@@ -147,13 +150,7 @@ export function ModerationThresholdsTab({ thresholds, onSave }: ModerationThresh
           />
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => onSave(values)}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        Save Thresholds
-      </button>
+      <SaveButton status={saveStatus} onClick={() => onSave(values)} label="Save Thresholds" />
     </div>
   )
 }
