@@ -6,7 +6,13 @@
  */
 
 import Link from 'next/link'
-import { ChatCircle, Clock, Tag, PencilSimple } from '@phosphor-icons/react/dist/ssr'
+import {
+  ChatCircle,
+  Clock,
+  Tag,
+  PencilSimple,
+  Link as LinkIcon,
+} from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
@@ -158,11 +164,40 @@ export function TopicView({
         )}
       </div>
 
-      {/* Footer: reactions + stats + report */}
+      {/* Footer: read signals left, actions right */}
       <div className="flex items-center gap-4 border-t border-border px-4 py-3 text-sm text-muted-foreground sm:px-6">
         {reactions && onReactionToggle && (
           <ReactionBar reactions={reactions} onToggle={onReactionToggle} />
         )}
+        <LikeButton
+          subjectUri={topic.uri}
+          subjectCid={topic.cid}
+          initialCount={topic.reactionCount}
+        />
+        <span className="flex items-center gap-1.5">
+          <Clock className="h-4 w-4" weight="regular" aria-hidden="true" />
+          Last activity {formatRelativeTime(topic.lastActivityAt)}
+        </span>
+
+        <a
+          href="#post-1"
+          className="ml-auto flex items-center gap-1.5 hover:text-foreground"
+          aria-label="Permalink to original post"
+        >
+          <LinkIcon className="h-4 w-4" weight="regular" aria-hidden="true" />
+        </a>
+
+        {canEdit && onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <PencilSimple className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
+            Edit
+          </button>
+        )}
+
         {onReply ? (
           <button
             type="button"
@@ -182,32 +217,8 @@ export function TopicView({
             {formatCompactNumber(topic.replyCount)}
           </span>
         )}
-        <LikeButton
-          subjectUri={topic.uri}
-          subjectCid={topic.cid}
-          initialCount={topic.reactionCount}
-        />
-        <span className="flex items-center gap-1.5">
-          <Clock className="h-4 w-4" weight="regular" aria-hidden="true" />
-          Last activity {formatRelativeTime(topic.lastActivityAt)}
-        </span>
 
-        {canEdit && onEdit && (
-          <button
-            type="button"
-            onClick={onEdit}
-            className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <PencilSimple className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
-            Edit
-          </button>
-        )}
-
-        {canReport && onReport && (
-          <span className="ml-auto">
-            <ReportDialog subjectUri={topic.uri} onSubmit={onReport} />
-          </span>
-        )}
+        {canReport && onReport && <ReportDialog subjectUri={topic.uri} onSubmit={onReport} />}
       </div>
     </article>
   )
