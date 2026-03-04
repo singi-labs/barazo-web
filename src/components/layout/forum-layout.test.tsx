@@ -58,6 +58,7 @@ const baseSettings: PublicSettings = {
   communityDid: 'did:plc:test',
   communityName: 'Test Community',
   maturityRating: 'safe',
+  maxReplyDepth: 9999,
   communityDescription: null,
   communityLogoUrl: null,
   faviconUrl: null,
