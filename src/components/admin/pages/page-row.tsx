@@ -4,7 +4,7 @@
  */
 
 import Link from 'next/link'
-import { PencilSimple, TrashSimple } from '@phosphor-icons/react'
+import { ArrowSquareOut, TrashSimple } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import type { PageTreeNode, PageStatus } from '@/lib/api/types'
 
@@ -30,17 +30,22 @@ export function PageRow({ page, depth, onDelete }: PageRowProps) {
       <div
         data-depth={depth}
         className={cn(
-          'flex items-center justify-between rounded-md border border-border bg-card p-3',
+          'group relative flex items-center justify-between rounded-md border border-border bg-card p-3 transition-colors hover:bg-card-hover',
           depth > 0 && 'ml-6'
         )}
       >
+        <Link
+          href={`/admin/pages/${page.id}`}
+          className="absolute inset-0 rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          aria-label={`Edit ${page.title}`}
+        />
         <div className="flex items-center gap-3">
           <div>
             <p className="text-sm font-medium text-foreground">{page.title}</p>
             <p className="text-xs text-muted-foreground">/p/{page.slug}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="relative flex items-center gap-2">
           <span
             className={cn(
               'rounded-full px-2 py-0.5 text-xs font-medium',
@@ -49,17 +54,22 @@ export function PageRow({ page, depth, onDelete }: PageRowProps) {
           >
             {STATUS_LABELS[page.status]}
           </span>
-          <Link
-            href={`/admin/pages/${page.id}`}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label={`Edit ${page.title}`}
+          <a
+            href={`/p/${page.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label={`View ${page.title}`}
           >
-            <PencilSimple size={16} aria-hidden="true" />
-          </Link>
+            <ArrowSquareOut size={16} aria-hidden="true" />
+          </a>
           <button
             type="button"
-            onClick={() => onDelete(page.id)}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            onClick={(e) => {
+              e.preventDefault()
+              onDelete(page.id)
+            }}
+            className="relative rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
             aria-label={`Delete ${page.title}`}
           >
             <TrashSimple size={16} aria-hidden="true" />

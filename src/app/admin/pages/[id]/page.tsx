@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { ArrowSquareOut } from '@phosphor-icons/react'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { ErrorAlert } from '@/components/error-alert'
 import { PageForm } from '@/components/admin/pages/page-form'
@@ -157,9 +158,22 @@ export default function AdminPageEditorPage() {
   return (
     <AdminLayout>
       <div className="mx-auto max-w-3xl space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">
-          {isCreateMode ? 'Create Page' : 'Edit Page'}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-foreground">
+            {isCreateMode ? 'Create Page' : 'Edit Page'}
+          </h1>
+          {!isCreateMode && form.slug && (
+            <a
+              href={`/p/${form.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <ArrowSquareOut size={16} aria-hidden="true" />
+              View page
+            </a>
+          )}
+        </div>
 
         {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
