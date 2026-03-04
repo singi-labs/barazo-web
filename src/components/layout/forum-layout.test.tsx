@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { axe } from 'vitest-axe'
 import { ForumLayout } from './forum-layout'
+import type { PublicSettings } from '@/lib/api/types'
 
 // Mock next-themes
 vi.mock('next-themes', () => ({
@@ -53,6 +54,18 @@ vi.mock('@/hooks/use-auth', () => ({
   }),
 }))
 
+const baseSettings: PublicSettings = {
+  communityDid: 'did:plc:test',
+  communityName: 'Test Community',
+  maturityRating: 'safe',
+  maxReplyDepth: 9999,
+  communityDescription: null,
+  communityLogoUrl: null,
+  faviconUrl: null,
+  headerLogoUrl: null,
+  showCommunityName: true,
+}
+
 describe('ForumLayout', () => {
   it('renders header with logo', () => {
     render(<ForumLayout>Content</ForumLayout>)
@@ -99,8 +112,49 @@ describe('ForumLayout', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument()
   })
 
-  it('renders community name next to logo', () => {
-    render(<ForumLayout communityName="Test Community">Content</ForumLayout>)
+  it('shows default Barazo logo when no custom logos (publicSettings null)', () => {
+    render(<ForumLayout publicSettings={null}>Content</ForumLayout>)
+    const logos = screen.getAllByAltText('Barazo')
+    expect(logos.length).toBeGreaterThan(0)
+  })
+
+  it('shows header logo when headerLogoUrl provided via publicSettings', () => {
+    const settings: PublicSettings = {
+      ...baseSettings,
+      headerLogoUrl: 'https://cdn.example.com/header-logo.webp',
+    }
+    render(<ForumLayout publicSettings={settings}>Content</ForumLayout>)
+    const headerLogo = screen.getByAltText('Test Community')
+    expect(headerLogo).toBeInTheDocument()
+    expect(headerLogo).toHaveAttribute('src', 'https://cdn.example.com/header-logo.webp')
+  })
+
+  it('shows square community logo when only communityLogoUrl provided', () => {
+    const settings: PublicSettings = {
+      ...baseSettings,
+      communityLogoUrl: 'https://cdn.example.com/logo.webp',
+    }
+    render(<ForumLayout publicSettings={settings}>Content</ForumLayout>)
+    const logo = screen.getByAltText('Test Community')
+    expect(logo).toBeInTheDocument()
+    expect(logo).toHaveAttribute('src', 'https://cdn.example.com/logo.webp')
+  })
+
+  it('hides community name when showCommunityName is false', () => {
+    const settings: PublicSettings = {
+      ...baseSettings,
+      showCommunityName: false,
+    }
+    render(<ForumLayout publicSettings={settings}>Content</ForumLayout>)
+    expect(screen.queryByText('Test Community')).not.toBeInTheDocument()
+  })
+
+  it('shows community name when showCommunityName is true', () => {
+    const settings: PublicSettings = {
+      ...baseSettings,
+      showCommunityName: true,
+    }
+    render(<ForumLayout publicSettings={settings}>Content</ForumLayout>)
     expect(screen.getByText('Test Community')).toBeInTheDocument()
   })
 

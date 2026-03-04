@@ -60,10 +60,9 @@ export default async function PublicPage({ params }: PublicPageProps) {
     throw error
   }
 
-  let communityName = ''
+  let publicSettings = null
   try {
-    const settings = await getPublicSettings()
-    communityName = settings.communityName
+    publicSettings = await getPublicSettings()
   } catch {
     // silently degrade
   }
@@ -78,7 +77,7 @@ export default async function PublicPage({ params }: PublicPageProps) {
   }
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -91,8 +91,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     getPublicSettings().catch(() => null),
   ])
 
-  const communityName = publicSettings?.communityName ?? ''
-
   const totalPages = Math.max(1, Math.ceil(category.topicCount / TOPICS_PER_PAGE))
 
   const breadcrumbItems = [
@@ -102,7 +100,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   return (
     <ForumLayout
-      communityName={communityName}
+      publicSettings={publicSettings}
       sidebar={<CategoryNav categories={categoriesResult.categories} currentSlug={slug} />}
     >
       {/* Breadcrumbs (includes JSON-LD BreadcrumbList) */}

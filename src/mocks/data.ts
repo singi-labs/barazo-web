@@ -604,6 +604,8 @@ export const mockCommunitySettings: CommunitySettings = {
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
   faviconUrl: null,
+  headerLogoUrl: null,
+  showCommunityName: true,
   primaryColor: '#31748f',
   accentColor: '#c4a7e7',
   jurisdictionCountry: null,
@@ -1200,6 +1202,8 @@ export const mockPublicSettings: PublicSettings = {
   communityDescription: 'A test community for development',
   communityLogoUrl: null,
   faviconUrl: null,
+  headerLogoUrl: null,
+  showCommunityName: true,
 }
 
 // --- Community Profile (own profile in a community) ---

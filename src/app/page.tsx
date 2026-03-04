@@ -61,7 +61,7 @@ export default async function HomePage() {
 
   return (
     <ForumLayout
-      communityName={communityName}
+      publicSettings={publicSettings}
       sidebar={
         categoriesResult.categories.length > 0 ? (
           <CategoryNav categories={categoriesResult.categories} />

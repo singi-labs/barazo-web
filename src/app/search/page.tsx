@@ -14,18 +14,19 @@ import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { SearchInput } from '@/components/search-input'
 import { SearchResults } from '@/components/search-results'
+import type { PublicSettings } from '@/lib/api/types'
 
 export default function SearchPage() {
-  const [communityName, setCommunityName] = useState('')
+  const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
 
   useEffect(() => {
     getPublicSettings()
-      .then((settings) => setCommunityName(settings.communityName))
+      .then((settings) => setPublicSettings(settings))
       .catch(() => {})
   }, [])
 
   return (
-    <ForumLayout communityName={communityName}>
+    <ForumLayout publicSettings={publicSettings}>
       <div className="space-y-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Search' }]} />
 
