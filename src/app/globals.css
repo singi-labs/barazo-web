@@ -281,6 +281,59 @@ body {
   color: var(--color-primary);
 }
 
+/* Drawer animations for admin mobile sidebar */
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@utility animate-slide-in-left {
+  animation: slide-in-left 200ms ease-out;
+}
+
+@utility animate-slide-out-left {
+  animation: slide-out-left 200ms ease-in;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 200ms ease-out;
+}
+
+@utility animate-fade-out {
+  animation: fade-out 200ms ease-in;
+}
+
 /* Component classes */
 @layer components {
   .prose-barazo a {

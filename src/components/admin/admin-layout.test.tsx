@@ -4,6 +4,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
 import { AdminLayout } from './admin-layout'
 
@@ -102,5 +103,96 @@ describe('AdminLayout', () => {
     )
     const results = await axe(container)
     expect(results).toHaveNoViolations()
+  })
+
+  describe('mobile sidebar drawer', () => {
+    it('renders a menu button for opening the mobile sidebar', () => {
+      render(
+        <AdminLayout>
+          <p>Content</p>
+        </AdminLayout>
+      )
+      expect(screen.getByRole('button', { name: /open admin menu/i })).toBeInTheDocument()
+    })
+
+    it('opens the drawer when the menu button is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <AdminLayout>
+          <p>Content</p>
+        </AdminLayout>
+      )
+
+      const menuButton = screen.getByRole('button', { name: /open admin menu/i })
+      await user.click(menuButton)
+
+      // The drawer should show an accessible dialog with the navigation
+      expect(screen.getByRole('dialog', { name: /admin menu/i })).toBeInTheDocument()
+    })
+
+    it('closes the drawer when a nav link is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <AdminLayout>
+          <p>Content</p>
+        </AdminLayout>
+      )
+
+      await user.click(screen.getByRole('button', { name: /open admin menu/i }))
+      expect(screen.getByRole('dialog', { name: /admin menu/i })).toBeInTheDocument()
+
+      // Click a nav link inside the drawer
+      const drawerNav = screen.getByRole('dialog', { name: /admin menu/i })
+      const categoriesLink = drawerNav.querySelector('a[href="/admin/categories"]')
+      expect(categoriesLink).not.toBeNull()
+      await user.click(categoriesLink!)
+
+      expect(screen.queryByRole('dialog', { name: /admin menu/i })).not.toBeInTheDocument()
+    })
+
+    it('closes the drawer when the close button is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <AdminLayout>
+          <p>Content</p>
+        </AdminLayout>
+      )
+
+      await user.click(screen.getByRole('button', { name: /open admin menu/i }))
+      expect(screen.getByRole('dialog', { name: /admin menu/i })).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: /close admin menu/i }))
+      expect(screen.queryByRole('dialog', { name: /admin menu/i })).not.toBeInTheDocument()
+    })
+
+    it('renders back to forum link in the mobile drawer', async () => {
+      const user = userEvent.setup()
+      render(
+        <AdminLayout>
+          <p>Content</p>
+        </AdminLayout>
+      )
+
+      await user.click(screen.getByRole('button', { name: /open admin menu/i }))
+      const drawer = screen.getByRole('dialog', { name: /admin menu/i })
+      const backLink = drawer.querySelector('a[href="/"]')
+      expect(backLink).not.toBeNull()
+    })
+
+    it('passes axe accessibility check with drawer open', async () => {
+      const user = userEvent.setup()
+      const { container } = render(
+        <AdminLayout>
+          <h1>Admin Page</h1>
+          <p>Content</p>
+        </AdminLayout>
+      )
+
+      await user.click(screen.getByRole('button', { name: /open admin menu/i }))
+      expect(screen.getByRole('dialog', { name: /admin menu/i })).toBeInTheDocument()
+
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
   })
 })
