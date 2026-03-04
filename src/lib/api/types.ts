@@ -549,6 +549,10 @@ export type OnboardingFieldType =
   | 'custom_select'
   | 'custom_checkbox'
 
+export type OnboardingFieldSource = 'platform' | 'admin'
+
+export type HostingMode = 'saas' | 'selfhosted'
+
 export interface OnboardingField {
   id: string
   communityDid: string
@@ -557,13 +561,15 @@ export interface OnboardingField {
   description: string | null
   isMandatory: boolean
   sortOrder: number
+  source: OnboardingFieldSource
   config: Record<string, unknown> | null
   createdAt: string
   updatedAt: string
 }
 
-export interface OnboardingFieldsResponse {
+export interface AdminOnboardingFieldsResponse {
   fields: OnboardingField[]
+  hostingMode: HostingMode
 }
 
 export interface CreateOnboardingFieldInput {

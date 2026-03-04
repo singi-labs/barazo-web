@@ -43,6 +43,7 @@ import type {
   MaturityRating,
   PluginsResponse,
   OnboardingField,
+  AdminOnboardingFieldsResponse,
   CreateOnboardingFieldInput,
   UpdateOnboardingFieldInput,
   OnboardingStatus,
@@ -773,8 +774,8 @@ export function unmuteUser(
 export function getOnboardingFields(
   accessToken: string,
   options?: FetchOptions
-): Promise<OnboardingField[]> {
-  return apiFetch<OnboardingField[]>('/api/admin/onboarding-fields', {
+): Promise<AdminOnboardingFieldsResponse> {
+  return apiFetch<AdminOnboardingFieldsResponse>('/api/admin/onboarding-fields', {
     ...options,
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
   })

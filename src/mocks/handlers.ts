@@ -641,7 +641,7 @@ export const handlers = [
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return HttpResponse.json(mockOnboardingFields)
+    return HttpResponse.json({ fields: mockOnboardingFields, hostingMode: 'selfhosted' })
   }),
 
   // POST /api/admin/onboarding-fields
@@ -660,6 +660,7 @@ export const handlers = [
       description: body.description ?? null,
       isMandatory: body.isMandatory ?? true,
       sortOrder: body.sortOrder ?? 0,
+      source: 'admin' as const,
       config: body.config ?? null,
       createdAt: now,
       updatedAt: now,

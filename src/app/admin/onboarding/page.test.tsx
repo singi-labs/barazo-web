@@ -6,6 +6,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'vitest-axe'
+import { http, HttpResponse } from 'msw'
+import { server } from '@/mocks/server'
+import { mockOnboardingFields } from '@/mocks/data'
 import AdminOnboardingPage from './page'
 
 vi.mock('next/navigation', () => ({
@@ -67,6 +70,7 @@ describe('AdminOnboardingPage', () => {
       expect(screen.getByText('Terms of Service')).toBeInTheDocument()
     })
     expect(screen.getByText('Introduce yourself')).toBeInTheDocument()
+    expect(screen.getByText('Age Declaration')).toBeInTheDocument()
   })
 
   it('renders field type badges', async () => {
@@ -83,7 +87,8 @@ describe('AdminOnboardingPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Terms of Service')).toBeInTheDocument()
     })
-    expect(screen.getByText('Required')).toBeInTheDocument()
+    // ToS and Age Declaration are both mandatory
+    expect(screen.getAllByText('Required')).toHaveLength(2)
   })
 
   it('renders add field button', () => {
@@ -143,8 +148,8 @@ describe('AdminOnboardingPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Terms of Service')).toBeInTheDocument()
     })
-    expect(screen.getAllByRole('button', { name: /move.*up/i })).toHaveLength(2)
-    expect(screen.getAllByRole('button', { name: /move.*down/i })).toHaveLength(2)
+    expect(screen.getAllByRole('button', { name: /move.*up/i })).toHaveLength(3)
+    expect(screen.getAllByRole('button', { name: /move.*down/i })).toHaveLength(3)
   })
 
   it('disables move up on first field and move down on last field', async () => {
@@ -161,6 +166,67 @@ describe('AdminOnboardingPage', () => {
   it('renders description text', () => {
     render(<AdminOnboardingPage />)
     expect(screen.getByText(/configure fields that users must complete/i)).toBeInTheDocument()
+  })
+
+  it('shows Platform badge for platform-sourced fields', async () => {
+    render(<AdminOnboardingPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Age Declaration')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Platform')).toBeInTheDocument()
+  })
+
+  it('does not show Platform badge for admin-sourced fields', async () => {
+    render(<AdminOnboardingPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Terms of Service')).toBeInTheDocument()
+    })
+    // Only one Platform badge (for the age_confirmation field)
+    const badges = screen.getAllByText('Platform')
+    expect(badges).toHaveLength(1)
+  })
+
+  it('does not disable controls for platform fields in selfhosted mode', async () => {
+    render(<AdminOnboardingPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Age Declaration')).toBeInTheDocument()
+    })
+    // All edit/delete buttons should be enabled in selfhosted mode
+    const editButtons = screen.getAllByRole('button', { name: /edit/i })
+    const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
+    editButtons.forEach((btn) => expect(btn).not.toBeDisabled())
+    deleteButtons.forEach((btn) => expect(btn).not.toBeDisabled())
+  })
+
+  it('disables controls for platform fields in SaaS mode', async () => {
+    server.use(
+      http.get('/api/admin/onboarding-fields', () => {
+        return HttpResponse.json({ fields: mockOnboardingFields, hostingMode: 'saas' })
+      })
+    )
+    render(<AdminOnboardingPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Age Declaration')).toBeInTheDocument()
+    })
+    // Platform field buttons should be disabled
+    expect(screen.getByRole('button', { name: /edit age declaration/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /delete age declaration/i })).toBeDisabled()
+    // Admin field buttons should remain enabled
+    expect(screen.getByRole('button', { name: /edit terms of service/i })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: /delete terms of service/i })).not.toBeDisabled()
+  })
+
+  it('shows SaaS note for platform fields in SaaS mode', async () => {
+    server.use(
+      http.get('/api/admin/onboarding-fields', () => {
+        return HttpResponse.json({ fields: mockOnboardingFields, hostingMode: 'saas' })
+      })
+    )
+    render(<AdminOnboardingPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Age Declaration')).toBeInTheDocument()
+    })
+    expect(screen.getByText(/this field is required by the barazo platform/i)).toBeInTheDocument()
   })
 
   it('passes axe accessibility check', async () => {
