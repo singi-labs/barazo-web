@@ -5,6 +5,20 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - 'public/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+      - 'next.config.ts'
+      - 'tailwind.config.*'
+      - 'playwright.config.ts'
+      - 'lighthouserc.json'
+      - '.github/workflows/ci.yml'
+      - '.github/actions/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,6 +31,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -49,6 +64,7 @@ jobs:
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -78,6 +94,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -107,6 +124,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [lint, typecheck, test]
     steps:
       - name: Checkout
@@ -146,6 +164,7 @@ jobs:
   accessibility:
     name: Accessibility Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: build
     steps:
       - name: Checkout
@@ -224,6 +243,7 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
