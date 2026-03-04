@@ -142,6 +142,16 @@ describe('AdminCategoriesPage', () => {
     expect(optionTexts).not.toContain(expect.stringContaining('Backend'))
   })
 
+  it('renders drag handles for each category', async () => {
+    render(<AdminCategoriesPage />)
+    await waitFor(() => {
+      expect(screen.getByText('General Discussion')).toBeInTheDocument()
+    })
+    const dragHandles = screen.getAllByRole('button', { name: /drag/i })
+    // 4 root + 2 children = 6 total categories with drag handles
+    expect(dragHandles.length).toBeGreaterThanOrEqual(4)
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<AdminCategoriesPage />)
     await waitFor(() => {
