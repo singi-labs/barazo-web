@@ -1,6 +1,7 @@
 /**
  * TopicList - Paginated list of TopicCard components.
  * Renders topics with optional heading and empty state.
+ * Separates pinned topics from regular topics with section headings.
  * @see specs/prd-web.md Section 4 (Topic Components)
  */
 
@@ -13,6 +14,10 @@ interface TopicListProps {
 }
 
 export function TopicList({ topics, heading }: TopicListProps) {
+  const pinnedTopics = topics.filter((t) => t.isPinned)
+  const regularTopics = topics.filter((t) => !t.isPinned)
+  const hasPinned = pinnedTopics.length > 0
+
   return (
     <section>
       {heading && <h2 className="mb-4 text-xl font-semibold text-foreground">{heading}</h2>}
@@ -24,7 +29,21 @@ export function TopicList({ topics, heading }: TopicListProps) {
         </div>
       ) : (
         <div className="space-y-3">
-          {topics.map((topic) => (
+          {hasPinned && (
+            <>
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Pinned
+              </h3>
+              {pinnedTopics.map((topic) => (
+                <TopicCard key={topic.uri} topic={topic} />
+              ))}
+              <div className="border-b border-border" role="separator" />
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Topics
+              </h3>
+            </>
+          )}
+          {regularTopics.map((topic) => (
             <TopicCard key={topic.uri} topic={topic} />
           ))}
         </div>

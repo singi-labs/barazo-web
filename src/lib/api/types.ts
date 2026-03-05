@@ -122,6 +122,10 @@ export interface Topic {
   reactionCount: number
   isAuthorDeleted: boolean
   isModDeleted: boolean
+  isPinned: boolean
+  isLocked: boolean
+  pinnedScope: 'category' | 'forum' | null
+  pinnedAt: string | null
   categoryMaturityRating: MaturityRating
   lastActivityAt: string
   createdAt: string

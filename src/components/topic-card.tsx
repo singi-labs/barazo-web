@@ -6,7 +6,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChatCircle, Heart, Clock } from '@phosphor-icons/react/dist/ssr'
+import { ChatCircle, Heart, Clock, PushPin } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, getTopicUrl } from '@/lib/format'
@@ -25,7 +25,8 @@ export function TopicCard({ topic, className }: TopicCardProps) {
   return (
     <article
       className={cn(
-        'flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-card-hover',
+        'flex items-start gap-4 rounded-lg border p-4 transition-colors hover:bg-card-hover',
+        topic.isPinned ? 'border-amber-500/30 bg-amber-500/5' : 'border-border bg-card',
         className
       )}
       aria-labelledby={`topic-title-${topic.rkey}`}
@@ -33,13 +34,25 @@ export function TopicCard({ topic, className }: TopicCardProps) {
       {/* Content */}
       <div className="min-w-0 flex-1">
         {/* Title */}
-        <h3 id={`topic-title-${topic.rkey}`} className="mb-1">
+        <h3 id={`topic-title-${topic.rkey}`} className="mb-1 flex items-center gap-1.5">
+          {topic.isPinned && (
+            <PushPin
+              className="h-4 w-4 shrink-0 text-primary"
+              weight="fill"
+              aria-label="Pinned topic"
+            />
+          )}
           <Link
             href={topicUrl}
             className="text-base font-semibold text-foreground hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
           >
             {topic.title}
           </Link>
+          {topic.pinnedScope === 'forum' && (
+            <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+              Global
+            </span>
+          )}
         </h3>
 
         {/* Metadata */}

@@ -36,6 +36,7 @@ const mockUseAuth = vi.fn(() => ({
     handle: 'test.bsky.social',
     displayName: 'Test User',
     avatarUrl: null,
+    role: 'user',
   } as Record<string, unknown> | null,
   getAccessToken: (() => 'mock-access-token') as () => string | null,
   login: vi.fn(),
@@ -57,6 +58,20 @@ vi.mock('@/hooks/use-toast', () => ({
   }),
 }))
 
+const mockPinTopic = vi.fn().mockResolvedValue({
+  uri: 'at://did:plc:user-test-001/forum.barazo.topic/abc',
+  isPinned: true,
+  pinnedScope: 'category',
+  pinnedAt: new Date().toISOString(),
+})
+const mockLockTopic = vi.fn().mockResolvedValue({
+  uri: 'at://did:plc:user-test-001/forum.barazo.topic/abc',
+  isLocked: true,
+})
+const mockDeleteTopicMod = vi.fn().mockResolvedValue({
+  uri: 'at://did:plc:user-test-001/forum.barazo.topic/abc',
+})
+
 vi.mock('@/lib/api/client', () => ({
   createReply: vi.fn().mockResolvedValue({
     uri: 'at://did:plc:user-test-001/forum.barazo.reply/789',
@@ -64,6 +79,9 @@ vi.mock('@/lib/api/client', () => ({
     content: 'Test reply',
     authorDid: 'did:plc:user-test-001',
   }),
+  pinTopic: (...args: unknown[]) => mockPinTopic(...args),
+  lockTopic: (...args: unknown[]) => mockLockTopic(...args),
+  deleteTopicMod: (...args: unknown[]) => mockDeleteTopicMod(...args),
 }))
 
 // Mock next/link to render a plain anchor
@@ -88,6 +106,7 @@ vi.mock('next/image', () => ({
 }))
 
 const topic = mockTopics[0]!
+const lockedTopic = { ...topic, isLocked: true }
 const replies = mockReplies.slice(0, 3)
 
 beforeEach(() => {
@@ -258,7 +277,7 @@ describe('TopicDetailClient', () => {
 
   describe('locked topic', () => {
     it('hides reply buttons when topic is locked', () => {
-      render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+      render(<TopicDetailClient topic={lockedTopic} replies={replies} />)
       // Neither OP reply button nor reply card buttons should be present
       expect(screen.queryByRole('button', { name: /reply to this topic/i })).not.toBeInTheDocument()
       expect(
@@ -267,14 +286,14 @@ describe('TopicDetailClient', () => {
     })
 
     it('shows locked notice in composer when topic is locked', () => {
-      render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+      render(<TopicDetailClient topic={lockedTopic} replies={replies} />)
       expect(
         screen.getByText('This topic is locked. New replies are not accepted.')
       ).toBeInTheDocument()
     })
 
     it('still renders replies when topic is locked', () => {
-      render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+      render(<TopicDetailClient topic={lockedTopic} replies={replies} />)
       for (const reply of replies) {
         expect(screen.getByText(reply.content)).toBeInTheDocument()
       }
@@ -325,7 +344,7 @@ describe('TopicDetailClient', () => {
 
     it('does not open composer when topic is locked', async () => {
       const user = userEvent.setup()
-      render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+      render(<TopicDetailClient topic={lockedTopic} replies={replies} />)
 
       await user.keyboard('r')
 
@@ -374,6 +393,163 @@ describe('TopicDetailClient', () => {
     })
   })
 
+  describe('moderation controls', () => {
+    it('renders moderation controls for moderators', () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: true,
+        isLoading: false,
+        user: {
+          did: 'did:plc:user-test-001',
+          handle: 'test.bsky.social',
+          displayName: 'Test User',
+          avatarUrl: null,
+          role: 'moderator',
+        } as Record<string, unknown> | null,
+        getAccessToken: (() => 'mock-access-token') as () => string | null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+      expect(screen.getByRole('group', { name: 'Moderation actions' })).toBeInTheDocument()
+    })
+
+    it('renders moderation controls for admins', () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: true,
+        isLoading: false,
+        user: {
+          did: 'did:plc:user-test-001',
+          handle: 'test.bsky.social',
+          displayName: 'Test User',
+          avatarUrl: null,
+          role: 'admin',
+        } as Record<string, unknown> | null,
+        getAccessToken: (() => 'mock-access-token') as () => string | null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+      expect(screen.getByRole('group', { name: 'Moderation actions' })).toBeInTheDocument()
+    })
+
+    it('does not render moderation controls for regular users', () => {
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+      expect(screen.queryByRole('group', { name: 'Moderation actions' })).not.toBeInTheDocument()
+    })
+
+    it('calls pinTopic API when pin action is triggered', async () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: true,
+        isLoading: false,
+        user: {
+          did: 'did:plc:user-test-001',
+          handle: 'test.bsky.social',
+          displayName: 'Test User',
+          avatarUrl: null,
+          role: 'moderator',
+        } as Record<string, unknown> | null,
+        getAccessToken: (() => 'mock-access-token') as () => string | null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      // Click Pin button to open confirmation dialog
+      await user.click(screen.getByRole('button', { name: /pin topic/i }))
+      // Confirm the action
+      await user.click(screen.getByRole('button', { name: /confirm/i }))
+
+      await vi.waitFor(() => {
+        expect(mockPinTopic).toHaveBeenCalledWith(
+          topic.uri,
+          { scope: 'category' },
+          'mock-access-token'
+        )
+      })
+    })
+
+    it('calls lockTopic API when lock action is triggered', async () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: true,
+        isLoading: false,
+        user: {
+          did: 'did:plc:user-test-001',
+          handle: 'test.bsky.social',
+          displayName: 'Test User',
+          avatarUrl: null,
+          role: 'moderator',
+        } as Record<string, unknown> | null,
+        getAccessToken: (() => 'mock-access-token') as () => string | null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      // Click Lock button to open confirmation dialog
+      await user.click(screen.getByRole('button', { name: /lock topic/i }))
+      // Confirm the action
+      await user.click(screen.getByRole('button', { name: /confirm/i }))
+
+      await vi.waitFor(() => {
+        expect(mockLockTopic).toHaveBeenCalledWith(topic.uri, {}, 'mock-access-token')
+      })
+    })
+
+    it('refreshes router after successful moderation action', async () => {
+      mockUseAuth.mockReturnValueOnce({
+        isAuthenticated: true,
+        isLoading: false,
+        user: {
+          did: 'did:plc:user-test-001',
+          handle: 'test.bsky.social',
+          displayName: 'Test User',
+          avatarUrl: null,
+          role: 'moderator',
+        } as Record<string, unknown> | null,
+        getAccessToken: (() => 'mock-access-token') as () => string | null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        setSessionFromCallback: vi.fn(),
+        authFetch: vi.fn(),
+        crossPostScopesGranted: false,
+        requestCrossPostAuth: vi.fn(),
+      })
+
+      const user = userEvent.setup()
+      render(<TopicDetailClient topic={topic} replies={replies} />)
+
+      // Click Pin button to open confirmation dialog, then confirm
+      await user.click(screen.getByRole('button', { name: /pin topic/i }))
+      await user.click(screen.getByRole('button', { name: /confirm/i }))
+
+      await vi.waitFor(() => {
+        expect(mockRouterRefresh).toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('accessibility', () => {
     it('passes axe accessibility check when authenticated', async () => {
       const { container } = render(<TopicDetailClient topic={topic} replies={replies} />)
@@ -401,7 +577,7 @@ describe('TopicDetailClient', () => {
     })
 
     it('passes axe accessibility check when locked', async () => {
-      const { container } = render(<TopicDetailClient topic={topic} replies={replies} isLocked />)
+      const { container } = render(<TopicDetailClient topic={lockedTopic} replies={replies} />)
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })

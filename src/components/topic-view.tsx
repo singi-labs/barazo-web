@@ -20,7 +20,11 @@ import { formatRelativeTime, formatCompactNumber, isEdited } from '@/lib/format'
 import { MarkdownContent } from './markdown-content'
 import { LikeButton } from './like-button'
 import { ReactionBar } from './reaction-bar'
-import { ModerationControls, type ModerationAction } from './moderation-controls'
+import {
+  ModerationControls,
+  type ModerationAction,
+  type ModerationActionOptions,
+} from './moderation-controls'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
 import { SelfLabelIndicator } from './self-label-indicator'
 
@@ -35,9 +39,10 @@ interface TopicViewProps {
   reactions?: ReactionData[]
   onReactionToggle?: (type: string) => void
   isModerator?: boolean
+  isAdmin?: boolean
   isLocked?: boolean
   isPinned?: boolean
-  onModerationAction?: (action: ModerationAction) => void
+  onModerationAction?: (action: ModerationAction, options?: ModerationActionOptions) => void
   canEdit?: boolean
   onEdit?: () => void
   onReply?: () => void
@@ -52,6 +57,7 @@ export function TopicView({
   reactions,
   onReactionToggle,
   isModerator,
+  isAdmin,
   isLocked,
   isPinned,
   onModerationAction,
@@ -167,6 +173,7 @@ export function TopicView({
           <div className="mt-3">
             <ModerationControls
               isModerator={true}
+              isAdmin={isAdmin}
               isLocked={isLocked}
               isPinned={isPinned}
               onAction={onModerationAction}

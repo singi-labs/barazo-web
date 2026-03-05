@@ -39,6 +39,33 @@ describe('TopicCard', () => {
     expect(screen.getByRole('article')).toBeInTheDocument()
   })
 
+  it('should show pin icon for pinned topics', () => {
+    const pinnedTopic = {
+      ...topic,
+      isPinned: true,
+      pinnedScope: 'category' as const,
+      pinnedAt: '2026-03-01T00:00:00Z',
+    }
+    const { getByLabelText } = render(<TopicCard topic={pinnedTopic} />)
+    expect(getByLabelText('Pinned topic')).toBeInTheDocument()
+  })
+
+  it('should show Global badge for forum-wide pinned topics', () => {
+    const globalTopic = {
+      ...topic,
+      isPinned: true,
+      pinnedScope: 'forum' as const,
+      pinnedAt: '2026-03-01T00:00:00Z',
+    }
+    const { getByText } = render(<TopicCard topic={globalTopic} />)
+    expect(getByText('Global')).toBeInTheDocument()
+  })
+
+  it('should not show pin indicator for unpinned topics', () => {
+    const { queryByLabelText } = render(<TopicCard topic={topic} />)
+    expect(queryByLabelText('Pinned topic')).not.toBeInTheDocument()
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(<TopicCard topic={topic} />)
     const results = await axe(container)

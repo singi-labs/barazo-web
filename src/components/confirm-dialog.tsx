@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { type ReactNode, useEffect, useRef, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 
 interface ConfirmDialogProps {
@@ -18,6 +18,7 @@ interface ConfirmDialogProps {
   variant?: 'default' | 'destructive'
   onConfirm: () => void
   onCancel: () => void
+  children?: ReactNode
 }
 
 export function ConfirmDialog({
@@ -29,6 +30,7 @@ export function ConfirmDialog({
   variant = 'default',
   onConfirm,
   onCancel,
+  children,
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -71,6 +73,7 @@ export function ConfirmDialog({
         <p id="confirm-dialog-description" className="mt-2 text-sm text-muted-foreground">
           {description}
         </p>
+        {children}
         <div className="mt-6 flex justify-end gap-3">
           <button
             ref={cancelRef}
