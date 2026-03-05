@@ -123,6 +123,72 @@ describe('LoginPage', () => {
     expect(mockLogin).toHaveBeenCalledWith('test.bsky.social')
   })
 
+  it('strips at:// prefix from AT-URI with handle', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'at://ngerakines.me')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('ngerakines.me')
+  })
+
+  it('strips at:// prefix from AT-URI with DID', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'at://did:plc:cbkjy5n7bk3ax2wplmtjofq2')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('did:plc:cbkjy5n7bk3ax2wplmtjofq2')
+  })
+
+  it('passes plain DID through without lowercasing', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'did:plc:CbKjY5N7Bk3Ax2WplmTjOfQ2')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('did:plc:CbKjY5N7Bk3Ax2WplmTjOfQ2')
+  })
+
+  it('passes did:web identifier through without lowercasing', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(screen.getByLabelText(/handle/i), 'did:web:Example.Com')
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('did:web:Example.Com')
+  })
+
+  it('extracts DID from bsky.app profile URL', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(
+      screen.getByLabelText(/handle/i),
+      'https://bsky.app/profile/did:plc:cbkjy5n7bk3ax2wplmtjofq2'
+    )
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('did:plc:cbkjy5n7bk3ax2wplmtjofq2')
+  })
+
+  it('strips AT-URI path segments after authority', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.type(
+      screen.getByLabelText(/handle/i),
+      'at://ngerakines.me/app.bsky.feed.post/abc123'
+    )
+    await user.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockLogin).toHaveBeenCalledWith('ngerakines.me')
+  })
+
   it('shows user-friendly error for unknown handle (502)', async () => {
     const { ApiError } = await import('@/lib/api/client')
     mockLogin.mockRejectedValueOnce(new ApiError(502, 'API 502: Bad Gateway'))
