@@ -29,7 +29,7 @@ export function ForumLayout({ children, sidebar, publicSettings }: ForumLayoutPr
   const showCommunityName = publicSettings?.showCommunityName ?? true
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background">
+    <div className="min-h-screen overflow-x-clip bg-background">
       <SkipLinks />
 
       {/* Header */}
