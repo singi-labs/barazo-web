@@ -10,7 +10,9 @@ describe('AncestorLines', () => {
       { uri: 'a1', authorName: 'Alice', replyCount: 3, expanded: true },
       { uri: 'a2', authorName: 'Bob', replyCount: 5, expanded: true },
     ]
-    render(<AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} />)
+    render(
+      <AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} lineWidth={22} />
+    )
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(2)
   })
@@ -22,7 +24,7 @@ describe('AncestorLines', () => {
       { uri: 'a3', authorName: 'Carol', replyCount: 1, expanded: true },
     ]
     const { container } = render(
-      <AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} />
+      <AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} lineWidth={22} />
     )
     const lines = container.querySelectorAll('[aria-hidden="true"]')
     expect(lines.length).toBeGreaterThan(0)
@@ -39,7 +41,9 @@ describe('AncestorLines', () => {
       { uri: 'a1', authorName: 'Alice', replyCount: 3, expanded: true },
       { uri: 'a2', authorName: 'Bob', replyCount: 5, expanded: true },
     ]
-    render(<AncestorLines ancestors={ancestors} onToggle={onToggle} showChevron={false} />)
+    render(
+      <AncestorLines ancestors={ancestors} onToggle={onToggle} showChevron={false} lineWidth={22} />
+    )
     const buttons = screen.getAllByRole('button')
     await user.click(buttons[0]!)
     expect(onToggle).toHaveBeenCalledWith('a1')
@@ -47,7 +51,7 @@ describe('AncestorLines', () => {
 
   it('renders nothing when ancestors array is empty', () => {
     const { container } = render(
-      <AncestorLines ancestors={[]} onToggle={vi.fn()} showChevron={false} />
+      <AncestorLines ancestors={[]} onToggle={vi.fn()} showChevron={false} lineWidth={22} />
     )
     expect(container.querySelector('button')).not.toBeInTheDocument()
   })
@@ -55,7 +59,7 @@ describe('AncestorLines', () => {
   it('passes axe accessibility check', async () => {
     const ancestors = [{ uri: 'a1', authorName: 'Alice', replyCount: 3, expanded: true }]
     const { container } = render(
-      <AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} />
+      <AncestorLines ancestors={ancestors} onToggle={vi.fn()} showChevron={false} lineWidth={22} />
     )
     const results = await axe(container)
     expect(results).toHaveNoViolations()

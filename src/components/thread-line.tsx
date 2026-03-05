@@ -14,6 +14,8 @@ interface ThreadLineProps {
   replyCount: number
   opacity?: number
   showChevron?: boolean
+  /** Width in pixels. Matches the indent step so lines ARE the indentation. */
+  width?: number
 }
 
 export function ThreadLine({
@@ -23,6 +25,7 @@ export function ThreadLine({
   replyCount,
   opacity = 1,
   showChevron = true,
+  width = 22,
 }: ThreadLineProps) {
   const label = expanded
     ? `Collapse thread by ${authorName}, ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`
@@ -35,7 +38,8 @@ export function ThreadLine({
       aria-expanded={expanded}
       aria-label={label}
       title={expanded ? 'Collapse thread' : 'Expand thread'}
-      className="group relative min-w-[44px] shrink-0 cursor-pointer border-none bg-transparent p-0"
+      className="group relative shrink-0 cursor-pointer border-none bg-transparent p-0"
+      style={{ width }}
     >
       {showChevron && (
         <span className="absolute left-1/2 top-1 -translate-x-1/2 text-border transition-colors group-hover:text-accent-foreground">

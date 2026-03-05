@@ -20,9 +20,11 @@ interface AncestorLinesProps {
   ancestors: AncestorInfo[]
   onToggle: (uri: string) => void
   showChevron: boolean
+  /** Width per line in pixels. Should match indent step. */
+  lineWidth: number
 }
 
-export function AncestorLines({ ancestors, onToggle }: AncestorLinesProps) {
+export function AncestorLines({ ancestors, onToggle, lineWidth }: AncestorLinesProps) {
   if (ancestors.length === 0) return null
 
   return (
@@ -40,6 +42,7 @@ export function AncestorLines({ ancestors, onToggle }: AncestorLinesProps) {
             replyCount={ancestor.replyCount}
             opacity={opacity}
             showChevron={false}
+            width={lineWidth}
           />
         )
       })}

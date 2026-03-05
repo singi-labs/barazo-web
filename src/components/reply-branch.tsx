@@ -12,7 +12,6 @@ import { useState, useCallback } from 'react'
 import type { Reply } from '@/lib/api/types'
 import { type ReplyTreeNode, countDescendants } from '@/lib/build-reply-tree'
 import {
-  VISUAL_INDENT_CAP,
   DEFAULT_EXPANDED_LEVELS,
   AUTO_COLLAPSE_SIBLING_THRESHOLD,
   AUTO_COLLAPSE_SHOW_COUNT,
@@ -101,8 +100,6 @@ export function ReplyBranch({
   const visibleNodes = shouldLimitSiblings ? nodes.slice(0, AUTO_COLLAPSE_SHOW_COUNT) : nodes
   const hiddenSiblingCount = nodes.length - visibleNodes.length
 
-  const atVisualCap = (nodes[0]?.reply.depth ?? 1) >= VISUAL_INDENT_CAP
-
   return (
     <ol className="list-none space-y-3 pl-0">
       {visibleNodes.map((node) => {
@@ -133,12 +130,17 @@ export function ReplyBranch({
         return (
           <li key={node.reply.uri} aria-level={node.reply.depth}>
             {needsBadge && parentHandle && parentPostNumber > 0 && (
-              <div style={{ marginLeft: ancestors.length * 44 }}>
+              <div style={{ marginLeft: ancestors.length * indentStep }}>
                 <ReplyToBadge authorHandle={parentHandle} parentPostNumber={parentPostNumber} />
               </div>
             )}
             <div className="flex gap-0">
-              <AncestorLines ancestors={ancestors} onToggle={handleToggle} showChevron={false} />
+              <AncestorLines
+                ancestors={ancestors}
+                onToggle={handleToggle}
+                showChevron={false}
+                lineWidth={indentStep}
+              />
               {hasChildren && (
                 <ThreadLine
                   expanded={!isCollapsed}
@@ -147,6 +149,7 @@ export function ReplyBranch({
                   replyCount={descendantCount}
                   opacity={1}
                   showChevron={showChevron}
+                  width={indentStep}
                 />
               )}
               <div className="min-w-0 flex-1">
@@ -165,47 +168,28 @@ export function ReplyBranch({
                 type="button"
                 onClick={() => toggleCollapse(node.reply.uri)}
                 className="mt-1 flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-                style={{ marginLeft: (ancestors.length + 1) * 44 }}
+                style={{ marginLeft: (ancestors.length + 1) * indentStep }}
                 aria-live="polite"
               >
                 {descendantCount} {descendantCount === 1 ? 'reply' : 'replies'}
               </button>
             )}
-            {hasChildren &&
-              !isCollapsed &&
-              (atVisualCap ? (
-                <ReplyBranch
-                  nodes={node.children}
-                  postNumberMap={postNumberMap}
-                  topicUri={topicUri}
-                  allReplies={allReplies}
-                  indentStep={indentStep}
-                  showChevron={showChevron}
-                  ancestors={childAncestors}
-                  onToggleAncestor={handleToggle}
-                  treeParentUri={node.reply.uri}
-                  onReply={onReply}
-                  onDeleteReply={onDeleteReply}
-                  currentUserDid={currentUserDid}
-                />
-              ) : (
-                <div style={{ marginLeft: indentStep }}>
-                  <ReplyBranch
-                    nodes={node.children}
-                    postNumberMap={postNumberMap}
-                    topicUri={topicUri}
-                    allReplies={allReplies}
-                    indentStep={indentStep}
-                    showChevron={showChevron}
-                    ancestors={childAncestors}
-                    onToggleAncestor={handleToggle}
-                    treeParentUri={node.reply.uri}
-                    onReply={onReply}
-                    onDeleteReply={onDeleteReply}
-                    currentUserDid={currentUserDid}
-                  />
-                </div>
-              ))}
+            {hasChildren && !isCollapsed && (
+              <ReplyBranch
+                nodes={node.children}
+                postNumberMap={postNumberMap}
+                topicUri={topicUri}
+                allReplies={allReplies}
+                indentStep={indentStep}
+                showChevron={showChevron}
+                ancestors={childAncestors}
+                onToggleAncestor={handleToggle}
+                treeParentUri={node.reply.uri}
+                onReply={onReply}
+                onDeleteReply={onDeleteReply}
+                currentUserDid={currentUserDid}
+              />
+            )}
           </li>
         )
       })}

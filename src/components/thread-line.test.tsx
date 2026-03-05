@@ -61,10 +61,10 @@ describe('ThreadLine', () => {
     expect(line!.getAttribute('style')).toContain('opacity')
   })
 
-  it('has adequate tap target (min 44px)', () => {
-    const { container } = render(<ThreadLine {...defaultProps} />)
+  it('applies width from prop', () => {
+    const { container } = render(<ThreadLine {...defaultProps} width={22} />)
     const button = container.querySelector('button')!
-    expect(button.className).toMatch(/min-w-\[44px\]/)
+    expect(button.style.width).toBe('22px')
   })
 
   it('passes axe accessibility check', async () => {
