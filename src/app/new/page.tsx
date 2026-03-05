@@ -9,8 +9,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import type { CreateTopicInput, PublicSettings } from '@/lib/api/types'
-import { ApiError, createTopic, getPublicSettings } from '@/lib/api/client'
+import type { CreateTopicInput, CategoryTreeNode, PublicSettings } from '@/lib/api/types'
+import { ApiError, createTopic, getCategories, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { ForumLayout } from '@/components/layout/forum-layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
@@ -28,10 +28,14 @@ export default function NewTopicPage() {
   const [error, setError] = useState<string | null>(null)
   const [heldMessage, setHeldMessage] = useState<string | null>(null)
   const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
+  const [categories, setCategories] = useState<CategoryTreeNode[]>([])
 
   useEffect(() => {
     getPublicSettings()
       .then((settings) => setPublicSettings(settings))
+      .catch(() => {})
+    getCategories()
+      .then((res) => setCategories(res.categories))
       .catch(() => {})
   }, [])
 
@@ -93,6 +97,7 @@ export default function NewTopicPage() {
         <TopicForm
           onSubmit={handleSubmit}
           submitting={submitting}
+          categories={categories.length > 0 ? categories : undefined}
           initialValues={{ category: initialCategory }}
         />
       </div>
