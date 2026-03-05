@@ -10,8 +10,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import type { CreateTopicInput, PublicSettings, Topic } from '@/lib/api/types'
-import { getTopicByAuthorAndRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
+import type { CreateTopicInput, CategoryTreeNode, PublicSettings, Topic } from '@/lib/api/types'
+import {
+  getCategories,
+  getTopicByAuthorAndRkey,
+  updateTopic,
+  getPublicSettings,
+} from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { useAuth } from '@/hooks/use-auth'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -32,10 +37,14 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
+  const [categories, setCategories] = useState<CategoryTreeNode[]>([])
 
   useEffect(() => {
     getPublicSettings()
       .then((settings) => setPublicSettings(settings))
+      .catch(() => {})
+    getCategories()
+      .then((res) => setCategories(res.categories))
       .catch(() => {})
   }, [])
 
@@ -170,6 +179,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
           onSubmit={handleSubmit}
           submitting={submitting}
           mode="edit"
+          categories={categories.length > 0 ? categories : undefined}
           initialValues={{
             title: topic.title,
             content: topic.content,
