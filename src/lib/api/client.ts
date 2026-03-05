@@ -1386,4 +1386,60 @@ export function deletePage(id: string, accessToken: string, options?: FetchOptio
   })
 }
 
+// --- Moderation action endpoints ---
+
+export interface PinTopicResponse {
+  uri: string
+  isPinned: boolean
+  pinnedScope: 'category' | 'forum' | null
+  pinnedAt: string | null
+}
+
+export function pinTopic(
+  topicUri: string,
+  params: { scope?: 'category' | 'forum'; reason?: string } = {},
+  accessToken: string,
+  options?: FetchOptions
+): Promise<PinTopicResponse> {
+  return apiFetch<PinTopicResponse>(`/api/moderation/pin/${encodeURIComponent(topicUri)}`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: params,
+  })
+}
+
+export interface LockTopicResponse {
+  uri: string
+  isLocked: boolean
+}
+
+export function lockTopic(
+  topicUri: string,
+  params: { reason?: string } = {},
+  accessToken: string,
+  options?: FetchOptions
+): Promise<LockTopicResponse> {
+  return apiFetch<LockTopicResponse>(`/api/moderation/lock/${encodeURIComponent(topicUri)}`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: params,
+  })
+}
+
+export function deleteTopicMod(
+  topicUri: string,
+  params: { reason: string },
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ uri: string }> {
+  return apiFetch<{ uri: string }>(`/api/moderation/delete/${encodeURIComponent(topicUri)}`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: params,
+  })
+}
+
 export { ApiError }
