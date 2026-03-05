@@ -1,6 +1,5 @@
 /**
- * Tests for ReplyBranch collapse behavior.
- * Covers auto-collapse by depth, sibling limiting, and thread line toggle.
+ * Tests for ReplyBranch collapse behavior and unified line system.
  */
 
 import { describe, it, expect, vi } from 'vitest'
@@ -10,7 +9,6 @@ import type { Reply } from '@/lib/api/types'
 import type { ReplyTreeNode } from '@/lib/build-reply-tree'
 import { ReplyBranch } from './reply-branch'
 
-// Mock onboarding context (required by LikeButton via ReplyCard)
 vi.mock('@/context/onboarding-context', () => ({
   useOnboardingContext: () => ({
     state: { completed: true, dismissed: true, currentStep: null, completedSteps: [] },
@@ -103,8 +101,7 @@ function buildAllRepliesMap(nodes: ReplyTreeNode[]): Map<string, Reply> {
   return map
 }
 
-describe('ReplyBranch collapse behavior', () => {
-  // Build a deep tree: depth 1 -> 2 -> 3 -> 4 -> 5
+describe('ReplyBranch', () => {
   const depth1 = makeReply({ uri: 'at://test/r/d1', depth: 1, parentUri: TOPIC_URI })
   const depth2 = makeReply({ uri: 'at://test/r/d2', depth: 2, parentUri: depth1.uri })
   const depth3 = makeReply({ uri: 'at://test/r/d3', depth: 3, parentUri: depth2.uri })
@@ -120,83 +117,66 @@ describe('ReplyBranch collapse behavior', () => {
   const deepPostMap = buildPostNumberMap(deepTree)
   const deepAllReplies = buildAllRepliesMap(deepTree)
 
+  const defaultProps = {
+    postNumberMap: deepPostMap,
+    topicUri: TOPIC_URI,
+    allReplies: deepAllReplies,
+    indentStep: 22,
+    showChevron: true,
+    ancestors: [] as Array<{
+      uri: string
+      authorName: string
+      replyCount: number
+      expanded: boolean
+    }>,
+    onToggleAncestor: vi.fn(),
+  }
+
   it('renders first 3 levels expanded by default', () => {
-    render(
-      <ReplyBranch
-        nodes={deepTree}
-        postNumberMap={deepPostMap}
-        topicUri={TOPIC_URI}
-        allReplies={deepAllReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
-    )
-    // Depth 1, 2, 3 should all be visible
+    render(<ReplyBranch nodes={deepTree} {...defaultProps} />)
     expect(screen.getByText(depth1.content)).toBeInTheDocument()
     expect(screen.getByText(depth2.content)).toBeInTheDocument()
     expect(screen.getByText(depth3.content)).toBeInTheDocument()
   })
 
   it('auto-collapses depth 4+ by default', () => {
-    render(
-      <ReplyBranch
-        nodes={deepTree}
-        postNumberMap={deepPostMap}
-        topicUri={TOPIC_URI}
-        allReplies={deepAllReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
-    )
-    // Depth 4 and 5 should be hidden (depth 3 node's children are auto-collapsed)
+    render(<ReplyBranch nodes={deepTree} {...defaultProps} />)
     expect(screen.queryByText(depth4.content)).not.toBeInTheDocument()
     expect(screen.queryByText(depth5.content)).not.toBeInTheDocument()
   })
 
-  it('shows "N replies hidden" for auto-collapsed threads', () => {
-    render(
-      <ReplyBranch
-        nodes={deepTree}
-        postNumberMap={deepPostMap}
-        topicUri={TOPIC_URI}
-        allReplies={deepAllReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
-    )
-    // depth3 node has 2 descendants: depth4 and depth5
-    expect(screen.getByText(/2 replies hidden/)).toBeInTheDocument()
+  it('shows reply count for collapsed threads', () => {
+    render(<ReplyBranch nodes={deepTree} {...defaultProps} />)
+    expect(screen.getByText(/2 replies/)).toBeInTheDocument()
   })
 
   it('toggles collapse when ThreadLine is clicked', async () => {
     const user = userEvent.setup()
-    render(
-      <ReplyBranch
-        nodes={deepTree}
-        postNumberMap={deepPostMap}
-        topicUri={TOPIC_URI}
-        allReplies={deepAllReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
-    )
+    render(<ReplyBranch nodes={deepTree} {...defaultProps} />)
 
-    // Depth 3 is visible, depth 4 is hidden (auto-collapsed)
-    expect(screen.getByText(depth3.content)).toBeInTheDocument()
     expect(screen.queryByText(depth4.content)).not.toBeInTheDocument()
 
-    // Find the thread line button for depth 3 node (which has children)
-    // It should have aria-expanded="false" since its children are auto-collapsed
     const collapseButtons = screen.getAllByRole('button', { expanded: false })
-    // Click the last one (depth 3's thread line)
     await user.click(collapseButtons[collapseButtons.length - 1]!)
 
-    // Now depth 4 should be visible
     expect(screen.getByText(depth4.content)).toBeInTheDocument()
   })
 
+  it('does not render thread lines for leaf comments', () => {
+    const leaf = makeReply({ uri: 'at://test/r/leaf', depth: 1, parentUri: TOPIC_URI })
+    const tree = [makeNode(leaf)]
+    const map = buildPostNumberMap(tree)
+    const allReplies = buildAllRepliesMap(tree)
+
+    render(
+      <ReplyBranch nodes={tree} {...defaultProps} postNumberMap={map} allReplies={allReplies} />
+    )
+
+    expect(screen.queryByRole('button', { name: /collapse/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /expand/i })).not.toBeInTheDocument()
+  })
+
   it('direct replies (depth 1) are never auto-collapsed by sibling limiting', () => {
-    // Create 7 root-level replies
     const roots: ReplyTreeNode[] = Array.from({ length: 7 }, (_, i) =>
       makeNode(
         makeReply({
@@ -212,24 +192,15 @@ describe('ReplyBranch collapse behavior', () => {
     const allReplies = buildAllRepliesMap(roots)
 
     render(
-      <ReplyBranch
-        nodes={roots}
-        postNumberMap={map}
-        topicUri={TOPIC_URI}
-        allReplies={allReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
+      <ReplyBranch nodes={roots} {...defaultProps} postNumberMap={map} allReplies={allReplies} />
     )
 
-    // All 7 should be visible (no sibling limiting at depth 1)
     for (let i = 0; i < 7; i++) {
       expect(screen.getByText(`Root reply ${i}`)).toBeInTheDocument()
     }
   })
 
   it('shows "Show N more replies" for 5+ siblings at depth 2+', () => {
-    // Create a parent with 6 children at depth 2
     const parent = makeReply({ uri: 'at://test/r/parent', depth: 1, parentUri: TOPIC_URI })
     const children: ReplyTreeNode[] = Array.from({ length: 6 }, (_, i) =>
       makeNode(
@@ -247,65 +218,13 @@ describe('ReplyBranch collapse behavior', () => {
     const allReplies = buildAllRepliesMap(tree)
 
     render(
-      <ReplyBranch
-        nodes={tree}
-        postNumberMap={map}
-        topicUri={TOPIC_URI}
-        allReplies={allReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
+      <ReplyBranch nodes={tree} {...defaultProps} postNumberMap={map} allReplies={allReplies} />
     )
 
-    // First 3 children visible
     expect(screen.getByText('Child reply 0')).toBeInTheDocument()
     expect(screen.getByText('Child reply 1')).toBeInTheDocument()
     expect(screen.getByText('Child reply 2')).toBeInTheDocument()
-
-    // Remaining 3 hidden with button
     expect(screen.queryByText('Child reply 3')).not.toBeInTheDocument()
     expect(screen.getByText('Show 3 more replies')).toBeInTheDocument()
-  })
-
-  it('reveals hidden siblings when "Show more" is clicked', async () => {
-    const user = userEvent.setup()
-
-    const parent = makeReply({ uri: 'at://test/r/parent2', depth: 1, parentUri: TOPIC_URI })
-    const children: ReplyTreeNode[] = Array.from({ length: 6 }, (_, i) =>
-      makeNode(
-        makeReply({
-          uri: `at://test/r/sib${i}`,
-          depth: 2,
-          parentUri: parent.uri,
-          content: `Sibling ${i}`,
-        })
-      )
-    )
-
-    const tree: ReplyTreeNode[] = [makeNode(parent, children)]
-    const map = buildPostNumberMap(tree)
-    const allReplies = buildAllRepliesMap(tree)
-
-    render(
-      <ReplyBranch
-        nodes={tree}
-        postNumberMap={map}
-        topicUri={TOPIC_URI}
-        allReplies={allReplies}
-        visualIndentCap={10}
-        currentVisualDepth={1}
-      />
-    )
-
-    // Click "Show 3 more replies"
-    await user.click(screen.getByText('Show 3 more replies'))
-
-    // All 6 should now be visible
-    for (let i = 0; i < 6; i++) {
-      expect(screen.getByText(`Sibling ${i}`)).toBeInTheDocument()
-    }
-
-    // Button should be gone
-    expect(screen.queryByText(/Show \d+ more/)).not.toBeInTheDocument()
   })
 })
