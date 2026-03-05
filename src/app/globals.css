@@ -5,8 +5,8 @@
 
 @import '@radix-ui/colors/gray.css';
 @import '@radix-ui/colors/gray-dark.css';
-@import '@radix-ui/colors/slate.css';
-@import '@radix-ui/colors/slate-dark.css';
+@import '@radix-ui/colors/sand.css';
+@import '@radix-ui/colors/sand-dark.css';
 @import '@radix-ui/colors/cyan.css';
 @import '@radix-ui/colors/cyan-dark.css';
 @import '@radix-ui/colors/purple.css';
@@ -43,19 +43,19 @@
   --color-gray-11: var(--gray-11);
   --color-gray-12: var(--gray-12);
 
-  /* Slate scale (subtle backgrounds) */
-  --color-slate-1: var(--slate-1);
-  --color-slate-2: var(--slate-2);
-  --color-slate-3: var(--slate-3);
-  --color-slate-4: var(--slate-4);
-  --color-slate-5: var(--slate-5);
-  --color-slate-6: var(--slate-6);
-  --color-slate-7: var(--slate-7);
-  --color-slate-8: var(--slate-8);
-  --color-slate-9: var(--slate-9);
-  --color-slate-10: var(--slate-10);
-  --color-slate-11: var(--slate-11);
-  --color-slate-12: var(--slate-12);
+  /* Sand scale (warm neutral backgrounds) */
+  --color-sand-1: var(--sand-1);
+  --color-sand-2: var(--sand-2);
+  --color-sand-3: var(--sand-3);
+  --color-sand-4: var(--sand-4);
+  --color-sand-5: var(--sand-5);
+  --color-sand-6: var(--sand-6);
+  --color-sand-7: var(--sand-7);
+  --color-sand-8: var(--sand-8);
+  --color-sand-9: var(--sand-9);
+  --color-sand-10: var(--sand-10);
+  --color-sand-11: var(--sand-11);
+  --color-sand-12: var(--sand-12);
 
   /* Primary accent - Cyan (Flexoki-inspired) */
   --color-cyan-1: var(--cyan-1);
@@ -128,21 +128,21 @@
   --color-red-12: var(--red-12);
 
   /* Semantic mapping */
-  --color-background: var(--slate-1);
-  --color-foreground: var(--slate-12);
-  --color-muted: var(--slate-3);
-  --color-muted-foreground: var(--slate-11);
-  --color-border: var(--slate-6);
-  --color-border-hover: var(--slate-7);
-  --color-input: var(--slate-3);
-  --color-input-focus: var(--slate-4);
+  --color-background: var(--sand-1);
+  --color-foreground: var(--sand-12);
+  --color-muted: var(--sand-3);
+  --color-muted-foreground: var(--sand-11);
+  --color-border: var(--sand-6);
+  --color-border-hover: var(--sand-7);
+  --color-input: var(--sand-3);
+  --color-input-focus: var(--sand-4);
   --color-ring: var(--cyan-8);
-  --color-ring-offset: var(--slate-1);
+  --color-ring-offset: var(--sand-1);
 
   /* Primary (Cyan) - cyan-9 is bright, needs dark text for AA contrast
-     Hardcoded from --slate-12 to avoid CSS var resolution issues in a11y tools */
+     Hardcoded from --sand-12 to avoid CSS var resolution issues in a11y tools */
   --color-primary: var(--cyan-9);
-  --color-primary-foreground: #1c2024;
+  --color-primary-foreground: #21201c;
   --color-primary-hover: var(--cyan-10);
   --color-primary-active: var(--cyan-11);
   --color-primary-muted: var(--cyan-3);
@@ -168,13 +168,13 @@
 
   /* Success (Green) */
   --color-success: var(--green-9);
-  --color-success-foreground: var(--slate-12);
+  --color-success-foreground: var(--sand-12);
   --color-success-hover: var(--green-10);
   --color-success-muted: var(--green-3);
 
   /* Warning (Orange) */
   --color-warning: var(--orange-9);
-  --color-warning-foreground: var(--slate-12);
+  --color-warning-foreground: var(--sand-12);
   --color-warning-hover: var(--orange-10);
   --color-warning-muted: var(--orange-3);
 
@@ -185,11 +185,11 @@
   --color-info-muted: var(--purple-3);
 
   /* Card/Surface */
-  --color-card: var(--slate-2);
-  --color-card-foreground: var(--slate-12);
-  --color-card-hover: var(--slate-3);
-  --color-popover: var(--slate-1);
-  --color-popover-foreground: var(--slate-12);
+  --color-card: var(--sand-2);
+  --color-card-foreground: var(--sand-12);
+  --color-card-hover: var(--sand-3);
+  --color-popover: var(--sand-1);
+  --color-popover-foreground: var(--sand-12);
 
   /* Shadows */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -209,22 +209,22 @@
 
 .dark {
   /* Dark mode uses Radix dark color scales */
-  --color-background: var(--slate-dark-1);
-  --color-foreground: var(--slate-dark-12);
-  --color-muted: var(--slate-dark-3);
-  --color-muted-foreground: var(--slate-dark-11);
-  --color-border: var(--slate-dark-6);
-  --color-border-hover: var(--slate-dark-7);
-  --color-input: var(--slate-dark-3);
-  --color-input-focus: var(--slate-dark-4);
+  --color-background: var(--sand-dark-1);
+  --color-foreground: var(--sand-dark-12);
+  --color-muted: var(--sand-dark-3);
+  --color-muted-foreground: var(--sand-dark-11);
+  --color-border: var(--sand-dark-6);
+  --color-border-hover: var(--sand-dark-7);
+  --color-input: var(--sand-dark-3);
+  --color-input-focus: var(--sand-dark-4);
   --color-ring: var(--cyan-dark-8);
-  --color-ring-offset: var(--slate-dark-1);
+  --color-ring-offset: var(--sand-dark-1);
 
-  --color-card: var(--slate-dark-2);
-  --color-card-foreground: var(--slate-dark-12);
-  --color-card-hover: var(--slate-dark-3);
-  --color-popover: var(--slate-dark-1);
-  --color-popover-foreground: var(--slate-dark-12);
+  --color-card: var(--sand-dark-2);
+  --color-card-foreground: var(--sand-dark-12);
+  --color-card-hover: var(--sand-dark-3);
+  --color-popover: var(--sand-dark-1);
+  --color-popover-foreground: var(--sand-dark-12);
 }
 
 /* Container -- Tailwind v4 no longer includes mx-auto/padding by default */
