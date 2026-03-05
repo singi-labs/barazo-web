@@ -152,9 +152,9 @@ function NotificationsContent() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-foreground">{notification.message}</p>
-                      {notification.subjectTitle && (
+                      {notification.subjectTitle && notification.subjectAuthorHandle && (
                         <Link
-                          href={`/t/-/${notification.subjectUri.split('/').pop()}`}
+                          href={`/${notification.subjectAuthorHandle}/${notification.subjectUri.split('/').pop()}`}
                           className="mt-1 block text-xs text-primary hover:underline"
                         >
                           {notification.subjectTitle}

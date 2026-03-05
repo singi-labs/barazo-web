@@ -1,6 +1,6 @@
 /**
  * Topic detail page - Shows topic post and threaded replies.
- * URL: /t/{slug}/{rkey}
+ * URL: /{handle}/{rkey}
  * Server-side rendered with JSON-LD DiscussionForumPosting.
  * Maturity-aware: Adult topics are noindex'd, Mature topics get rating meta.
  * @see specs/prd-web.md Section 3.1, Section 5
@@ -9,13 +9,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
-  getTopicByRkey,
+  getTopicByAuthorAndRkey,
   getCategories,
   getReplies,
   getPublicSettings,
   ApiError,
 } from '@/lib/api/client'
-import { slugify } from '@/lib/format'
+import { getTopicUrl } from '@/lib/format'
 import {
   getEffectiveMaturity,
   getMaturityMeta,
@@ -32,15 +32,15 @@ import type { CategoriesResponse, RepliesResponse } from '@/lib/api/types'
 export const dynamic = 'force-dynamic'
 
 interface TopicPageProps {
-  params: Promise<{ slug: string; rkey: string }>
+  params: Promise<{ handle: string; rkey: string }>
   searchParams: Promise<{ page?: string }>
 }
 
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
-  const { rkey } = await params
+  const { handle, rkey } = await params
   try {
     const [topic, publicSettings] = await Promise.all([
-      getTopicByRkey(rkey),
+      getTopicByAuthorAndRkey(handle, rkey),
       getPublicSettings().catch(() => null),
     ])
 
@@ -55,6 +55,7 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
     const description =
       topic.content.length > 160 ? topic.content.slice(0, 157) + '...' : topic.content
 
+    const authorHandle = topic.author?.handle ?? topic.authorDid
     const communityRating = publicSettings?.maturityRating ?? 'safe'
     const effectiveMaturity = getEffectiveMaturity(communityRating, topic.categoryMaturityRating)
     const maturityMeta = getMaturityMeta(effectiveMaturity)
@@ -64,7 +65,7 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
       title: topic.title,
       description,
       alternates: {
-        canonical: `/t/${slugify(topic.title)}/${rkey}`,
+        canonical: getTopicUrl({ authorHandle, rkey }),
       },
       ...(includeOg
         ? {
@@ -86,11 +87,11 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
 const REPLIES_PER_PAGE = 20
 
 export default async function TopicPage({ params }: TopicPageProps) {
-  const { rkey } = await params
+  const { handle, rkey } = await params
 
   let topic
   try {
-    topic = await getTopicByRkey(rkey)
+    topic = await getTopicByAuthorAndRkey(handle, rkey)
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       notFound()
@@ -160,7 +161,8 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const categoryName =
     findCategoryName(categoriesResult.categories, topic.category) ?? topic.category
 
-  const topicSlug = slugify(topic.title)
+  const authorHandle = topic.author?.handle ?? topic.authorDid
+  const topicUrl = getTopicUrl({ authorHandle, rkey })
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
     { label: categoryName, href: `/c/${topic.category}` },
@@ -169,7 +171,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const jsonLdItems = [
     { label: 'Home', href: '/' },
     { label: categoryName, href: `/c/${topic.category}` },
-    { label: topic.title, href: `/t/${topicSlug}/${rkey}` },
+    { label: topic.title, href: topicUrl },
   ]
 
   const jsonLd = {
@@ -189,7 +191,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       interactionType: 'https://schema.org/LikeAction',
       userInteractionCount: topic.reactionCount,
     },
-    url: `https://barazo.forum/t/${encodeURIComponent(topic.title)}/${topic.rkey}`,
+    url: `https://barazo.forum${topicUrl}`,
   }
 
   return (

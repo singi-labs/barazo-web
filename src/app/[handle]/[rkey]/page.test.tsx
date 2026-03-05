@@ -55,7 +55,10 @@ vi.mock('next/navigation', () => ({
 const topic = mockTopics[0]!
 
 describe('TopicPage', () => {
-  const defaultParams = Promise.resolve({ slug: 'welcome-to-barazo-forums', rkey: topic.rkey })
+  const defaultParams = Promise.resolve({
+    handle: topic.author?.handle ?? topic.authorDid,
+    rkey: topic.rkey,
+  })
   const defaultSearchParams = Promise.resolve({})
 
   it('renders topic title as h2', async () => {
@@ -100,7 +103,7 @@ describe('TopicPage', () => {
   })
 
   it('handles topic not found', async () => {
-    const params = Promise.resolve({ slug: 'nonexistent', rkey: 'notreal' })
+    const params = Promise.resolve({ handle: 'unknown.user', rkey: 'notreal' })
     await expect(TopicPage({ params, searchParams: defaultSearchParams })).rejects.toThrow(
       'NEXT_NOT_FOUND'
     )

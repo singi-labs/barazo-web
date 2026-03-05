@@ -3,7 +3,14 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { formatRelativeTime, formatCompactNumber, slugify, getTopicUrl, isEdited } from './format'
+import {
+  formatRelativeTime,
+  formatCompactNumber,
+  slugify,
+  getTopicUrl,
+  getReplyUrl,
+  isEdited,
+} from './format'
 
 describe('formatRelativeTime', () => {
   it('returns "just now" for recent timestamps', () => {
@@ -67,18 +74,31 @@ describe('slugify', () => {
 describe('getTopicUrl', () => {
   it('generates correct URL from topic', () => {
     const topic = {
-      title: 'Welcome to Barazo Forums',
+      authorHandle: 'jay.bsky.team',
       rkey: '3kf1abc',
     }
-    expect(getTopicUrl(topic)).toBe('/t/welcome-to-barazo-forums/3kf1abc')
+    expect(getTopicUrl(topic)).toBe('/jay.bsky.team/3kf1abc')
   })
 
-  it('handles special characters in title', () => {
+  it('handles different handles', () => {
     const topic = {
-      title: 'Feature Request: Dark Mode!',
+      authorHandle: 'alex.example.com',
       rkey: '3kf3ghi',
     }
-    expect(getTopicUrl(topic)).toBe('/t/feature-request-dark-mode/3kf3ghi')
+    expect(getTopicUrl(topic)).toBe('/alex.example.com/3kf3ghi')
+  })
+})
+
+describe('getReplyUrl', () => {
+  it('generates correct reply permalink URL', () => {
+    expect(
+      getReplyUrl({
+        topicAuthorHandle: 'jay.bsky.team',
+        topicRkey: '3kf1abc',
+        replyAuthorHandle: 'alex.example.com',
+        replyRkey: '3kf2def',
+      })
+    ).toBe('/jay.bsky.team/3kf1abc/alex.example.com/3kf2def')
   })
 })
 

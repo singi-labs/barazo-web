@@ -240,8 +240,20 @@ export function getTopics(
   return apiFetch<TopicsResponse>(`/api/topics${query}`, options)
 }
 
+/** @deprecated Use getTopicByAuthorAndRkey for author-scoped lookup */
 export function getTopicByRkey(rkey: string, options?: FetchOptions): Promise<Topic> {
   return apiFetch<Topic>(`/api/topics/by-rkey/${encodeURIComponent(rkey)}`, options)
+}
+
+export function getTopicByAuthorAndRkey(
+  handle: string,
+  rkey: string,
+  options?: FetchOptions
+): Promise<Topic> {
+  return apiFetch<Topic>(
+    `/api/topics/by-author-rkey/${encodeURIComponent(handle)}/${encodeURIComponent(rkey)}`,
+    options
+  )
 }
 
 export function createTopic(
@@ -327,6 +339,17 @@ export function updateReply(
     },
     body: input,
   })
+}
+
+export function getReplyByAuthorAndRkey(
+  handle: string,
+  rkey: string,
+  options?: FetchOptions
+): Promise<Reply> {
+  return apiFetch<Reply>(
+    `/api/replies/by-author-rkey/${encodeURIComponent(handle)}/${encodeURIComponent(rkey)}`,
+    options
+  )
 }
 
 export function deleteReply(

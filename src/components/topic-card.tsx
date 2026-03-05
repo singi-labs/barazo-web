@@ -17,7 +17,10 @@ interface TopicCardProps {
 }
 
 export function TopicCard({ topic, className }: TopicCardProps) {
-  const topicUrl = getTopicUrl(topic)
+  const topicUrl = getTopicUrl({
+    authorHandle: topic.author?.handle ?? topic.authorDid,
+    rkey: topic.rkey,
+  })
 
   return (
     <article
@@ -43,7 +46,7 @@ export function TopicCard({ topic, className }: TopicCardProps) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
           {/* Author */}
           <Link
-            href={`/u/${topic.author?.handle ?? topic.authorDid}`}
+            href={`/profile/${topic.author?.handle ?? topic.authorDid}`}
             className="flex items-center gap-1.5 hover:text-foreground"
           >
             {topic.author?.avatarUrl ? (

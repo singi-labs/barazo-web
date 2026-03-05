@@ -72,7 +72,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
   useEffect(() => {
     if (!handle || !user) return
     if (user.handle !== handle) {
-      router.replace(`/u/${handle}`)
+      router.replace(`/profile/${handle}`)
     }
   }, [handle, user, router])
 
@@ -125,7 +125,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
-            { label: handle, href: `/u/${handle}` },
+            { label: handle, href: `/profile/${handle}` },
             { label: 'Edit profile' },
           ]}
         />
@@ -211,7 +211,7 @@ export function EditProfilePage({ params }: EditProfilePageProps) {
               {saving ? 'Saving...' : 'Save changes'}
             </button>
             <Link
-              href={`/u/${handle}`}
+              href={`/profile/${handle}`}
               className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
             >
               Cancel

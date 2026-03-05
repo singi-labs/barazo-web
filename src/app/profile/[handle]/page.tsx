@@ -1,6 +1,6 @@
 /**
  * User profile page.
- * URL: /u/[handle]
+ * URL: /profile/[handle]
  * Displays user info, reputation, recent posts.
  * Client component (needs param resolution + dynamic data).
  * @see specs/prd-web.md Section M8

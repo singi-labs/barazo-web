@@ -67,7 +67,7 @@ describe('TopicView', () => {
     render(<TopicView topic={topic} />)
     expect(screen.getByText('Jay')).toBeInTheDocument()
     const authorLink = screen.getByRole('link', { name: /Jay/ })
-    expect(authorLink).toHaveAttribute('href', `/u/${mockUsers[0]!.handle}`)
+    expect(authorLink).toHaveAttribute('href', `/profile/${mockUsers[0]!.handle}`)
   })
 
   it('falls back to DID when author profile is missing', () => {

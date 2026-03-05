@@ -15,6 +15,7 @@ export interface SearchSuggestion {
   type: 'topic' | 'reply'
   title: string
   rkey: string
+  authorHandle: string
 }
 
 interface SearchInputProps {
@@ -79,7 +80,9 @@ export function SearchInput({
           break
         case 'Enter':
           if (activeIndex >= 0 && suggestions[activeIndex]) {
-            router.push(`/t/-/${suggestions[activeIndex].rkey}`)
+            router.push(
+              `/${suggestions[activeIndex].authorHandle}/${suggestions[activeIndex].rkey}`
+            )
           } else if (query) {
             router.push(`/search?q=${encodeURIComponent(query)}`)
           }
@@ -154,8 +157,8 @@ export function SearchInput({
           baseId={id}
           suggestions={suggestions}
           activeIndex={activeIndex}
-          onSelect={(rkey) => {
-            router.push(`/t/-/${rkey}`)
+          onSelect={(rkey, authorHandle) => {
+            router.push(`/${authorHandle}/${rkey}`)
             setIsOpen(false)
           }}
         />

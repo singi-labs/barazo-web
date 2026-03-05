@@ -80,17 +80,17 @@ beforeEach(() => {
 
 describe('EditTopicPage', () => {
   it('renders edit topic heading', async () => {
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByRole('heading', { name: 'Edit topic' })).toBeInTheDocument()
   })
 
   it('pre-populates form with topic data', async () => {
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByDisplayValue('Welcome to Barazo Forums')).toBeInTheDocument()
   })
 
   it('shows save button', async () => {
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByRole('button', { name: 'Save Changes' })).toBeInTheDocument()
   })
 
@@ -111,7 +111,7 @@ describe('EditTopicPage', () => {
       authFetch: vi.fn(),
     })
 
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByRole('heading', { name: 'Edit topic' })).toBeInTheDocument()
   })
 
@@ -132,7 +132,7 @@ describe('EditTopicPage', () => {
       authFetch: vi.fn(),
     })
 
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByText('You can only edit your own posts.')).toBeInTheDocument()
   })
 
@@ -148,7 +148,7 @@ describe('EditTopicPage', () => {
       authFetch: vi.fn(),
     })
 
-    render(<EditTopicPage params={{ slug: 'welcome-to-barazo-forums', rkey: '3kf1abc' }} />)
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByText('You can only edit your own posts.')).toBeInTheDocument()
   })
 })

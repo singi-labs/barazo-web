@@ -194,6 +194,19 @@ export const handlers = [
     })
   }),
 
+  // GET /api/topics/by-author-rkey/:handle/:rkey
+  http.get(`${API_URL}/api/topics/by-author-rkey/:handle/:rkey`, ({ params }) => {
+    const handle = decodeURIComponent(params['handle'] as string)
+    const rkey = params['rkey'] as string
+    const topic = mockTopics.find(
+      (t) => t.rkey === rkey && (t.author?.handle === handle || t.authorDid === handle)
+    )
+    if (!topic) {
+      return HttpResponse.json({ error: 'Topic not found' }, { status: 404 })
+    }
+    return HttpResponse.json(topic)
+  }),
+
   // GET /api/topics/by-rkey/:rkey (must be before :uri handler)
   http.get(`${API_URL}/api/topics/by-rkey/:rkey`, ({ params }) => {
     const rkey = params['rkey'] as string

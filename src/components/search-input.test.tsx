@@ -39,7 +39,9 @@ describe('SearchInput', () => {
     render(
       <SearchInput
         onSearch={vi.fn()}
-        suggestions={[{ type: 'topic', title: 'Test result', rkey: '1' }]}
+        suggestions={[
+          { type: 'topic', title: 'Test result', rkey: '1', authorHandle: 'jay.bsky.team' },
+        ]}
       />
     )
     const input = screen.getByRole('combobox')
@@ -85,8 +87,8 @@ describe('SearchInput', () => {
       <SearchInput
         onSearch={vi.fn()}
         suggestions={[
-          { type: 'topic', title: 'First result', rkey: '1' },
-          { type: 'topic', title: 'Second result', rkey: '2' },
+          { type: 'topic', title: 'First result', rkey: '1', authorHandle: 'jay.bsky.team' },
+          { type: 'topic', title: 'Second result', rkey: '2', authorHandle: 'alex.example.com' },
         ]}
       />
     )
@@ -107,7 +109,7 @@ describe('SearchInput', () => {
     render(
       <SearchInput
         onSearch={vi.fn()}
-        suggestions={[{ type: 'topic', title: 'Result', rkey: '1' }]}
+        suggestions={[{ type: 'topic', title: 'Result', rkey: '1', authorHandle: 'jay.bsky.team' }]}
       />
     )
     const input = screen.getByRole('combobox')
@@ -129,8 +131,8 @@ describe('SearchInput', () => {
       <SearchInput
         onSearch={vi.fn()}
         suggestions={[
-          { type: 'topic', title: 'First', rkey: '1' },
-          { type: 'topic', title: 'Second', rkey: '2' },
+          { type: 'topic', title: 'First', rkey: '1', authorHandle: 'jay.bsky.team' },
+          { type: 'topic', title: 'Second', rkey: '2', authorHandle: 'alex.example.com' },
         ]}
       />
     )

@@ -53,7 +53,7 @@ export default function NewTopicPage() {
         return
       }
 
-      router.push(getTopicUrl(topic))
+      router.push(getTopicUrl({ authorHandle: topic.authorHandle, rkey: topic.rkey }))
     } catch (err) {
       if (err instanceof ApiError && err.errorCode === 'Onboarding required') {
         ensureOnboarded()

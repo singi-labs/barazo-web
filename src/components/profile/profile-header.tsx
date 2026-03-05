@@ -92,7 +92,7 @@ export function ProfileHeader({
               )}
               {isOwnProfile && (
                 <Link
-                  href={`/u/${handle}/edit`}
+                  href={`/profile/${handle}/edit`}
                   className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
                   <PencilSimple size={16} aria-hidden="true" />
