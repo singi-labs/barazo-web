@@ -108,7 +108,7 @@ describe('TopicList', () => {
         uri: 'at://did:plc:test/forum.barazo.topic.post/p2',
         rkey: 'p2',
         isPinned: true,
-        pinnedScope: 'global',
+        pinnedScope: 'forum',
         pinnedAt: '2026-03-02T00:00:00Z',
       },
     ]

@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/use-auth'
 import type { Reply, Topic } from '@/lib/api/types'
 import { getTopicUrl } from '@/lib/format'
 import { pinTopic, lockTopic, deleteTopicMod } from '@/lib/api/client'
-import type { ModerationAction } from '@/components/moderation-controls'
+import type { ModerationAction, ModerationActionOptions } from '@/components/moderation-controls'
 import { TopicView } from '@/components/topic-view'
 import { ReplyThread } from '@/components/reply-thread'
 import {
@@ -32,16 +32,17 @@ export function TopicDetailClient({ topic, replies }: TopicDetailClientProps) {
 
   const isLocked = topic.isLocked
   const isModerator = user?.role === 'moderator' || user?.role === 'admin'
+  const isAdmin = user?.role === 'admin'
 
   const handleModerationAction = useCallback(
-    async (action: ModerationAction) => {
+    async (action: ModerationAction, options?: ModerationActionOptions) => {
       const token = getAccessToken()
       if (!token) return
 
       try {
         switch (action) {
           case 'pin':
-            await pinTopic(topic.uri, { scope: 'category' }, token)
+            await pinTopic(topic.uri, { scope: options?.scope ?? 'category' }, token)
             break
           case 'unpin':
             await pinTopic(topic.uri, {}, token)
@@ -146,6 +147,7 @@ export function TopicDetailClient({ topic, replies }: TopicDetailClientProps) {
           canEdit={canEdit}
           onEdit={handleEdit}
           isModerator={isModerator}
+          isAdmin={isAdmin}
           isPinned={topic.isPinned}
           isLocked={isLocked}
           onModerationAction={isModerator ? handleModerationAction : undefined}

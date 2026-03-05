@@ -14,11 +14,16 @@ import { ConfirmDialog } from './confirm-dialog'
 
 export type ModerationAction = 'lock' | 'unlock' | 'pin' | 'unpin' | 'delete'
 
+export interface ModerationActionOptions {
+  scope?: 'category' | 'forum'
+}
+
 interface ModerationControlsProps {
   isModerator: boolean
   isLocked?: boolean
   isPinned?: boolean
-  onAction: (action: ModerationAction) => void
+  isAdmin?: boolean
+  onAction: (action: ModerationAction, options?: ModerationActionOptions) => void
   className?: string
 }
 
@@ -50,10 +55,12 @@ export function ModerationControls({
   isModerator,
   isLocked = false,
   isPinned = false,
+  isAdmin = false,
   onAction,
   className,
 }: ModerationControlsProps) {
   const [pendingAction, setPendingAction] = useState<ModerationAction | null>(null)
+  const [pinScope, setPinScope] = useState<'category' | 'forum'>('category')
 
   if (!isModerator) return null
 
@@ -63,13 +70,19 @@ export function ModerationControls({
 
   const handleConfirm = () => {
     if (pendingAction) {
-      onAction(pendingAction)
+      if (pendingAction === 'pin') {
+        onAction(pendingAction, { scope: pinScope })
+      } else {
+        onAction(pendingAction)
+      }
       setPendingAction(null)
+      setPinScope('category')
     }
   }
 
   const handleCancel = () => {
     setPendingAction(null)
+    setPinScope('category')
   }
 
   const lockAction = isLocked ? 'unlock' : 'lock'
@@ -130,7 +143,37 @@ export function ModerationControls({
           variant={pendingAction === 'delete' ? 'destructive' : 'default'}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
-        />
+        >
+          {pendingAction === 'pin' && (
+            <fieldset className="mt-3">
+              <legend className="text-sm font-medium text-foreground">Pin scope</legend>
+              <div className="mt-2 space-y-2">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="pin-scope"
+                    value="category"
+                    checked={pinScope === 'category'}
+                    onChange={() => setPinScope('category')}
+                  />
+                  This category
+                </label>
+                {isAdmin && (
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="pin-scope"
+                      value="forum"
+                      checked={pinScope === 'forum'}
+                      onChange={() => setPinScope('forum')}
+                    />
+                    Forum-wide
+                  </label>
+                )}
+              </div>
+            </fieldset>
+          )}
+        </ConfirmDialog>
       )}
     </>
   )
