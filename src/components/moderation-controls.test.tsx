@@ -173,6 +173,42 @@ describe('ModerationControls', () => {
       expect(categoryRadio.checked).toBe(true)
     })
 
+    it('should show warning when pinnedCount is 5 or more', async () => {
+      const user = userEvent.setup()
+      render(
+        <ModerationControls
+          isModerator={true}
+          isPinned={false}
+          pinnedCount={6}
+          onAction={vi.fn()}
+        />
+      )
+      await user.click(screen.getByRole('button', { name: /pin topic/i }))
+      expect(screen.getByText(/6 pinned topics/)).toBeInTheDocument()
+      expect(screen.getByRole('status')).toBeInTheDocument()
+    })
+
+    it('should not show warning when pinnedCount is below 5', async () => {
+      const user = userEvent.setup()
+      render(
+        <ModerationControls
+          isModerator={true}
+          isPinned={false}
+          pinnedCount={3}
+          onAction={vi.fn()}
+        />
+      )
+      await user.click(screen.getByRole('button', { name: /pin topic/i }))
+      expect(screen.queryByText(/pinned topics/)).not.toBeInTheDocument()
+    })
+
+    it('should not show warning when pinnedCount is not provided', async () => {
+      const user = userEvent.setup()
+      render(<ModerationControls isModerator={true} isPinned={false} onAction={vi.fn()} />)
+      await user.click(screen.getByRole('button', { name: /pin topic/i }))
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    })
+
     it('passes axe accessibility check with pin scope selector open', async () => {
       const user = userEvent.setup()
       const { container } = render(

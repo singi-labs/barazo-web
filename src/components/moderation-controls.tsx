@@ -23,6 +23,7 @@ interface ModerationControlsProps {
   isLocked?: boolean
   isPinned?: boolean
   isAdmin?: boolean
+  pinnedCount?: number
   onAction: (action: ModerationAction, options?: ModerationActionOptions) => void
   className?: string
 }
@@ -56,6 +57,7 @@ export function ModerationControls({
   isLocked = false,
   isPinned = false,
   isAdmin = false,
+  pinnedCount,
   onAction,
   className,
 }: ModerationControlsProps) {
@@ -145,33 +147,41 @@ export function ModerationControls({
           onCancel={handleCancel}
         >
           {pendingAction === 'pin' && (
-            <fieldset className="mt-3">
-              <legend className="text-sm font-medium text-foreground">Pin scope</legend>
-              <div className="mt-2 space-y-2">
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    name="pin-scope"
-                    value="category"
-                    checked={pinScope === 'category'}
-                    onChange={() => setPinScope('category')}
-                  />
-                  This category
-                </label>
-                {isAdmin && (
+            <>
+              <fieldset className="mt-3">
+                <legend className="text-sm font-medium text-foreground">Pin scope</legend>
+                <div className="mt-2 space-y-2">
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="pin-scope"
-                      value="forum"
-                      checked={pinScope === 'forum'}
-                      onChange={() => setPinScope('forum')}
+                      value="category"
+                      checked={pinScope === 'category'}
+                      onChange={() => setPinScope('category')}
                     />
-                    Forum-wide
+                    This category
                   </label>
-                )}
-              </div>
-            </fieldset>
+                  {isAdmin && (
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="pin-scope"
+                        value="forum"
+                        checked={pinScope === 'forum'}
+                        onChange={() => setPinScope('forum')}
+                      />
+                      Forum-wide
+                    </label>
+                  )}
+                </div>
+              </fieldset>
+              {pinnedCount !== undefined && pinnedCount >= 5 && (
+                <p className="mt-2 text-xs text-yellow-600 dark:text-yellow-400" role="status">
+                  This category has {pinnedCount} pinned topics. Too many pinned topics reduce their
+                  effectiveness.
+                </p>
+              )}
+            </>
           )}
         </ConfirmDialog>
       )}
