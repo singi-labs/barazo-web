@@ -154,7 +154,7 @@ export function ReplyCard({
         <div className="flex items-center justify-between border-b border-border px-4 py-2">
           <div className="flex items-center gap-2 text-sm">
             <Link
-              href={`/u/${reply.author?.handle ?? reply.authorDid}`}
+              href={`/profile/${reply.author?.handle ?? reply.authorDid}`}
               className="flex items-center gap-2 hover:text-foreground"
             >
               {reply.author?.avatarUrl ? (

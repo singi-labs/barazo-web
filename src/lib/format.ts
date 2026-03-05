@@ -95,10 +95,22 @@ export function slugify(text: string): string {
 }
 
 /**
- * Generates a topic URL from a topic's title and rkey.
+ * Generates a topic URL from a topic's author handle and rkey.
  */
-export function getTopicUrl(topic: { title: string; rkey: string }): string {
-  return `/t/${slugify(topic.title)}/${topic.rkey}`
+export function getTopicUrl(topic: { authorHandle: string; rkey: string }): string {
+  return `/${topic.authorHandle}/${topic.rkey}`
+}
+
+/**
+ * Generates a reply permalink URL.
+ */
+export function getReplyUrl(params: {
+  topicAuthorHandle: string
+  topicRkey: string
+  replyAuthorHandle: string
+  replyRkey: string
+}): string {
+  return `/${params.topicAuthorHandle}/${params.topicRkey}/${params.replyAuthorHandle}/${params.replyRkey}`
 }
 
 /**

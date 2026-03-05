@@ -11,7 +11,7 @@ interface SearchSuggestionListProps {
   baseId: string
   suggestions: SearchSuggestion[]
   activeIndex: number
-  onSelect: (rkey: string) => void
+  onSelect: (rkey: string, authorHandle: string) => void
 }
 
 export function SearchSuggestionList({
@@ -43,7 +43,7 @@ export function SearchSuggestionList({
           )}
           onMouseDown={(e) => {
             e.preventDefault()
-            onSelect(suggestion.rkey)
+            onSelect(suggestion.rkey, suggestion.authorHandle)
           }}
         >
           <span className="font-medium">{suggestion.title}</span>

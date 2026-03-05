@@ -5,7 +5,7 @@ import AxeBuilder from '@axe-core/playwright'
  * Accessibility tests for all Barazo page types.
  * Tests against WCAG 2.0 A, WCAG 2.0 AA, and WCAG 2.2 AA criteria.
  *
- * Dynamic pages (/c/[slug], /t/[slug]/[rkey], /u/[handle]) may render
+ * Dynamic pages (/c/[slug], /[handle]/[rkey], /profile/[handle]) may render
  * error/fallback pages when no API is running. This is acceptable --
  * we test the rendered HTML for a11y violations regardless.
  */
@@ -15,11 +15,11 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag22aa'] as const
 const pages = [
   { name: 'Homepage', path: '/' },
   { name: 'Category page', path: '/c/general/' },
-  { name: 'Topic page', path: '/t/test-topic/abc123/' },
+  { name: 'Topic page', path: '/jay.bsky.team/abc123/' },
   { name: 'Search page', path: '/search/' },
   { name: 'Admin dashboard', path: '/admin/' },
   { name: 'Settings page', path: '/settings/' },
-  { name: 'Profile page', path: '/u/jay/' },
+  { name: 'Profile page', path: '/profile/jay/' },
   { name: 'Accessibility statement', path: '/accessibility/' },
 ]
 

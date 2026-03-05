@@ -71,7 +71,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link href={`/u/${encodeURIComponent(user.handle)}`} className="flex items-center gap-2">
+          <Link href={`/profile/${encodeURIComponent(user.handle)}`} className="flex items-center gap-2">
             <User size={16} aria-hidden="true" />
             Profile
           </Link>

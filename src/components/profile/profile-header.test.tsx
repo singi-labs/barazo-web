@@ -263,7 +263,7 @@ describe('ProfileHeader', () => {
       )
       const link = screen.getByRole('link', { name: /edit profile/i })
       expect(link).toBeInTheDocument()
-      expect(link).toHaveAttribute('href', '/u/test.bsky.social/edit')
+      expect(link).toHaveAttribute('href', '/profile/test.bsky.social/edit')
     })
 
     it('hides "Edit profile" link when viewing another user profile', () => {

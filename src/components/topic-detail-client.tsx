@@ -31,7 +31,12 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
 
   const canEdit = isAuthenticated && user?.did === topic.authorDid
   const handleEdit = useCallback(() => {
-    router.push(getTopicUrl(topic) + '/edit')
+    router.push(
+      getTopicUrl({
+        authorHandle: topic.author?.handle ?? topic.authorDid,
+        rkey: topic.rkey,
+      }) + '/edit'
+    )
   }, [router, topic])
   const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null)
   const [composerContent, setComposerContent] = useState('')

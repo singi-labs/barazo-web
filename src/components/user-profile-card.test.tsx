@@ -76,7 +76,7 @@ describe('UserProfileCard', () => {
   it('renders as link to user profile', () => {
     render(<UserProfileCard user={mockUser} />)
     const link = screen.getByRole('link', { name: /jay\.bsky\.team/i })
-    expect(link).toHaveAttribute('href', '/u/jay.bsky.team')
+    expect(link).toHaveAttribute('href', '/profile/jay.bsky.team')
   })
 
   it('passes axe accessibility check', async () => {

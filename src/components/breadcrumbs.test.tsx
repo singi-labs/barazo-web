@@ -68,7 +68,7 @@ describe('Breadcrumbs', () => {
     const jsonLdItems = [
       { label: 'Home', href: '/' },
       { label: 'Development', href: '/c/development' },
-      { label: 'My Topic Title', href: '/t/my-topic/abc123' },
+      { label: 'My Topic Title', href: '/jay.bsky.team/abc123' },
     ]
     const visualItems = [
       { label: 'Home', href: '/' },

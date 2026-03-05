@@ -1,6 +1,6 @@
 /**
  * Edit topic page - Edit an existing forum topic.
- * URL: /t/{slug}/{rkey}/edit
+ * URL: /{handle}/{rkey}/edit
  * Client component (requires auth context + form state).
  * @see specs/prd-web.md Section 3.2
  */
@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { CreateTopicInput, PublicSettings, Topic } from '@/lib/api/types'
-import { getTopicByRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
+import { getTopicByAuthorAndRkey, updateTopic, getPublicSettings } from '@/lib/api/client'
 import { getTopicUrl } from '@/lib/format'
 import { useAuth } from '@/hooks/use-auth'
 import { ForumLayout } from '@/components/layout/forum-layout'
@@ -19,12 +19,13 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicForm } from '@/components/topic-form'
 
 interface EditTopicPageProps {
-  params: Promise<{ slug: string; rkey: string }> | { slug: string; rkey: string }
+  params: Promise<{ handle: string; rkey: string }> | { handle: string; rkey: string }
 }
 
 export default function EditTopicPage({ params }: EditTopicPageProps) {
   const router = useRouter()
   const { user, isLoading: authLoading, getAccessToken } = useAuth()
+  const [handle, setHandle] = useState<string | null>(null)
   const [rkey, setRkey] = useState<string | null>(null)
   const [topic, setTopic] = useState<Topic | null>(null)
   const [loading, setLoading] = useState(true)
@@ -42,19 +43,20 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
   useEffect(() => {
     async function resolveParams() {
       const resolved = params instanceof Promise ? await params : params
+      setHandle(resolved.handle)
       setRkey(resolved.rkey)
     }
     void resolveParams()
   }, [params])
 
-  // Load topic once rkey is available
+  // Load topic once handle and rkey are available
   useEffect(() => {
-    if (!rkey) return
+    if (!handle || !rkey) return
 
     let cancelled = false
     async function loadTopic() {
       try {
-        const loaded = await getTopicByRkey(rkey!)
+        const loaded = await getTopicByAuthorAndRkey(handle!, rkey!)
         if (!cancelled) {
           setTopic(loaded)
           setLoading(false)
@@ -70,7 +72,10 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
     return () => {
       cancelled = true
     }
-  }, [rkey])
+  }, [handle, rkey])
+
+  const buildTopicUrl = (t: Topic) =>
+    getTopicUrl({ authorHandle: t.author?.handle ?? t.authorDid, rkey: t.rkey })
 
   const handleSubmit = async (values: CreateTopicInput) => {
     if (!rkey) return
@@ -89,7 +94,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
         },
         accessToken
       )
-      router.push(getTopicUrl(updated))
+      router.push(buildTopicUrl(updated))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update topic')
       setSubmitting(false)
@@ -129,7 +134,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Edit' }]} />
           <div className="py-8 text-center">
             <p className="text-muted-foreground">You can only edit your own posts.</p>
-            <Link href={getTopicUrl(topic)} className="text-sm text-primary hover:underline">
+            <Link href={buildTopicUrl(topic)} className="text-sm text-primary hover:underline">
               Back to topic
             </Link>
           </div>
@@ -145,7 +150,7 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
           items={[
             { label: 'Home', href: '/' },
             { label: topic.category, href: `/c/${topic.category}` },
-            { label: topic.title, href: getTopicUrl(topic) },
+            { label: topic.title, href: buildTopicUrl(topic) },
             { label: 'Edit' },
           ]}
         />

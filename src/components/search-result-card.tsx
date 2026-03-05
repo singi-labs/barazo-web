@@ -16,7 +16,8 @@ interface SearchResultCardProps {
 
 export function SearchResultCard({ result, formatDate }: SearchResultCardProps) {
   const isTopic = result.type === 'topic'
-  const href = isTopic ? `/t/${result.category ?? '-'}/${result.rkey}` : `/t/-/${result.rkey}`
+  const authorHandle = result.authorHandle ?? result.authorDid
+  const href = `/${authorHandle}/${result.rkey}`
 
   return (
     <article className="rounded-lg border border-border bg-card p-4 transition-colors hover:bg-card-hover">

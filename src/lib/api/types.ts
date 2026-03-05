@@ -158,6 +158,7 @@ export interface CreateTopicResponse {
   rkey: string
   title: string
   category: string
+  authorHandle: string
   moderationStatus: ModerationStatus
   createdAt: string
 }
@@ -237,6 +238,7 @@ export interface SearchResult {
   uri: string
   rkey: string
   authorDid: string
+  authorHandle: string | null
   title: string | null
   content: string
   category: string | null
@@ -339,6 +341,8 @@ export interface Notification {
   actorHandle: string
   subjectUri: string
   subjectTitle: string | null
+  subjectAuthorDid: string
+  subjectAuthorHandle: string | null
   message: string
   read: boolean
   createdAt: string

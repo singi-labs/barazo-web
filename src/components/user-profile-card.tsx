@@ -80,7 +80,7 @@ export function UserProfileCard({ user, className }: UserProfileCardProps) {
       onBlur={hide}
     >
       <Link
-        href={`/u/${user.handle}`}
+        href={`/profile/${user.handle}`}
         className="font-medium text-foreground hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-sm"
       >
         {user.handle}

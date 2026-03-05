@@ -140,7 +140,7 @@ describe('EditProfilePage', () => {
       render(<EditProfilePage params={{ handle: 'alex.bsky.team' }} />)
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith('/u/alex.bsky.team')
+        expect(mockReplace).toHaveBeenCalledWith('/profile/alex.bsky.team')
       })
     })
   })
@@ -164,7 +164,7 @@ describe('EditProfilePage', () => {
     it('renders cancel link', () => {
       render(<EditProfilePage params={{ handle: 'jay.bsky.team' }} />)
       const cancel = screen.getByRole('link', { name: /cancel/i })
-      expect(cancel).toHaveAttribute('href', '/u/jay.bsky.team')
+      expect(cancel).toHaveAttribute('href', '/profile/jay.bsky.team')
     })
   })
 

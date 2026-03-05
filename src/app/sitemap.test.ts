@@ -113,16 +113,16 @@ describe('sitemap', () => {
     expect(urls).toContain('https://barazo.forum/c/introductions')
   })
 
-  it('includes topic pages with slug and rkey', async () => {
+  it('includes topic pages with author handle and rkey', async () => {
     const result = await sitemap()
     const urls = result.map((entry) => entry.url)
-    expect(urls).toContain('https://barazo.forum/t/hello-world/abc123')
-    expect(urls).toContain('https://barazo.forum/t/second-topic/def456')
+    expect(urls).toContain('https://barazo.forum/did:plc:author1/abc123')
+    expect(urls).toContain('https://barazo.forum/did:plc:author2/def456')
   })
 
   it('sets lastModified for topics', async () => {
     const result = await sitemap()
-    const topicEntry = result.find((entry) => entry.url.includes('/t/hello-world/abc123'))
+    const topicEntry = result.find((entry) => entry.url.includes('/did:plc:author1/abc123'))
     expect(topicEntry?.lastModified).toBeDefined()
   })
 
@@ -134,7 +134,7 @@ describe('sitemap', () => {
     const categoryEntry = result.find((entry) => entry.url.includes('/c/general'))
     expect(categoryEntry?.changeFrequency).toBe('daily')
 
-    const topicEntry = result.find((entry) => entry.url.includes('/t/hello-world/abc123'))
+    const topicEntry = result.find((entry) => entry.url.includes('/did:plc:author1/abc123'))
     expect(topicEntry?.changeFrequency).toBe('weekly')
   })
 
@@ -146,7 +146,7 @@ describe('sitemap', () => {
     const categoryEntry = result.find((entry) => entry.url.includes('/c/general'))
     expect(categoryEntry?.priority).toBe(0.8)
 
-    const topicEntry = result.find((entry) => entry.url.includes('/t/hello-world/abc123'))
+    const topicEntry = result.find((entry) => entry.url.includes('/did:plc:author1/abc123'))
     expect(topicEntry?.priority).toBe(0.6)
   })
 
@@ -255,8 +255,8 @@ describe('sitemap', () => {
 
     const result = await sitemap()
     const urls = result.map((entry) => entry.url)
-    expect(urls).toContain('https://barazo.forum/t/safe-topic/safe1')
-    expect(urls).not.toContain('https://barazo.forum/t/adult-topic/adult1')
+    expect(urls).toContain('https://barazo.forum/did:plc:author1/safe1')
+    expect(urls).not.toContain('https://barazo.forum/did:plc:author2/adult1')
   })
 
   it('includes mature-rated categories in sitemap', async () => {

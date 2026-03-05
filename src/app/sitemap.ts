@@ -7,7 +7,7 @@
 
 import type { MetadataRoute } from 'next'
 import { getCategories, getTopics } from '@/lib/api/client'
-import { slugify } from '@/lib/format'
+import { getTopicUrl } from '@/lib/format'
 import type { CategoryTreeNode } from '@/lib/api/types'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://barazo.forum'
@@ -58,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const topic of topicsResult.topics) {
       if (topic.categoryMaturityRating === 'adult') continue
       entries.push({
-        url: `${SITE_URL}/t/${slugify(topic.title)}/${topic.rkey}`,
+        url: `${SITE_URL}${getTopicUrl({ authorHandle: topic.author?.handle ?? topic.authorDid, rkey: topic.rkey })}`,
         lastModified: new Date(topic.lastActivityAt),
         changeFrequency: 'weekly',
         priority: 0.6,
