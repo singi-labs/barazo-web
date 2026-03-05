@@ -137,10 +137,7 @@ describe('LoginPage', () => {
     const user = userEvent.setup()
     render(<LoginPage />)
 
-    await user.type(
-      screen.getByLabelText(/handle/i),
-      'at://did:plc:cbkjy5n7bk3ax2wplmtjofq2'
-    )
+    await user.type(screen.getByLabelText(/handle/i), 'at://did:plc:cbkjy5n7bk3ax2wplmtjofq2')
     await user.click(screen.getByRole('button', { name: /continue/i }))
 
     expect(mockLogin).toHaveBeenCalledWith('did:plc:cbkjy5n7bk3ax2wplmtjofq2')
@@ -150,10 +147,7 @@ describe('LoginPage', () => {
     const user = userEvent.setup()
     render(<LoginPage />)
 
-    await user.type(
-      screen.getByLabelText(/handle/i),
-      'did:plc:CbKjY5N7Bk3Ax2WplmTjOfQ2'
-    )
+    await user.type(screen.getByLabelText(/handle/i), 'did:plc:CbKjY5N7Bk3Ax2WplmTjOfQ2')
     await user.click(screen.getByRole('button', { name: /continue/i }))
 
     expect(mockLogin).toHaveBeenCalledWith('did:plc:CbKjY5N7Bk3Ax2WplmTjOfQ2')
