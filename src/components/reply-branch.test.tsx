@@ -164,7 +164,8 @@ describe('ReplyBranch collapse behavior', () => {
         currentVisualDepth={1}
       />
     )
-    expect(screen.getByText(/1 reply hidden/)).toBeInTheDocument()
+    // depth3 node has 2 descendants: depth4 and depth5
+    expect(screen.getByText(/2 replies hidden/)).toBeInTheDocument()
   })
 
   it('toggles collapse when ThreadLine is clicked', async () => {
