@@ -147,7 +147,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
       {/* New topic button */}
       <div className="mb-4 flex justify-end">
-        <NewTopicButton variant="category" categorySlug={categorySlug} categoryName={category.name} />
+        <NewTopicButton
+          variant="category"
+          categorySlug={categorySlug}
+          categoryName={category.name}
+        />
       </div>
 
       {/* Topic list */}

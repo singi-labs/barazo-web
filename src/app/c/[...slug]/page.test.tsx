@@ -137,9 +137,7 @@ describe('CategoryPage', () => {
     const page = await CategoryPage({ params: subcategoryParams })
     render(page)
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Bug Reports' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Bug Reports' })).toBeInTheDocument()
 
     // Parent category should appear in breadcrumbs
     const breadcrumbNav = screen.getByRole('navigation', { name: /breadcrumb/i })
