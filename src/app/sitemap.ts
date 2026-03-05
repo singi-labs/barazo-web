@@ -12,12 +12,17 @@ import type { CategoryTreeNode } from '@/lib/api/types'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://barazo.forum'
 
-function flattenCategories(nodes: CategoryTreeNode[]): CategoryTreeNode[] {
-  const result: CategoryTreeNode[] = []
+interface FlatCategory extends CategoryTreeNode {
+  path: string
+}
+
+function flattenCategories(nodes: CategoryTreeNode[], parentPath = ''): FlatCategory[] {
+  const result: FlatCategory[] = []
   for (const node of nodes) {
-    result.push(node)
+    const path = parentPath ? `${parentPath}/${node.slug}` : node.slug
+    result.push({ ...node, path })
     if (node.children.length > 0) {
-      result.push(...flattenCategories(node.children))
+      result.push(...flattenCategories(node.children, path))
     }
   }
   return result
@@ -45,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const category of allCategories) {
       if (category.maturityRating === 'adult') continue
       entries.push({
-        url: `${SITE_URL}/c/${category.slug}`,
+        url: `${SITE_URL}/c/${category.path}`,
         lastModified: new Date(category.updatedAt),
         changeFrequency: 'daily',
         priority: 0.8,

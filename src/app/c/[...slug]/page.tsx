@@ -1,6 +1,6 @@
 /**
  * Category page - Shows topics for a specific category.
- * URL: /c/{slug}
+ * URL: /c/{slug} or /c/{parentSlug}/{slug} for subcategories.
  * Server-side rendered with SEO metadata and JSON-LD.
  * Maturity-aware: Adult categories are noindex'd, Mature get rating meta.
  * @see specs/prd-web.md Section 3.1
@@ -24,17 +24,34 @@ import { CategoryNav } from '@/components/category-nav'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { Pagination } from '@/components/pagination'
 import { NewTopicButton } from '@/components/new-topic-button'
+import type { CategoryTreeNode } from '@/lib/api/types'
 
 interface CategoryPageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
   searchParams?: Promise<{ page?: string }>
 }
 
+/** Find a category in the tree by slug. */
+function findCategoryInTree(
+  categories: CategoryTreeNode[],
+  slug: string
+): CategoryTreeNode | undefined {
+  for (const cat of categories) {
+    if (cat.slug === slug) return cat
+    const found = findCategoryInTree(cat.children, slug)
+    if (found) return found
+  }
+  return undefined
+}
+
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { slug } = await params
+  const { slug: slugSegments } = await params
+  const categorySlug = slugSegments.at(-1)!
+  const canonicalPath = `/c/${slugSegments.join('/')}`
+
   try {
     const [category, publicSettings] = await Promise.all([
-      getCategoryBySlug(slug),
+      getCategoryBySlug(categorySlug),
       getPublicSettings().catch(() => null),
     ])
 
@@ -47,7 +64,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       title: category.name,
       description: category.description ?? `Topics in ${category.name}`,
       alternates: {
-        canonical: `/c/${slug}`,
+        canonical: canonicalPath,
       },
       ...(includeOg
         ? {
@@ -68,13 +85,15 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 const TOPICS_PER_PAGE = 20
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { slug } = await params
+  const { slug: slugSegments } = await params
+  const categorySlug = slugSegments.at(-1)!
+  const canonicalPath = `/c/${slugSegments.join('/')}`
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const page = Math.max(1, parseInt(resolvedSearchParams.page ?? '1', 10) || 1)
 
   let category
   try {
-    category = await getCategoryBySlug(slug)
+    category = await getCategoryBySlug(categorySlug)
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       notFound()
@@ -85,7 +104,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const [categoriesResult, topicsResult, publicSettings] = await Promise.all([
     getCategories(),
     getTopics({
-      category: slug,
+      category: categorySlug,
       limit: TOPICS_PER_PAGE,
     }),
     getPublicSettings().catch(() => null),
@@ -93,15 +112,24 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const totalPages = Math.max(1, Math.ceil(category.topicCount / TOPICS_PER_PAGE))
 
-  const breadcrumbItems = [
-    { label: 'Home', href: '/' },
-    { label: category.name, href: `/c/${slug}` },
-  ]
+  // Build breadcrumbs: Home > [Parent] > Category
+  const breadcrumbItems = [{ label: 'Home', href: '/' }]
+
+  if (slugSegments.length > 1) {
+    const parentSlug = slugSegments[0]!
+    const parentCategory = findCategoryInTree(categoriesResult.categories, parentSlug)
+    breadcrumbItems.push({
+      label: parentCategory?.name ?? parentSlug,
+      href: `/c/${parentSlug}`,
+    })
+  }
+
+  breadcrumbItems.push({ label: category.name, href: canonicalPath })
 
   return (
     <ForumLayout
       publicSettings={publicSettings}
-      sidebar={<CategoryNav categories={categoriesResult.categories} currentSlug={slug} />}
+      sidebar={<CategoryNav categories={categoriesResult.categories} currentSlug={categorySlug} />}
     >
       {/* Breadcrumbs (includes JSON-LD BreadcrumbList) */}
       <Breadcrumbs items={breadcrumbItems} />
@@ -119,7 +147,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
       {/* New topic button */}
       <div className="mb-4 flex justify-end">
-        <NewTopicButton variant="category" categorySlug={slug} categoryName={category.name} />
+        <NewTopicButton
+          variant="category"
+          categorySlug={categorySlug}
+          categoryName={category.name}
+        />
       </div>
 
       {/* Topic list */}
@@ -128,7 +160,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-6">
-          <Pagination currentPage={page} totalPages={totalPages} baseUrl={`/c/${slug}`} />
+          <Pagination currentPage={page} totalPages={totalPages} baseUrl={canonicalPath} />
         </div>
       )}
     </ForumLayout>

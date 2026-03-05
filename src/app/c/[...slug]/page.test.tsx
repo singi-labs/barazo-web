@@ -78,7 +78,7 @@ beforeEach(() => {
   vi.mocked(getPublicSettings).mockResolvedValue(mockPublicSettings)
 })
 
-const params = Promise.resolve({ slug: 'general' })
+const params = Promise.resolve({ slug: ['general'] })
 
 describe('CategoryPage', () => {
   it('renders category name as heading', async () => {
@@ -123,5 +123,24 @@ describe('CategoryPage', () => {
       return data['@type'] === 'BreadcrumbList'
     })
     expect(breadcrumbScript).toBeTruthy()
+  })
+
+  it('renders subcategory with parent breadcrumb', async () => {
+    const subcategoryData = {
+      ...mockCategories[2]!.children[1]!, // bug-reports under feedback
+      topicCount: 3,
+    }
+    mockGetCategoryBySlug.mockResolvedValue(subcategoryData)
+    mockGetTopics.mockResolvedValue({ topics: [], cursor: null })
+
+    const subcategoryParams = Promise.resolve({ slug: ['feedback', 'bug-reports'] })
+    const page = await CategoryPage({ params: subcategoryParams })
+    render(page)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Bug Reports' })).toBeInTheDocument()
+
+    // Parent category should appear in breadcrumbs
+    const breadcrumbNav = screen.getByRole('navigation', { name: /breadcrumb/i })
+    expect(breadcrumbNav).toHaveTextContent('Feedback & Ideas')
   })
 })
