@@ -27,13 +27,16 @@ module.exports = {
       ignore: ['WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl'],
     },
     {
-      url: 'http://localhost:3000/t/test-topic/abc123/',
+      url: 'http://localhost:3000/jay.bsky.team/abc123/',
       ignore: ['WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl'],
     },
     'http://localhost:3000/search/',
     'http://localhost:3000/admin/',
     'http://localhost:3000/settings/',
-    'http://localhost:3000/u/jay/',
+    {
+      url: 'http://localhost:3000/profile/jay/',
+      ignore: ['WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl'],
+    },
     'http://localhost:3000/accessibility/',
   ],
 }

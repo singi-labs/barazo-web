@@ -11,7 +11,7 @@ import { join } from 'node:path'
 const pages = [
   { name: 'Homepage', path: '/' },
   { name: 'Category page', path: '/c/general/' },
-  { name: 'Topic page', path: '/t/test-topic/abc123/' },
+  { name: 'Topic page', path: '/jay.bsky.team/abc123/' },
   { name: 'Search page', path: '/search/' },
   { name: 'Admin dashboard', path: '/admin/' },
   { name: 'Admin categories', path: '/admin/categories/' },
@@ -19,7 +19,7 @@ const pages = [
   { name: 'Admin settings', path: '/admin/settings/' },
   { name: 'Admin users', path: '/admin/users/' },
   { name: 'Settings page', path: '/settings/' },
-  { name: 'Profile page', path: '/u/jay/' },
+  { name: 'Profile page', path: '/profile/jay/' },
   { name: 'Accessibility statement', path: '/accessibility/' },
   { name: 'Login page', path: '/login/' },
   { name: 'Legal - Privacy', path: '/legal/privacy/' },
