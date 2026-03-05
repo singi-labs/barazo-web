@@ -80,7 +80,9 @@ export function SearchInput({
           break
         case 'Enter':
           if (activeIndex >= 0 && suggestions[activeIndex]) {
-            router.push(`/${suggestions[activeIndex].authorHandle}/${suggestions[activeIndex].rkey}`)
+            router.push(
+              `/${suggestions[activeIndex].authorHandle}/${suggestions[activeIndex].rkey}`
+            )
           } else if (query) {
             router.push(`/search?q=${encodeURIComponent(query)}`)
           }

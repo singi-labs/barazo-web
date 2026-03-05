@@ -39,7 +39,9 @@ describe('SearchInput', () => {
     render(
       <SearchInput
         onSearch={vi.fn()}
-        suggestions={[{ type: 'topic', title: 'Test result', rkey: '1', authorHandle: 'jay.bsky.team' }]}
+        suggestions={[
+          { type: 'topic', title: 'Test result', rkey: '1', authorHandle: 'jay.bsky.team' },
+        ]}
       />
     )
     const input = screen.getByRole('combobox')
