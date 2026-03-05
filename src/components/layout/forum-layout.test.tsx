@@ -165,9 +165,15 @@ describe('ForumLayout', () => {
     expect(logos.length).toBeGreaterThan(0)
   })
 
+  it('links footer your data to /p/your-data', () => {
+    render(<ForumLayout>Content</ForumLayout>)
+    const yourDataLink = screen.getByRole('link', { name: /your data/i })
+    expect(yourDataLink).toHaveAttribute('href', '/p/your-data')
+  })
+
   it('links footer privacy to /p/privacy-policy', () => {
     render(<ForumLayout>Content</ForumLayout>)
-    const privacyLink = screen.getByRole('link', { name: /privacy/i })
+    const privacyLink = screen.getByRole('link', { name: /^privacy$/i })
     expect(privacyLink).toHaveAttribute('href', '/p/privacy-policy')
   })
 
