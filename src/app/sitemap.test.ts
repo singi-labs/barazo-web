@@ -118,7 +118,7 @@ describe('sitemap', () => {
     const result = await sitemap()
     const urls = result.map((entry) => entry.url)
     expect(urls).toContain('https://barazo.forum/c/general')
-    expect(urls).toContain('https://barazo.forum/c/introductions')
+    expect(urls).toContain('https://barazo.forum/c/general/introductions')
   })
 
   it('includes topic pages with author handle and rkey', async () => {
@@ -163,7 +163,7 @@ describe('sitemap', () => {
     const urls = result.map((entry) => entry.url)
     // Both parent and child categories should be included
     expect(urls).toContain('https://barazo.forum/c/general')
-    expect(urls).toContain('https://barazo.forum/c/introductions')
+    expect(urls).toContain('https://barazo.forum/c/general/introductions')
   })
 
   it('handles API errors gracefully', async () => {
