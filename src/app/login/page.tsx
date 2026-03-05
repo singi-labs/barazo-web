@@ -38,13 +38,21 @@ function LoginContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const trimmed = handle
+    let identifier = handle
       .trim()
       .replace(/^https?:\/\/bsky\.app\/profile\//i, '')
+      .replace(/^at:\/\//i, '')
       .replace(/^@/, '')
-      .replace(/\.$/, '')
-      .toLowerCase()
-    if (!trimmed) {
+    // Strip AT-URI path segments (e.g. "handle/app.bsky.feed.post/abc" → "handle")
+    if (!identifier.startsWith('did:')) {
+      identifier = identifier.split('/')[0] ?? identifier
+    }
+    identifier = identifier.replace(/\.$/, '')
+    // Only lowercase handles -- DIDs are case-sensitive
+    if (!identifier.startsWith('did:')) {
+      identifier = identifier.toLowerCase()
+    }
+    if (!identifier) {
       setError('Please enter your handle')
       return
     }
@@ -55,11 +63,11 @@ function LoginContent() {
     try {
       // Store returnTo so callback can redirect back
       sessionStorage.setItem('auth_returnTo', returnTo)
-      await login(trimmed)
+      await login(identifier)
     } catch (err) {
       if (err instanceof ApiError && err.status === 502) {
         setError(
-          `We couldn't find an account for "${trimmed}". Please check for typos and try again.`
+          `We couldn't find an account for "${identifier}". Please check for typos and try again.`
         )
       } else {
         setError(err instanceof Error ? err.message : 'Failed to start login')
@@ -112,7 +120,7 @@ function LoginContent() {
 
           <div className="space-y-1">
             <FormLabel htmlFor="handle" required>
-              Handle
+              Handle or DID
             </FormLabel>
             <input
               id="handle"
@@ -131,7 +139,7 @@ function LoginContent() {
               )}
             />
             <p className="text-xs text-muted-foreground">
-              Your Bluesky or AT Protocol handle (e.g. jay.bsky.team)
+              Handle, DID, or AT Protocol URI (e.g. jay.bsky.team)
             </p>
           </div>
 
