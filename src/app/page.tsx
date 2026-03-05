@@ -97,15 +97,40 @@ export default async function HomePage() {
             </div>
           )}
 
-          {/* Recent Topics */}
-          <TopicList topics={recentTopics.topics} heading="Recent Topics" />
+          {/* Pinned Topics — deduplicated from both feeds, shown once at top */}
+          {(() => {
+            const pinnedMap = new Map<string, (typeof recentTopics.topics)[number]>()
+            for (const t of [...recentTopics.topics, ...popularTopics.topics]) {
+              if (t.isPinned && !pinnedMap.has(t.uri)) {
+                pinnedMap.set(t.uri, t)
+              }
+            }
+            const pinnedTopics = [...pinnedMap.values()]
+            const recentFiltered = recentTopics.topics.filter((t) => !t.isPinned)
+            const popularFiltered = popularTopics.topics.filter((t) => !t.isPinned)
 
-          {/* Popular Topics */}
-          {popularTopics.topics.length > 0 && (
-            <div className="mt-8">
-              <TopicList topics={popularTopics.topics} heading="Popular Topics" />
-            </div>
-          )}
+            return (
+              <>
+                {pinnedTopics.length > 0 && (
+                  <TopicList topics={pinnedTopics} heading="Pinned Topics" />
+                )}
+
+                {/* Recent Topics */}
+                {recentFiltered.length > 0 && (
+                  <div className={pinnedTopics.length > 0 ? 'mt-8' : undefined}>
+                    <TopicList topics={recentFiltered} heading="Recent Topics" />
+                  </div>
+                )}
+
+                {/* Popular Topics */}
+                {popularFiltered.length > 0 && (
+                  <div className="mt-8">
+                    <TopicList topics={popularFiltered} heading="Popular Topics" />
+                  </div>
+                )}
+              </>
+            )
+          })()}
         </>
       )}
     </ForumLayout>
