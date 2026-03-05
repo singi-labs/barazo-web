@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import type { Reply, Topic } from '@/lib/api/types'
 import { getTopicUrl } from '@/lib/format'
+import { pinTopic, lockTopic, deleteTopicMod } from '@/lib/api/client'
+import type { ModerationAction } from '@/components/moderation-controls'
 import { TopicView } from '@/components/topic-view'
 import { ReplyThread } from '@/components/reply-thread'
 import {
@@ -22,12 +24,44 @@ import { AuthGate } from '@/components/auth-gate'
 interface TopicDetailClientProps {
   topic: Topic
   replies: Reply[]
-  isLocked?: boolean
 }
 
-export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDetailClientProps) {
-  const { user, isAuthenticated, isLoading } = useAuth()
+export function TopicDetailClient({ topic, replies }: TopicDetailClientProps) {
+  const { user, isAuthenticated, isLoading, getAccessToken } = useAuth()
   const router = useRouter()
+
+  const isLocked = topic.isLocked
+  const isModerator = user?.role === 'moderator' || user?.role === 'admin'
+
+  const handleModerationAction = useCallback(
+    async (action: ModerationAction) => {
+      const token = getAccessToken()
+      if (!token) return
+
+      try {
+        switch (action) {
+          case 'pin':
+            await pinTopic(topic.uri, { scope: 'category' }, token)
+            break
+          case 'unpin':
+            await pinTopic(topic.uri, {}, token)
+            break
+          case 'lock':
+          case 'unlock':
+            await lockTopic(topic.uri, {}, token)
+            break
+          case 'delete':
+            await deleteTopicMod(topic.uri, { reason: 'Moderator action' }, token)
+            break
+        }
+        router.refresh()
+      } catch (err) {
+        // Client-side error logging for failed moderation actions
+        console.error('Moderation action failed:', err)
+      }
+    },
+    [topic.uri, getAccessToken, router]
+  )
 
   const canEdit = isAuthenticated && user?.did === topic.authorDid
   const handleEdit = useCallback(() => {
@@ -111,6 +145,10 @@ export function TopicDetailClient({ topic, replies, isLocked = false }: TopicDet
           topic={topic}
           canEdit={canEdit}
           onEdit={handleEdit}
+          isModerator={isModerator}
+          isPinned={topic.isPinned}
+          isLocked={isLocked}
+          onModerationAction={isModerator ? handleModerationAction : undefined}
           onReply={
             isAuthenticated && !isLocked
               ? () =>
