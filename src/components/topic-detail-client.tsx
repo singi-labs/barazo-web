@@ -166,7 +166,7 @@ export function TopicDetailClient({ topic, replies }: TopicDetailClientProps) {
       </div>
 
       {/* Reply thread with reply buttons */}
-      <div className="mt-8 pb-16">
+      <div className="mt-8">
         <ReplyThread
           replies={replies}
           topicUri={topic.uri}
