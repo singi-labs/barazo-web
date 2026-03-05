@@ -50,12 +50,12 @@ The default frontend for Barazo forums. Communicates with the [barazo-api](https
 | Route                    | Page                                                      |
 | ------------------------ | --------------------------------------------------------- |
 | `/`                      | Topic list (home)                                         |
-| `/t/[slug]/[rkey]`       | Topic detail with threaded replies                        |
-| `/t/[slug]/[rkey]/edit`  | Edit topic                                                |
+| `/[handle]/[rkey]`       | Topic detail with threaded replies                        |
+| `/[handle]/[rkey]/edit`  | Edit topic                                                |
 | `/new`                   | Create new topic                                          |
 | `/c/[slug]`              | Category view                                             |
 | `/search`                | Full-text search                                          |
-| `/u/[handle]`            | User profile                                              |
+| `/profile/[handle]`      | User profile                                              |
 | `/settings`              | User preferences (maturity, notifications, cross-posting) |
 | `/notifications`         | Notification center                                       |
 | `/accessibility`         | Accessibility statement                                   |
