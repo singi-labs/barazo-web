@@ -1,5 +1,7 @@
 /**
- * ReplyComposer - Fixed bottom bar for replying to topics and replies.
+ * ReplyComposer - Sticky bottom bar for replying to topics and replies.
+ * Sticks to viewport bottom while scrolling; settles into flow at page end
+ * so the footer remains accessible.
  * Collapse/expand states, reply targeting with quote banner.
  * Supports keyboard shortcuts: `r` to open (via imperative ref), `Escape` to collapse.
  */
@@ -170,7 +172,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
       return (
         <div
           className={cn(
-            'fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-muted/80 backdrop-blur',
+            'sticky bottom-0 z-30 border-t border-border bg-muted/80 backdrop-blur',
             className
           )}
         >
@@ -186,7 +188,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
       return (
         <div
           className={cn(
-            'fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+            'sticky bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
             className
           )}
         >
@@ -208,7 +210,7 @@ export const ReplyComposer = forwardRef<ReplyComposerHandle, ReplyComposerProps>
       <div
         ref={composerRef}
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background shadow-lg',
+          'sticky bottom-0 z-30 border-t border-border bg-background shadow-lg',
           className
         )}
       >
