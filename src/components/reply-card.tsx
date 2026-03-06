@@ -245,7 +245,12 @@ export function ReplyCard({
         {/* TODO: Compute isFirstByAuthor properly when signatures plugin is built */}
         <PluginSlot
           name="post-content"
-          context={{ authorDid: reply.authorDid, threadUri: reply.rootUri, postUri: reply.uri, isFirstByAuthor: false }}
+          context={{
+            authorDid: reply.authorDid,
+            threadUri: reply.rootUri,
+            postUri: reply.uri,
+            isFirstByAuthor: false,
+          }}
         />
 
         {/* Footer */}

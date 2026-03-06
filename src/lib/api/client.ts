@@ -732,14 +732,15 @@ export function searchPluginRegistry(
   if (params.category) searchParams.set('category', params.category)
   if (params.source) searchParams.set('source', params.source)
   const query = searchParams.toString()
-  return apiFetch<RegistrySearchResponse>(`/api/plugins/registry/search${query ? `?${query}` : ''}`, {
-    ...options,
-  })
+  return apiFetch<RegistrySearchResponse>(
+    `/api/plugins/registry/search${query ? `?${query}` : ''}`,
+    {
+      ...options,
+    }
+  )
 }
 
-export function getFeaturedPlugins(
-  options?: FetchOptions
-): Promise<RegistrySearchResponse> {
+export function getFeaturedPlugins(options?: FetchOptions): Promise<RegistrySearchResponse> {
   return apiFetch<RegistrySearchResponse>('/api/plugins/registry/featured', {
     ...options,
   })

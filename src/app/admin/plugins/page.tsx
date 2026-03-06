@@ -43,9 +43,7 @@ export default function AdminPluginsPage() {
           <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchPlugins()} />
         )}
 
-        {actionError && (
-          <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />
-        )}
+        {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
 
         {loading && (
           <div className="space-y-3" aria-busy="true" aria-label="Loading plugins">

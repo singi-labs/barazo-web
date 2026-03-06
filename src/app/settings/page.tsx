@@ -173,7 +173,10 @@ export default function SettingsPage() {
                     onReactionsChange={(v) => setValues({ ...values, notifyReactions: v })}
                   />
 
-                  <PluginSlot name="settings-community" context={{ communityDid: publicSettings?.communityDid }} />
+                  <PluginSlot
+                    name="settings-community"
+                    context={{ communityDid: publicSettings?.communityDid }}
+                  />
 
                   {/* Reports link -- scoped to this community's AppView */}
                   <div className="rounded-lg border border-border p-4">

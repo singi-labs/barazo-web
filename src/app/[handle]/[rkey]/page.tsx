@@ -203,7 +203,10 @@ export default async function TopicPage({ params }: TopicPageProps) {
           {categoriesResult.categories.length > 0 && (
             <CategoryNav categories={categoriesResult.categories} />
           )}
-          <PluginSlot name="topic-sidebar" context={{ topicUri: topic.uri, categorySlug: topic.category }} />
+          <PluginSlot
+            name="topic-sidebar"
+            context={{ topicUri: topic.uri, categorySlug: topic.category }}
+          />
         </>
       }
     >
