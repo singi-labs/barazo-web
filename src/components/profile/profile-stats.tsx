@@ -4,7 +4,8 @@
  * @see specs/prd-web.md Section M8
  */
 
-import { Users, ArrowSquareOut, CalendarBlank } from '@phosphor-icons/react'
+import { Users, CalendarBlank } from '@phosphor-icons/react'
+import { BlueskyIcon } from '@/components/icons/bluesky-icon'
 import { formatCount } from '@/lib/format-count'
 import { formatDateLong } from '@/lib/format'
 import type { UserProfile } from '@/lib/api/types'
@@ -49,10 +50,11 @@ export function ProfileStats({ profile, handle }: ProfileStatsProps) {
           href={`https://bsky.app/profile/${handle}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 inline-flex items-center gap-1 break-all text-sm text-primary hover:underline"
+          className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+          title={`View ${handle} on Bluesky`}
         >
-          bsky.app/profile/{handle}
-          <ArrowSquareOut size={14} aria-hidden="true" />
+          <BlueskyIcon size={18} />
+          <span>Bluesky</span>
         </a>
       )}
     </div>
