@@ -141,12 +141,19 @@ export default function AdminPluginsPage() {
         </div>
 
         {tab === 'installed' && (
-          <div role="tabpanel" id="tabpanel-installed" aria-labelledby="tab-installed" className="space-y-6">
+          <div
+            role="tabpanel"
+            id="tabpanel-installed"
+            aria-labelledby="tab-installed"
+            className="space-y-6"
+          >
             {loadError && (
               <ErrorAlert message={loadError} variant="page" onRetry={() => void fetchPlugins()} />
             )}
 
-            {actionError && <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />}
+            {actionError && (
+              <ErrorAlert message={actionError} onDismiss={() => setActionError(null)} />
+            )}
 
             {loading && (
               <div className="space-y-3" aria-busy="true" aria-label="Loading plugins">
@@ -161,11 +168,14 @@ export default function AdminPluginsPage() {
 
             {!loading && !loadError && plugins.length === 0 && (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
-                <PuzzlePiece className="mb-4 h-12 w-12 text-muted-foreground/50" aria-hidden="true" />
+                <PuzzlePiece
+                  className="mb-4 h-12 w-12 text-muted-foreground/50"
+                  aria-hidden="true"
+                />
                 <h2 className="text-lg font-semibold text-foreground">No plugins installed</h2>
                 <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                  Plugins extend your community with additional features. Browse the registry to find
-                  and install plugins.
+                  Plugins extend your community with additional features. Browse the registry to
+                  find and install plugins.
                 </p>
                 <button
                   type="button"
@@ -201,7 +211,12 @@ export default function AdminPluginsPage() {
         )}
 
         {tab === 'browse' && (
-          <div role="tabpanel" id="tabpanel-browse" aria-labelledby="tab-browse" className="space-y-6">
+          <div
+            role="tabpanel"
+            id="tabpanel-browse"
+            aria-labelledby="tab-browse"
+            className="space-y-6"
+          >
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <MagnifyingGlass
@@ -230,7 +245,9 @@ export default function AdminPluginsPage() {
               </button>
             </div>
 
-            {installError && <ErrorAlert message={installError} onDismiss={() => setInstallError(null)} />}
+            {installError && (
+              <ErrorAlert message={installError} onDismiss={() => setInstallError(null)} />
+            )}
             {registry.error && <ErrorAlert message={registry.error} />}
 
             {registry.loading && (
@@ -244,20 +261,31 @@ export default function AdminPluginsPage() {
               </div>
             )}
 
-            {!registry.loading && registry.hasSearched && registry.results.length === 0 && !registry.error && (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
-                <MagnifyingGlass className="mb-4 h-12 w-12 text-muted-foreground/50" aria-hidden="true" />
-                <h2 className="text-lg font-semibold text-foreground">No plugins found</h2>
-                <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                  Try a different search term or browse all available plugins.
-                </p>
-              </div>
-            )}
+            {!registry.loading &&
+              registry.hasSearched &&
+              registry.results.length === 0 &&
+              !registry.error && (
+                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+                  <MagnifyingGlass
+                    className="mb-4 h-12 w-12 text-muted-foreground/50"
+                    aria-hidden="true"
+                  />
+                  <h2 className="text-lg font-semibold text-foreground">No plugins found</h2>
+                  <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                    Try a different search term or browse all available plugins.
+                  </p>
+                </div>
+              )}
 
             {!registry.loading && !registry.hasSearched && (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
-                <PuzzlePiece className="mb-4 h-12 w-12 text-muted-foreground/50" aria-hidden="true" />
-                <h2 className="text-lg font-semibold text-foreground">Browse the plugin registry</h2>
+                <PuzzlePiece
+                  className="mb-4 h-12 w-12 text-muted-foreground/50"
+                  aria-hidden="true"
+                />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Browse the plugin registry
+                </h2>
                 <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                   Search for plugins by name, category, or keyword to extend your community.
                 </p>
