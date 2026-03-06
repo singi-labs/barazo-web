@@ -572,6 +572,41 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
+  // GET /api/plugins/registry/search
+  http.get(`${API_URL}/api/plugins/registry/search`, () => {
+    return HttpResponse.json({ plugins: [] })
+  }),
+
+  // GET /api/plugins/registry/featured
+  http.get(`${API_URL}/api/plugins/registry/featured`, () => {
+    return HttpResponse.json({ plugins: [] })
+  }),
+
+  // POST /api/plugins/install
+  http.post(`${API_URL}/api/plugins/install`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({
+      plugin: {
+        id: 'installed-1',
+        name: '@barazo/plugin-new',
+        displayName: 'New Plugin',
+        version: '1.0.0',
+        description: 'A newly installed plugin',
+        source: 'community',
+        enabled: false,
+        category: 'general',
+        dependencies: [],
+        dependents: [],
+        settingsSchema: {},
+        settings: {},
+        installedAt: new Date().toISOString(),
+      },
+    })
+  }),
+
   // GET /api/users/resolve-handles
   http.get(`${API_URL}/api/users/resolve-handles`, ({ request }) => {
     const auth = request.headers.get('Authorization')
