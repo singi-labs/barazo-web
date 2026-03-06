@@ -139,11 +139,17 @@ async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T>
     await throwApiError(response)
   }
 
-  if (response.status === 204) {
+  const contentLength = response.headers.get('content-length')
+  if (response.status === 204 || contentLength === '0') {
     return undefined as T
   }
 
-  return response.json() as Promise<T>
+  const text = await response.text()
+  if (!text) {
+    return undefined as T
+  }
+
+  return JSON.parse(text) as T
 }
 
 function buildQuery(params: Record<string, string | number | undefined>): string {
