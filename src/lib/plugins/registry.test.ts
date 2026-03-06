@@ -4,12 +4,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest'
 import type { ComponentType } from 'react'
-import {
-  registerPluginComponent,
-  getPluginComponents,
-  clearPluginRegistry,
-  type SlotName,
-} from './registry'
+import { registerPluginComponent, getPluginComponents, clearPluginRegistry } from './registry'
 
 // Stub components for testing
 const StubComponentA = (() => null) as ComponentType<Record<string, unknown>>
