@@ -105,12 +105,19 @@ export function LikeButton({
         reactionUriRef.current = result.uri
       }
     } catch (err) {
-      // Revert optimistic update
-      setLiked(wasLiked)
-      setCount(previousCount)
-      reactionUriRef.current = previousUri
       const message = err instanceof Error ? err.message : 'Failed to update reaction'
-      toast({ title: 'Error', description: message, variant: 'destructive' })
+      const isNotFound = message === 'Not Found' || message.includes('not found')
+
+      if (wasLiked && isNotFound) {
+        // Reaction was already deleted server-side -- accept the unliked state
+        reactionUriRef.current = null
+      } else {
+        // Revert optimistic update
+        setLiked(wasLiked)
+        setCount(previousCount)
+        reactionUriRef.current = previousUri
+        toast({ title: 'Error', description: message, variant: 'destructive' })
+      }
     } finally {
       setPending(false)
     }
