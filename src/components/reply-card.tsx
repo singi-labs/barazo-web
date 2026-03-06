@@ -258,7 +258,11 @@ export function ReplyCard({
         {/* Footer */}
         <div className="flex items-center gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
           {reactions && onReactionToggle && (
-            <ReactionBar reactions={reactions} onToggle={onReactionToggle} disabled={isOwnContent} />
+            <ReactionBar
+              reactions={reactions}
+              onToggle={onReactionToggle}
+              disabled={isOwnContent}
+            />
           )}
           <LikeButton
             subjectUri={reply.uri}
