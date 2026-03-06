@@ -103,7 +103,7 @@ describe('UserProfilePage', () => {
   it('renders Bluesky link', async () => {
     render(<UserProfilePage params={{ handle: 'jay.bsky.team' }} />)
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /bsky\.app\/profile\/jay\.bsky\.team/i })
+      const link = screen.getByRole('link', { name: /bluesky/i })
       expect(link).toHaveAttribute('href', 'https://bsky.app/profile/jay.bsky.team')
     })
   })

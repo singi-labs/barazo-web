@@ -184,17 +184,18 @@ describe('ProfileHeader', () => {
     expect(screen.getByText(/75 following/i)).toBeInTheDocument()
   })
 
-  it('renders Bluesky link with stripped URL display when hasBlueskyProfile is true', () => {
+  it('renders Bluesky icon link when hasBlueskyProfile is true', () => {
     render(<ProfileHeader profile={createProfile({ hasBlueskyProfile: true })} {...defaultProps} />)
-    const link = screen.getByRole('link', { name: /bsky\.app\/profile\/test\.bsky\.social/i })
+    const link = screen.getByRole('link', { name: /bluesky/i })
     expect(link).toHaveAttribute('href', 'https://bsky.app/profile/test.bsky.social')
+    expect(link).toHaveAttribute('title', 'View test.bsky.social on Bluesky')
   })
 
   it('does not render Bluesky link when hasBlueskyProfile is false', () => {
     render(
       <ProfileHeader profile={createProfile({ hasBlueskyProfile: false })} {...defaultProps} />
     )
-    expect(screen.queryByRole('link', { name: /bsky\.app\/profile/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /bluesky/i })).not.toBeInTheDocument()
   })
 
   it('renders votesReceived in "This forum" stats', () => {
