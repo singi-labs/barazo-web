@@ -160,6 +160,7 @@ export function ReplyBranch({
                   onReply={onReply}
                   canEdit={currentUserDid ? node.reply.authorDid === currentUserDid : false}
                   canDelete={currentUserDid ? node.reply.authorDid === currentUserDid : false}
+                  isOwnContent={currentUserDid ? node.reply.authorDid === currentUserDid : false}
                   onDelete={onDeleteReply}
                 />
               </div>
