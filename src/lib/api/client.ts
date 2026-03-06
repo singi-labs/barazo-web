@@ -139,6 +139,10 @@ async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T>
     await throwApiError(response)
   }
 
+  if (response.status === 204) {
+    return undefined as T
+  }
+
   return response.json() as Promise<T>
 }
 
