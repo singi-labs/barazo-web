@@ -20,6 +20,7 @@ interface LikeButtonProps {
   subjectCid: string
   initialCount: number
   size?: 'sm' | 'md'
+  disabled?: boolean
   className?: string
 }
 
@@ -28,6 +29,7 @@ export function LikeButton({
   subjectCid,
   initialCount,
   size = 'md',
+  disabled = false,
   className,
 }: LikeButtonProps) {
   const { user, isAuthenticated, getAccessToken } = useAuth()
@@ -121,7 +123,7 @@ export function LikeButton({
       type="button"
       aria-pressed={liked}
       aria-label={`${formatCompactNumber(count)} reactions`}
-      disabled={!isAuthenticated}
+      disabled={disabled || !isAuthenticated}
       onClick={handleToggle}
       className={cn(
         'inline-flex items-center gap-1.5 transition-colors',

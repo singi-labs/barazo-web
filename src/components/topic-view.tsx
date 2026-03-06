@@ -48,6 +48,7 @@ interface TopicViewProps {
   onReply?: () => void
   canReport?: boolean
   onReport?: (report: ReportSubmission) => void
+  isOwnContent?: boolean
   selfLabels?: string[]
   className?: string
 }
@@ -66,6 +67,7 @@ export function TopicView({
   onReply,
   canReport,
   onReport,
+  isOwnContent,
   selfLabels,
   className,
 }: TopicViewProps) {
@@ -196,12 +198,13 @@ export function TopicView({
       {/* Footer: read signals left, actions right */}
       <div className="flex items-center gap-4 border-t border-border px-4 py-3 text-sm text-muted-foreground sm:px-6">
         {reactions && onReactionToggle && (
-          <ReactionBar reactions={reactions} onToggle={onReactionToggle} />
+          <ReactionBar reactions={reactions} onToggle={onReactionToggle} disabled={isOwnContent} />
         )}
         <LikeButton
           subjectUri={topic.uri}
           subjectCid={topic.cid}
           initialCount={topic.reactionCount}
+          disabled={isOwnContent}
         />
         <span className="flex items-center gap-1.5">
           <Clock className="h-4 w-4" weight="regular" aria-hidden="true" />

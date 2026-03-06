@@ -146,6 +146,7 @@ export function TopicDetailClient({ topic, replies }: TopicDetailClientProps) {
           topic={topic}
           canEdit={canEdit}
           onEdit={handleEdit}
+          isOwnContent={canEdit}
           isModerator={isModerator}
           isAdmin={isAdmin}
           isPinned={topic.isPinned}
