@@ -40,6 +40,7 @@ export function AncestorLines({ ancestors, onToggle, lineWidth }: AncestorLinesP
             onToggle={() => onToggle(ancestor.uri)}
             authorName={ancestor.authorName}
             replyCount={ancestor.replyCount}
+            ancestorUri={ancestor.uri}
             opacity={opacity}
             showChevron={false}
             width={lineWidth}

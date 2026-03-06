@@ -13,6 +13,7 @@ import type { Reply } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { buildReplyTree, flattenReplyTree } from '@/lib/build-reply-tree'
 import { useThreadIndent } from '@/hooks/use-thread-indent'
+import { ThreadHoverProvider } from '@/context/thread-hover-context'
 import { ReplyBranch } from './reply-branch'
 
 interface ReplyThreadProps {
@@ -58,17 +59,19 @@ export function ReplyThread({
           <p className="text-muted-foreground">No replies yet. Be the first to respond!</p>
         </div>
       ) : (
-        <ReplyBranch
-          nodes={tree}
-          postNumberMap={postNumberMap}
-          topicUri={topicUri}
-          allReplies={allReplies}
-          indentStep={indentStep}
-          showChevron={showChevron}
-          onReply={onReply}
-          onDeleteReply={onDeleteReply}
-          currentUserDid={currentUserDid}
-        />
+        <ThreadHoverProvider>
+          <ReplyBranch
+            nodes={tree}
+            postNumberMap={postNumberMap}
+            topicUri={topicUri}
+            allReplies={allReplies}
+            indentStep={indentStep}
+            showChevron={showChevron}
+            onReply={onReply}
+            onDeleteReply={onDeleteReply}
+            currentUserDid={currentUserDid}
+          />
+        </ThreadHoverProvider>
       )}
     </section>
   )

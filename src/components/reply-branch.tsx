@@ -147,6 +147,7 @@ export function ReplyBranch({
                   onToggle={() => toggleCollapse(node.reply.uri)}
                   authorName={authorName}
                   replyCount={descendantCount}
+                  ancestorUri={node.reply.uri}
                   opacity={1}
                   showChevron={showChevron}
                   width={indentStep}
