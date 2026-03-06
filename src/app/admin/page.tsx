@@ -14,6 +14,7 @@ import { ErrorAlert } from '@/components/error-alert'
 import { getCommunityStats } from '@/lib/api/client'
 import type { CommunityStats } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { PluginSlot } from '@/components/plugin-slot'
 
 interface StatCardProps {
   label: string
@@ -101,6 +102,8 @@ export default function AdminDashboardPage() {
             />
           </div>
         )}
+
+        <PluginSlot name="admin-dashboard" />
       </div>
     </AdminLayout>
   )

@@ -27,6 +27,7 @@ import { CategoryNav } from '@/components/category-nav'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { TopicView } from '@/components/topic-view'
 import { TopicDetailClient } from '@/components/topic-detail-client'
+import { PluginSlot } from '@/components/plugin-slot'
 import type { CategoriesResponse, RepliesResponse } from '@/lib/api/types'
 
 export const dynamic = 'force-dynamic'
@@ -198,9 +199,15 @@ export default async function TopicPage({ params }: TopicPageProps) {
     <ForumLayout
       publicSettings={publicSettings}
       sidebar={
-        categoriesResult.categories.length > 0 ? (
-          <CategoryNav categories={categoriesResult.categories} />
-        ) : undefined
+        <>
+          {categoriesResult.categories.length > 0 && (
+            <CategoryNav categories={categoriesResult.categories} />
+          )}
+          <PluginSlot
+            name="topic-sidebar"
+            context={{ topicUri: topic.uri, categorySlug: topic.category }}
+          />
+        </>
       }
     >
       {/* JSON-LD: omitted for Adult content */}

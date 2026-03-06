@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/auth-context'
 import { AppToastProvider } from '@/context/toast-context'
 import { OnboardingProvider } from '@/context/onboarding-context'
+import { PluginProvider } from '@/context/plugin-context'
 import { SetupGuard } from '@/components/setup-guard'
 import { DynamicFavicon } from '@/components/dynamic-favicon'
 
@@ -61,7 +62,9 @@ export default function RootLayout({
           <AuthProvider>
             <AppToastProvider>
               <OnboardingProvider>
-                <SetupGuard>{children}</SetupGuard>
+                <PluginProvider>
+                  <SetupGuard>{children}</SetupGuard>
+                </PluginProvider>
               </OnboardingProvider>
             </AppToastProvider>
           </AuthProvider>

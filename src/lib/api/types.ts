@@ -557,6 +557,27 @@ export interface PluginsResponse {
   plugins: Plugin[]
 }
 
+export interface RegistryPlugin {
+  name: string
+  displayName: string
+  description: string
+  version: string
+  source: PluginSource
+  category: string
+  barazoVersion: string
+  author: { name: string; url?: string }
+  license: string
+  npmUrl: string
+  repositoryUrl?: string
+  approved: boolean
+  featured: boolean
+  downloads: number
+}
+
+export interface RegistrySearchResponse {
+  plugins: RegistryPlugin[]
+}
+
 // --- User Preferences ---
 
 export interface UserPreferences {

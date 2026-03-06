@@ -17,6 +17,7 @@ import { getUserProfile, getPublicSettings } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatDateLong } from '@/lib/format'
 import type { PublicSettings, UserProfile } from '@/lib/api/types'
+import { PluginSlot } from '@/components/plugin-slot'
 
 interface UserProfilePageProps {
   params: Promise<{ handle: string }> | { handle: string }
@@ -143,6 +144,8 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           onMuteToggle={setIsMuted}
           viewerDid={user?.did ?? null}
         />
+
+        <PluginSlot name="user-profile" context={{ profileDid: profile.did }} />
 
         {/* Recent activity */}
         <section>

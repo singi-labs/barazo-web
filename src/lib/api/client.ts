@@ -47,7 +47,9 @@ import type {
   ReportedUsersResponse,
   AdminUsersResponse,
   MaturityRating,
+  Plugin,
   PluginsResponse,
+  RegistrySearchResponse,
   OnboardingField,
   AdminOnboardingFieldsResponse,
   CreateOnboardingFieldInput,
@@ -81,7 +83,7 @@ const API_URL =
 interface FetchOptions {
   headers?: Record<string, string>
   signal?: AbortSignal
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   body?: unknown
 }
 
@@ -675,7 +677,7 @@ export function togglePlugin(
     `/api/plugins/${encodeURIComponent(id)}/${enabled ? 'enable' : 'disable'}`,
     {
       ...options,
-      method: 'PUT',
+      method: 'PATCH',
       headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     }
   )
@@ -689,7 +691,7 @@ export function updatePluginSettings(
 ): Promise<void> {
   return apiFetch<void>(`/api/plugins/${encodeURIComponent(id)}/settings`, {
     ...options,
-    method: 'PUT',
+    method: 'PATCH',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: settings,
   })
@@ -704,6 +706,43 @@ export function uninstallPlugin(
     ...options,
     method: 'DELETE',
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+  })
+}
+
+export function installPlugin(
+  packageName: string,
+  version: string | undefined,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ plugin: Plugin }> {
+  return apiFetch<{ plugin: Plugin }>('/api/plugins/install', {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: { packageName, ...(version ? { version } : {}) },
+  })
+}
+
+export function searchPluginRegistry(
+  params: { q?: string; category?: string; source?: string },
+  options?: FetchOptions
+): Promise<RegistrySearchResponse> {
+  const searchParams = new URLSearchParams()
+  if (params.q) searchParams.set('q', params.q)
+  if (params.category) searchParams.set('category', params.category)
+  if (params.source) searchParams.set('source', params.source)
+  const query = searchParams.toString()
+  return apiFetch<RegistrySearchResponse>(
+    `/api/plugins/registry/search${query ? `?${query}` : ''}`,
+    {
+      ...options,
+    }
+  )
+}
+
+export function getFeaturedPlugins(options?: FetchOptions): Promise<RegistrySearchResponse> {
+  return apiFetch<RegistrySearchResponse>('/api/plugins/registry/featured', {
+    ...options,
   })
 }
 

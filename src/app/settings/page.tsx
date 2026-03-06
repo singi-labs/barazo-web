@@ -25,6 +25,7 @@ import { SettingsSidebar } from '@/components/settings/settings-sidebar'
 import { AGE_OPTIONS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { useSettingsForm } from '@/hooks/use-settings-form'
+import { PluginSlot } from '@/components/plugin-slot'
 
 export default function SettingsPage() {
   const [publicSettings, setPublicSettings] = useState<PublicSettings | null>(null)
@@ -172,6 +173,11 @@ export default function SettingsPage() {
                     onReactionsChange={(v) => setValues({ ...values, notifyReactions: v })}
                   />
 
+                  <PluginSlot
+                    name="settings-community"
+                    context={{ communityDid: publicSettings?.communityDid }}
+                  />
+
                   {/* Reports link -- scoped to this community's AppView */}
                   <div className="rounded-lg border border-border p-4">
                     <Link
@@ -265,6 +271,8 @@ export default function SettingsPage() {
                     onBlockUser={handleBlockUser}
                     onUnblockUser={handleUnblockUser}
                   />
+
+                  <PluginSlot name="settings-global" />
 
                   <div className="flex justify-end">
                     <button

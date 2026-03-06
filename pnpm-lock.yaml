@@ -38,9 +38,6 @@ importers:
 
   .:
     dependencies:
-      '@barazo-forum/lexicons':
-        specifier: link:../barazo-lexicons
-        version: link:../barazo-lexicons
       '@dnd-kit/core':
         specifier: 6.3.1
         version: 6.3.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -137,6 +134,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@singi-labs/lexicons':
+        specifier: link:../barazo-lexicons
+        version: link:../barazo-lexicons
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.2.1)
