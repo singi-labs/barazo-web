@@ -24,6 +24,7 @@ import { ReactionBar } from './reaction-bar'
 import { ReportDialog, type ReportSubmission } from './report-dialog'
 import { ConfirmDialog } from './confirm-dialog'
 import { SelfLabelIndicator } from './self-label-indicator'
+import { PluginSlot } from '@/components/plugin-slot'
 
 interface ReactionData {
   type: string
@@ -239,6 +240,13 @@ export function ReplyCard({
             <MarkdownContent content={displayContent} />
           )}
         </div>
+
+        {/* Plugin slot for post content extensions (e.g., signatures) */}
+        {/* TODO: Compute isFirstByAuthor properly when signatures plugin is built */}
+        <PluginSlot
+          name="post-content"
+          context={{ authorDid: reply.authorDid, threadUri: reply.rootUri, postUri: reply.uri, isFirstByAuthor: false }}
+        />
 
         {/* Footer */}
         <div className="flex items-center gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
