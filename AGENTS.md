@@ -1,9 +1,9 @@
 # Barazo Web -- Default Frontend
 
 <!-- Auto-generated from barazo-workspace. To propose changes, edit the source:
-     https://github.com/barazo-forum/barazo-workspace/tree/main/agents-md -->
+     https://github.com/singi-labs/barazo-workspace/tree/main/agents-md -->
 
-MIT | Part of [github.com/barazo-forum](https://github.com/barazo-forum)
+MIT | Part of [github.com/singi-labs](https://github.com/singi-labs)
 
 The default frontend for Barazo forums. Communicates with the AppView backend exclusively via REST API. Forum admins can customize or replace entirely.
 
@@ -47,9 +47,9 @@ The default frontend for Barazo forums. Communicates with the AppView backend ex
 
 Open-source forum software built on the [AT Protocol](https://atproto.com/). Portable identity, member-owned data, no lock-in.
 
-- **Organization:** [github.com/barazo-forum](https://github.com/barazo-forum)
+- **Organization:** [github.com/singi-labs](https://github.com/singi-labs)
 - **License:** AGPL-3.0 (backend) / MIT (frontend, lexicons, deploy) / CC BY-SA 4.0 + MIT (docs) / Proprietary (website)
-- **Contributing:** See [CONTRIBUTING.md](https://github.com/barazo-forum/.github/blob/main/CONTRIBUTING.md)
+- **Contributing:** See [CONTRIBUTING.md](https://github.com/singi-labs/.github/blob/main/CONTRIBUTING.md)
 
 ### Coding Standards
 

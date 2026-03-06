@@ -1,9 +1,9 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/barazo-forum/.github/main/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/barazo-forum/.github/main/assets/logo-light.svg">
-  <img alt="Barazo Logo" src="https://raw.githubusercontent.com/barazo-forum/.github/main/assets/logo-dark.svg" width="120">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/singi-labs/.github/main/assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/singi-labs/.github/main/assets/logo-light.svg">
+  <img alt="Barazo Logo" src="https://raw.githubusercontent.com/singi-labs/.github/main/assets/logo-dark.svg" width="120">
 </picture>
 
 # Barazo Web
@@ -12,7 +12,7 @@
 
 [![Status: Alpha](https://img.shields.io/badge/status-alpha-orange)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/barazo-forum/barazo-web/actions/workflows/ci.yml/badge.svg)](https://github.com/barazo-forum/barazo-web/actions/workflows/ci.yml)
+[![CI](https://github.com/singi-labs/barazo-web/actions/workflows/ci.yml/badge.svg)](https://github.com/singi-labs/barazo-web/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/node-24%20LTS-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)](https://www.typescriptlang.org/)
 
@@ -22,7 +22,7 @@
 
 ## Overview
 
-The default frontend for Barazo forums. Communicates with the [barazo-api](https://github.com/barazo-forum/barazo-api) backend exclusively via REST API. Forum admins can customize the theme or replace this frontend entirely. WCAG 2.2 AA compliant from first commit.
+The default frontend for Barazo forums. Communicates with the [barazo-api](https://github.com/singi-labs/barazo-api) backend exclusively via REST API. Forum admins can customize the theme or replace this frontend entirely. WCAG 2.2 AA compliant from first commit.
 
 ---
 
@@ -103,10 +103,10 @@ The default frontend for Barazo forums. Communicates with the [barazo-api](https
 
 ## Quick Start
 
-**Prerequisites:** Node.js 24 LTS, pnpm, [barazo-api](https://github.com/barazo-forum/barazo-api) running (or mock handlers).
+**Prerequisites:** Node.js 24 LTS, pnpm, [barazo-api](https://github.com/singi-labs/barazo-api) running (or mock handlers).
 
 ```bash
-git clone https://github.com/barazo-forum/barazo-web.git
+git clone https://github.com/singi-labs/barazo-web.git
 cd barazo-web
 pnpm install
 
@@ -132,7 +132,7 @@ Three-tier accessibility testing:
 2. **Unit tests:** vitest-axe on rendered components
 3. **Integration:** @axe-core/playwright in CI
 
-See [CONTRIBUTING.md](https://github.com/barazo-forum/.github/blob/main/CONTRIBUTING.md) for branching strategy, commit format, and code review process.
+See [CONTRIBUTING.md](https://github.com/singi-labs/.github/blob/main/CONTRIBUTING.md) for branching strategy, commit format, and code review process.
 
 **Key standards:**
 
@@ -147,20 +147,20 @@ See [CONTRIBUTING.md](https://github.com/barazo-forum/.github/blob/main/CONTRIBU
 
 ## Related Repositories
 
-| Repository                                                         | Description                                   | License  |
-| ------------------------------------------------------------------ | --------------------------------------------- | -------- |
-| [barazo-api](https://github.com/barazo-forum/barazo-api)           | AppView backend (Fastify, firehose, REST API) | AGPL-3.0 |
-| [barazo-lexicons](https://github.com/barazo-forum/barazo-lexicons) | AT Protocol lexicon schemas + generated types | MIT      |
-| [barazo-deploy](https://github.com/barazo-forum/barazo-deploy)     | Docker Compose deployment templates           | MIT      |
-| [barazo-website](https://github.com/barazo-forum/barazo-website)   | Marketing + documentation site                | MIT      |
+| Repository                                                       | Description                                   | License  |
+| ---------------------------------------------------------------- | --------------------------------------------- | -------- |
+| [barazo-api](https://github.com/singi-labs/barazo-api)           | AppView backend (Fastify, firehose, REST API) | AGPL-3.0 |
+| [barazo-lexicons](https://github.com/singi-labs/barazo-lexicons) | AT Protocol lexicon schemas + generated types | MIT      |
+| [barazo-deploy](https://github.com/singi-labs/barazo-deploy)     | Docker Compose deployment templates           | MIT      |
+| [barazo-website](https://github.com/singi-labs/barazo-website)   | Marketing + documentation site                | MIT      |
 
 ---
 
 ## Community
 
 - **Website:** [barazo.forum](https://barazo.forum)
-- **Discussions:** [GitHub Discussions](https://github.com/orgs/barazo-forum/discussions)
-- **Issues:** [Report bugs](https://github.com/barazo-forum/barazo-web/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/orgs/singi-labs/discussions)
+- **Issues:** [Report bugs](https://github.com/singi-labs/barazo-web/issues)
 
 ---
 

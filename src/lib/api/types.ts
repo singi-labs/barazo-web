@@ -1,7 +1,7 @@
 /**
  * API response types matching barazo-api schemas.
  * These mirror the Zod-validated responses from the API.
- * @see ~/Documents/Git/barazo-forum/barazo-api/src/routes/
+ * @see ~/Documents/Git/singi-labs/barazo-api/src/routes/
  */
 
 // Re-export lexicon types for AT Protocol record validation and constants.
@@ -12,7 +12,7 @@ export type {
   TopicReplyInput,
   ReactionInput,
   ActorPreferencesInput,
-} from '@barazo-forum/lexicons'
+} from '@singi-labs/lexicons'
 
 export {
   LEXICON_IDS,
@@ -20,7 +20,7 @@ export {
   topicReplySchema,
   reactionSchema,
   actorPreferencesSchema,
-} from '@barazo-forum/lexicons'
+} from '@singi-labs/lexicons'
 
 // --- Categories ---
 

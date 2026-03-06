@@ -1,12 +1,12 @@
 {
-  "name": "@barazo-forum/web",
+  "name": "@singi-labs/web",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.29.2",
   "description": "Default frontend for Barazo forums",
   "repository": {
     "type": "git",
-    "url": "https://github.com/barazo-forum/barazo-web.git"
+    "url": "https://github.com/singi-labs/barazo-web.git"
   },
   "license": "MIT",
   "engines": {
@@ -29,7 +29,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@barazo-forum/lexicons": "link:../barazo-lexicons",
+    "@singi-labs/lexicons": "link:../barazo-lexicons",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",

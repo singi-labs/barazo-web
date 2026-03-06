@@ -41,8 +41,8 @@ COPY barazo-web/ ./barazo-web/
 
 # Build lexicons first (workspace dependency), then Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm --filter @barazo-forum/lexicons build && \
-    pnpm --filter @barazo-forum/web build
+RUN pnpm --filter @singi-labs/lexicons build && \
+    pnpm --filter @singi-labs/web build
 
 # ---------------------------------------------------------------------------
 # Stage 3: Production runner
