@@ -69,7 +69,7 @@ export function PluginCard({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {Object.keys(plugin.settingsSchema).length > 0 && (
+          {Object.keys(plugin.settingsSchema ?? {}).length > 0 && (
             <button
               type="button"
               onClick={() => onOpenSettings(plugin)}
