@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   // Standalone output for Docker (includes Node.js server)
   output: 'standalone',
 
+  // Transpile workspace plugin packages so Next.js bundles their frontend code
+  transpilePackages: ['@barazo/plugin-signatures'],
+
   // Image optimization — allow any HTTPS source for AT Protocol PDS avatars/banners.
   // Self-hosted PDS instances can use arbitrary domains, so a wildcard is necessary.
   images: {

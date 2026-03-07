@@ -11,6 +11,7 @@ import type { ReactNode } from 'react'
 import type { Plugin } from '@/lib/api/types'
 import { getPlugins } from '@/lib/api/client'
 import { useAuth } from '@/hooks/use-auth'
+import { loadBundledPlugins } from '@/lib/plugins/loader'
 
 export interface PluginContextValue {
   /** List of all plugins (enabled and disabled) */
@@ -48,6 +49,8 @@ export function PluginProvider({ children }: PluginProviderProps) {
     try {
       const response = await getPlugins(token)
       setPlugins(response.plugins)
+      const enabledNames = response.plugins.filter((p) => p.enabled).map((p) => p.name)
+      void loadBundledPlugins(enabledNames)
     } catch {
       // On error, keep existing plugins (or empty on first load)
       setPlugins((prev) => prev)
