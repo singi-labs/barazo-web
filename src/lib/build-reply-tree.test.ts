@@ -17,7 +17,6 @@ function makeReply(
     rkey: overrides.uri.split('/').pop()!,
     authorDid: 'did:plc:user-001',
     content: 'Test reply',
-    contentFormat: null,
     rootUri: TOPIC_URI,
     rootCid: TOPIC_CID,
     parentCid: 'bafyreir0',

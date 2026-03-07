@@ -61,7 +61,6 @@ function makeReply(
       avatarUrl: null,
     },
     content: `Reply ${overrides.uri}`,
-    contentFormat: null,
     rootUri: TOPIC_URI,
     rootCid: 'bafyrei-root',
     parentCid: 'bafyrei-parent',

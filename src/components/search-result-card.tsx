@@ -53,7 +53,7 @@ export function SearchResultCard({ result, formatDate }: SearchResultCardProps) 
           )}
 
           <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-            <span>{formatDate(result.createdAt)}</span>
+            <span>{formatDate(result.publishedAt)}</span>
             <span className="flex items-center gap-1">
               <Heart size={12} aria-hidden="true" />
               {result.reactionCount}

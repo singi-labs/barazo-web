@@ -43,7 +43,7 @@ const topic = mockTopics[0]!
 const baseTopic = topic
 const editedTopic = {
   ...baseTopic,
-  indexedAt: new Date(new Date(baseTopic.createdAt).getTime() + 60_000).toISOString(),
+  indexedAt: new Date(new Date(baseTopic.publishedAt).getTime() + 60_000).toISOString(),
 }
 
 const mockReactions = [
@@ -203,7 +203,7 @@ describe('TopicView', () => {
   })
 
   describe('edited indicator', () => {
-    it('shows "(edited)" when indexedAt is more than 30s after createdAt', () => {
+    it('shows "(edited)" when indexedAt is more than 30s after publishedAt', () => {
       render(<TopicView topic={editedTopic} />)
       expect(screen.getByText('(edited)')).toBeInTheDocument()
     })

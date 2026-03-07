@@ -140,8 +140,8 @@ export function TopicView({
             <span>{topic.author?.displayName ?? topic.author?.handle ?? topic.authorDid}</span>
           </Link>
           <span aria-hidden="true">·</span>
-          <time dateTime={topic.createdAt}>{formatRelativeTime(topic.createdAt)}</time>
-          {isEdited(topic.createdAt, topic.indexedAt) && (
+          <time dateTime={topic.publishedAt}>{formatRelativeTime(topic.publishedAt)}</time>
+          {isEdited(topic.publishedAt, topic.indexedAt) && (
             <span
               className="text-muted-foreground"
               title={`Edited ${new Date(topic.indexedAt).toLocaleString()}`}

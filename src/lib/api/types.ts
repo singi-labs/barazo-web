@@ -113,8 +113,8 @@ export interface Topic {
   author?: AuthorProfile
   title: string
   content: string
-  contentFormat: string | null
   category: string
+  site: string | null
   tags: string[] | null
   communityDid: string
   cid: string
@@ -128,7 +128,7 @@ export interface Topic {
   pinnedAt: string | null
   categoryMaturityRating: MaturityRating
   lastActivityAt: string
-  createdAt: string
+  publishedAt: string
   indexedAt: string
 }
 
@@ -164,7 +164,7 @@ export interface CreateTopicResponse {
   category: string
   authorHandle: string
   moderationStatus: ModerationStatus
-  createdAt: string
+  publishedAt: string
 }
 
 // --- Replies ---
@@ -175,7 +175,6 @@ export interface Reply {
   authorDid: string
   author?: AuthorProfile
   content: string
-  contentFormat: string | null
   rootUri: string
   rootCid: string
   parentUri: string
@@ -249,7 +248,7 @@ export interface SearchResult {
   communityDid: string
   replyCount: number | null
   reactionCount: number
-  createdAt: string
+  publishedAt: string
   rank: number
   rootUri: string | null
   rootTitle: string | null
