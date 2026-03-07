@@ -25,6 +25,21 @@ runs:
         git clone --depth 1 https://github.com/singi-labs/barazo-lexicons.git ../barazo-lexicons
         cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
 
+    - name: Cache plugins build
+      id: plugins-cache
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        path: ../barazo-plugins
+        key: plugins-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+    - name: Clone and build barazo-plugins (frontend only)
+      if: steps.plugins-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
+        cd ../barazo-plugins && pnpm install --ignore-scripts
+        cd packages/plugin-signatures && npx tsc -p tsconfig.frontend.json
+
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
