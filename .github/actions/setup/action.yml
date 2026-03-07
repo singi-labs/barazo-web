@@ -35,3 +35,13 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
+
+    - name: Replace plugin symlinks for Turbopack compatibility
+      shell: bash
+      run: |
+        LINK=node_modules/@barazo/plugin-signatures
+        if [ -L "$LINK" ]; then
+          TARGET=$(realpath "$LINK")
+          rm "$LINK"
+          cp -r "$TARGET" "$LINK"
+        fi
