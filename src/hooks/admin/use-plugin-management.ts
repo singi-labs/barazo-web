@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getPlugins, togglePlugin, updatePluginSettings, uninstallPlugin } from '@/lib/api/client'
 import type { Plugin } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 import { useSaveState } from '@/hooks/use-save-state'
 
 interface DependencyWarning {
@@ -18,6 +19,7 @@ interface DependencyWarning {
 
 export function usePluginManagement() {
   const { getAccessToken } = useAuth()
+  const { toast } = useToast()
   const settingsSave = useSaveState()
   const [plugins, setPlugins] = useState<Plugin[]>([])
   const [loading, setLoading] = useState(true)
@@ -62,6 +64,7 @@ export function usePluginManagement() {
       setPlugins((prev) =>
         prev.map((p) => (p.id === plugin.id ? { ...p, enabled: !p.enabled } : p))
       )
+      toast({ title: `${plugin.displayName} ${plugin.enabled ? 'disabled' : 'enabled'}` })
     } catch {
       setActionError(`Failed to ${plugin.enabled ? 'disable' : 'enable'} plugin. Please try again.`)
     }
@@ -75,6 +78,7 @@ export function usePluginManagement() {
       setPlugins((prev) =>
         prev.map((p) => (p.id === dependencyWarning.plugin.id ? { ...p, enabled: false } : p))
       )
+      toast({ title: `${dependencyWarning.plugin.displayName} disabled` })
     } catch {
       setActionError('Failed to disable plugin. Please try again.')
     }
@@ -89,6 +93,7 @@ export function usePluginManagement() {
       await updatePluginSettings(settingsPlugin.id, settings, getAccessToken() ?? '')
       setPlugins((prev) => prev.map((p) => (p.id === settingsPlugin.id ? { ...p, settings } : p)))
       settingsSave.reset()
+      toast({ title: `${settingsPlugin.displayName} settings saved` })
     } catch {
       settingsSave.reset()
       setActionError('Failed to save plugin settings. Please try again.')
@@ -101,6 +106,7 @@ export function usePluginManagement() {
     try {
       await uninstallPlugin(plugin.id, getAccessToken() ?? '')
       setPlugins((prev) => prev.filter((p) => p.id !== plugin.id))
+      toast({ title: `${plugin.displayName} uninstalled` })
     } catch {
       setActionError('Failed to uninstall plugin. Please try again.')
     }
