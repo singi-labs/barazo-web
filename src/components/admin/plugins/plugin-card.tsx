@@ -55,7 +55,7 @@ export function PluginCard({
             </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">{plugin.description}</p>
-          {plugin.dependencies.length > 0 && (
+          {(plugin.dependencies?.length ?? 0) > 0 && (
             <p className="mt-1 text-xs text-muted-foreground">
               Depends on:{' '}
               {plugin.dependencies
