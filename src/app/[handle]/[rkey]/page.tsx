@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
               title: topic.title,
               description,
               type: 'article',
-              publishedTime: topic.createdAt,
+              publishedTime: topic.publishedAt,
             },
           }
         : {}),
@@ -184,7 +184,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       '@type': 'Person',
       identifier: topic.authorDid,
     },
-    datePublished: topic.createdAt,
+    datePublished: topic.publishedAt,
     dateModified: topic.lastActivityAt,
     commentCount: topic.replyCount,
     interactionStatistic: {

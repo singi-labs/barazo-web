@@ -285,15 +285,15 @@ export const handlers = [
       },
       title: body.title,
       content: body.content,
-      contentFormat: null,
       category: body.category,
+      site: null,
       tags: [],
       communityDid: 'did:plc:test-community-123',
       cid: `bafyreib-${rkey}`,
       replyCount: 0,
       reactionCount: 0,
       lastActivityAt: now,
-      createdAt: now,
+      publishedAt: now,
       indexedAt: now,
     }
     return HttpResponse.json(newTopic, { status: 201 })
