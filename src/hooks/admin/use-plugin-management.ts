@@ -43,14 +43,14 @@ export function usePluginManagement() {
   }, [fetchPlugins])
 
   const findDependentNames = (plugin: Plugin): string[] => {
-    return plugin.dependents.map((depId) => {
+    return (plugin.dependents ?? []).map((depId) => {
       const dep = plugins.find((p) => p.id === depId)
       return dep?.displayName ?? depId
     })
   }
 
   const handleToggle = async (plugin: Plugin) => {
-    if (plugin.enabled && plugin.dependents.length > 0) {
+    if (plugin.enabled && (plugin.dependents?.length ?? 0) > 0) {
       const dependentNames = findDependentNames(plugin)
       setDependencyWarning({ plugin, dependents: dependentNames })
       return

@@ -55,7 +55,7 @@ export function PluginSettingsModal({
         </div>
 
         <div className="space-y-4">
-          {Object.entries(plugin.settingsSchema).map(([key, schema]) => (
+          {Object.entries(plugin.settingsSchema ?? {}).map(([key, schema]) => (
             <SettingsField
               key={key}
               fieldKey={key}
