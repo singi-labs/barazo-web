@@ -6,6 +6,10 @@
 
 import type { PluginSettingsSchema } from '@/lib/api/types'
 
+function formatOptionLabel(value: string): string {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
 interface SettingsFieldProps {
   fieldKey: string
   schema: PluginSettingsSchema[string]
@@ -47,7 +51,7 @@ export function SettingsField({ fieldKey, schema, value, onChange }: SettingsFie
         >
           {schema.options?.map((opt) => (
             <option key={opt} value={opt}>
-              {opt || '(none)'}
+              {opt ? formatOptionLabel(opt) : '(none)'}
             </option>
           ))}
         </select>
