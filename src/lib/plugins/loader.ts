@@ -20,12 +20,25 @@ function createRegistryAdapter(pluginName: string): PluginComponentRegistry {
   }
 }
 
+// Map of bundled plugin names to their frontend register module paths.
+// Dynamic import uses a variable so TypeScript doesn't statically resolve the
+// module — this lets CI pass without the workspace plugin packages checked out.
+const BUNDLED_PLUGIN_PATHS: Record<string, string> = {
+  '@barazo/plugin-signatures': '@barazo/plugin-signatures/frontend/register',
+}
+
+function pluginLoader(
+  modulePath: string
+): () => Promise<{ register: (r: PluginComponentRegistry) => void }> {
+  return () => import(/* webpackIgnore: true */ modulePath)
+}
+
 const BUNDLED_PLUGINS: Record<
   string,
   () => Promise<{ register: (r: PluginComponentRegistry) => void }>
-> = {
-  '@barazo/plugin-signatures': () => import('@barazo/plugin-signatures/frontend/register'),
-}
+> = Object.fromEntries(
+  Object.entries(BUNDLED_PLUGIN_PATHS).map(([name, path]) => [name, pluginLoader(path)])
+)
 
 let loaded = false
 
