@@ -43,10 +43,10 @@ COPY barazo-plugins/ ./barazo-plugins/
 # Copy web source
 COPY barazo-web/ ./barazo-web/
 
-# Build lexicons and plugin frontend first (workspace dependencies), then Next.js
+# Build lexicons first (workspace dependency), then Next.js.
+# Plugin frontend source is compiled by Next.js via transpilePackages.
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter @singi-labs/lexicons build && \
-    cd barazo-plugins/packages/plugin-signatures && npx tsc -p tsconfig.frontend.json --skipLibCheck && cd /workspace && \
     pnpm --filter @singi-labs/web build
 
 # ---------------------------------------------------------------------------
