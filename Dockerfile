@@ -18,6 +18,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY barazo-lexicons/package.json ./barazo-lexicons/
 COPY barazo-api/package.json ./barazo-api/
 COPY barazo-web/package.json ./barazo-web/
+COPY barazo-plugins/packages/plugin-signatures/package.json ./barazo-plugins/packages/plugin-signatures/
 
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
@@ -36,12 +37,16 @@ COPY --from=deps /workspace/ ./
 # Copy lexicons source (workspace dependency)
 COPY barazo-lexicons/ ./barazo-lexicons/
 
+# Copy plugins source (workspace dependency — frontend components bundled by Next.js)
+COPY barazo-plugins/ ./barazo-plugins/
+
 # Copy web source
 COPY barazo-web/ ./barazo-web/
 
-# Build lexicons first (workspace dependency), then Next.js
+# Build lexicons and plugin frontend first (workspace dependencies), then Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter @singi-labs/lexicons build && \
+    cd barazo-plugins/packages/plugin-signatures && npx tsc -p tsconfig.frontend.json && cd /workspace && \
     pnpm --filter @singi-labs/web build
 
 # ---------------------------------------------------------------------------
