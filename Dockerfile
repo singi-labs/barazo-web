@@ -46,7 +46,7 @@ COPY barazo-web/ ./barazo-web/
 # Build lexicons and plugin frontend first (workspace dependencies), then Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter @singi-labs/lexicons build && \
-    cd barazo-plugins/packages/plugin-signatures && npx tsc -p tsconfig.frontend.json && cd /workspace && \
+    cd barazo-plugins/packages/plugin-signatures && npx tsc -p tsconfig.frontend.json --skipLibCheck && cd /workspace && \
     pnpm --filter @singi-labs/web build
 
 # ---------------------------------------------------------------------------
