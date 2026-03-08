@@ -25,6 +25,23 @@ runs:
         git clone --depth 1 https://github.com/singi-labs/barazo-lexicons.git ../barazo-lexicons
         cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
 
+    - name: Clone and build barazo-plugins (frontend only)
+      shell: bash
+      run: |
+        git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
+        cd ../barazo-plugins && pnpm install --ignore-scripts
+        cd packages/plugin-signatures && npx tsc -p tsconfig.frontend.json
+
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
+
+    - name: Replace plugin symlinks for Turbopack compatibility
+      shell: bash
+      run: |
+        LINK=node_modules/@barazo/plugin-signatures
+        if [ -L "$LINK" ]; then
+          TARGET=$(realpath "$LINK")
+          rm "$LINK"
+          cp -r "$TARGET" "$LINK"
+        fi
