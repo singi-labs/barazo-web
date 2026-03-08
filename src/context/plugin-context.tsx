@@ -48,9 +48,9 @@ export function PluginProvider({ children }: PluginProviderProps) {
 
     try {
       const response = await getPlugins(token)
-      setPlugins(response.plugins)
       const enabledNames = response.plugins.filter((p) => p.enabled).map((p) => p.name)
-      void loadBundledPlugins(enabledNames)
+      await loadBundledPlugins(enabledNames)
+      setPlugins(response.plugins)
     } catch {
       // On error, keep existing plugins (or empty on first load)
       setPlugins((prev) => prev)
