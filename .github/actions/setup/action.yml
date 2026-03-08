@@ -25,12 +25,9 @@ runs:
         git clone --depth 1 https://github.com/singi-labs/barazo-lexicons.git ../barazo-lexicons
         cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
 
-    - name: Clone and build barazo-plugins (frontend only)
+    - name: Clone barazo-plugins
       shell: bash
-      run: |
-        git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
-        cd ../barazo-plugins && pnpm install --ignore-scripts
-        cd packages/plugin-signatures && npx tsc -p tsconfig.frontend.json
+      run: git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
 
     - name: Install dependencies
       shell: bash
