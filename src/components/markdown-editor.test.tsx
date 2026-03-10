@@ -132,6 +132,89 @@ describe('MarkdownEditor', () => {
     expect(screen.getByRole('textbox', { name: 'Content' })).toHaveAttribute('aria-invalid', 'true')
   })
 
+  describe('smart link paste', () => {
+    function pasteUrl(textarea: HTMLTextAreaElement, url: string) {
+      const event = new Event('paste', { bubbles: true, cancelable: true })
+      Object.defineProperty(event, 'clipboardData', {
+        value: { getData: (type: string) => (type === 'text/plain' ? url : '') },
+      })
+      textarea.dispatchEvent(event)
+      return event
+    }
+
+    it('wraps selected text as markdown link when pasting a URL', () => {
+      const onChange = vi.fn()
+      render(
+        <MarkdownEditor value="check this out" onChange={onChange} id="content" label="Content" />
+      )
+      const textarea = screen.getByRole('textbox', { name: 'Content' }) as HTMLTextAreaElement
+
+      // Select "this"
+      textarea.setSelectionRange(6, 10)
+      pasteUrl(textarea, 'https://example.com')
+
+      expect(onChange).toHaveBeenCalledWith('check [this](https://example.com) out')
+    })
+
+    it('does not intercept paste when no text is selected', () => {
+      const onChange = vi.fn()
+      render(<MarkdownEditor value="hello " onChange={onChange} id="content" label="Content" />)
+      const textarea = screen.getByRole('textbox', { name: 'Content' }) as HTMLTextAreaElement
+
+      textarea.setSelectionRange(6, 6)
+      const event = pasteUrl(textarea, 'https://example.com')
+
+      // Event should not be prevented — default paste behavior
+      expect(event.defaultPrevented).toBe(false)
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    it('does not intercept paste when pasted text is not a URL', () => {
+      const onChange = vi.fn()
+      render(
+        <MarkdownEditor value="hello world" onChange={onChange} id="content" label="Content" />
+      )
+      const textarea = screen.getByRole('textbox', { name: 'Content' }) as HTMLTextAreaElement
+
+      textarea.setSelectionRange(6, 11)
+      const event = pasteUrl(textarea, 'not a url')
+
+      expect(event.defaultPrevented).toBe(false)
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    it('handles http:// URLs', () => {
+      const onChange = vi.fn()
+      render(
+        <MarkdownEditor
+          value="click here please"
+          onChange={onChange}
+          id="content"
+          label="Content"
+        />
+      )
+      const textarea = screen.getByRole('textbox', { name: 'Content' }) as HTMLTextAreaElement
+
+      textarea.setSelectionRange(6, 10)
+      pasteUrl(textarea, 'http://example.com')
+
+      expect(onChange).toHaveBeenCalledWith('click [here](http://example.com) please')
+    })
+
+    it('places cursor after the inserted link', () => {
+      const onChange = vi.fn()
+      render(
+        <MarkdownEditor value="see docs now" onChange={onChange} id="content" label="Content" />
+      )
+      const textarea = screen.getByRole('textbox', { name: 'Content' }) as HTMLTextAreaElement
+
+      textarea.setSelectionRange(4, 8)
+      pasteUrl(textarea, 'https://docs.example.com')
+
+      expect(onChange).toHaveBeenCalledWith('see [docs](https://docs.example.com) now')
+    })
+  })
+
   it('passes axe accessibility check', async () => {
     const { container } = render(
       <MarkdownEditor value="Some content" onChange={vi.fn()} id="content" label="Content" />
