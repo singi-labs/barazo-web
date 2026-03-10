@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@barazo/plugin-signatures": "link:../barazo-plugins/packages/plugin-signatures",
-    "@singi-labs/lexicons": "link:../barazo-lexicons",
+    "@singi-labs/barazo-lexicons": "link:../barazo-lexicons",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
