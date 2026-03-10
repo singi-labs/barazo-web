@@ -862,6 +862,49 @@ export interface BehavioralFlagsResponse {
   flags: BehavioralFlag[]
 }
 
+// --- Community Rules ---
+
+export interface CommunityRule {
+  id: number
+  title: string
+  description: string
+  displayOrder: number
+  createdAt: string
+  updatedAt: string
+  archivedAt: string | null
+}
+
+export interface CommunityRulesResponse {
+  data: CommunityRule[]
+}
+
+export interface CommunityRuleVersion {
+  id: number
+  ruleId: number
+  title: string
+  description: string
+  createdAt: string
+}
+
+export interface CommunityRuleVersionsResponse {
+  data: CommunityRuleVersion[]
+  cursor: string | null
+}
+
+export interface CreateRuleInput {
+  title: string
+  description: string
+}
+
+export interface UpdateRuleInput {
+  title: string
+  description: string
+}
+
+export interface ReorderRulesInput {
+  order: Array<{ id: number; displayOrder: number }>
+}
+
 // --- Shared ---
 
 export type MaturityRating = 'safe' | 'mature' | 'adult'

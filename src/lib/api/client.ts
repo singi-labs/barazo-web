@@ -74,6 +74,11 @@ import type {
   BehavioralFlagsResponse,
   BehavioralFlag,
   ReactionsResponse,
+  CommunityRule,
+  CommunityRulesResponse,
+  CreateRuleInput,
+  UpdateRuleInput,
+  ReorderRulesInput,
 } from './types'
 
 /** Client: relative URLs (empty string). Server: internal Docker network URL. */
@@ -1489,6 +1494,83 @@ export function deleteTopicMod(
     headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
     body: params,
   })
+}
+
+// --- Community Rules endpoints ---
+
+export function getCommunityRules(
+  communityDid: string,
+  options?: FetchOptions
+): Promise<CommunityRulesResponse> {
+  return apiFetch<CommunityRulesResponse>(
+    `/api/communities/${encodeURIComponent(communityDid)}/rules`,
+    options
+  )
+}
+
+export function createCommunityRule(
+  communityDid: string,
+  input: CreateRuleInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunityRule> {
+  return apiFetch<CommunityRule>(`/api/communities/${encodeURIComponent(communityDid)}/rules`, {
+    ...options,
+    method: 'POST',
+    headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    body: input,
+  })
+}
+
+export function updateCommunityRule(
+  communityDid: string,
+  ruleId: number,
+  input: UpdateRuleInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<CommunityRule> {
+  return apiFetch<CommunityRule>(
+    `/api/communities/${encodeURIComponent(communityDid)}/rules/${ruleId}`,
+    {
+      ...options,
+      method: 'PUT',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+      body: input,
+    }
+  )
+}
+
+export function deleteCommunityRule(
+  communityDid: string,
+  ruleId: number,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(
+    `/api/communities/${encodeURIComponent(communityDid)}/rules/${ruleId}`,
+    {
+      ...options,
+      method: 'DELETE',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+    }
+  )
+}
+
+export function reorderCommunityRules(
+  communityDid: string,
+  input: ReorderRulesInput,
+  accessToken: string,
+  options?: FetchOptions
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(
+    `/api/communities/${encodeURIComponent(communityDid)}/rules/reorder`,
+    {
+      ...options,
+      method: 'PUT',
+      headers: { ...options?.headers, Authorization: `Bearer ${accessToken}` },
+      body: input,
+    }
+  )
 }
 
 export { ApiError }
