@@ -119,16 +119,14 @@ function LoginContent() {
           )}
 
           <div className="space-y-1">
-            <FormLabel htmlFor="handle" required>
-              Handle or DID
-            </FormLabel>
+            <FormLabel htmlFor="handle">Handle</FormLabel>
             <input
               id="handle"
               name="handle"
               type="text"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
-              placeholder="jay.bsky.team"
+              placeholder="alice.bsky.social"
               autoComplete="username"
               required
               disabled={submitting}
@@ -138,9 +136,6 @@ function LoginContent() {
                 'disabled:cursor-not-allowed disabled:opacity-50'
               )}
             />
-            <p className="text-xs text-muted-foreground">
-              Handle, DID, or AT Protocol URI (e.g. jay.bsky.team)
-            </p>
           </div>
 
           <button
@@ -155,6 +150,33 @@ function LoginContent() {
             {submitting ? 'Redirecting...' : 'Continue'}
           </button>
         </form>
+
+        <details className="group text-sm">
+          <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+            What is an AT Protocol identity?
+          </summary>
+          <p className="mt-2 text-muted-foreground">
+            <strong className="text-foreground">Barazo</strong> is built on the{' '}
+            <a
+              href="https://atproto.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
+            >
+              AT Protocol
+            </a>
+            , which lets you own your data and use one account across many apps. If you have a{' '}
+            <a
+              href="https://bsky.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline decoration-primary/50 hover:text-primary-hover hover:decoration-primary"
+            >
+              Bluesky
+            </a>{' '}
+            account, you already have one.
+          </p>
+        </details>
 
         <div className="space-y-2 text-center">
           <p className="text-sm text-muted-foreground">
