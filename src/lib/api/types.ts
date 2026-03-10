@@ -12,7 +12,7 @@ export type {
   TopicReplyInput,
   ReactionInput,
   ActorPreferencesInput,
-} from '@singi-labs/lexicons'
+} from '@singi-labs/barazo-lexicons'
 
 export {
   LEXICON_IDS,
@@ -20,7 +20,7 @@ export {
   topicReplySchema,
   reactionSchema,
   actorPreferencesSchema,
-} from '@singi-labs/lexicons'
+} from '@singi-labs/barazo-lexicons'
 
 // --- Categories ---
 
