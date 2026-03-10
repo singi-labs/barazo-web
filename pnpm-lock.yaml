@@ -137,7 +137,7 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@singi-labs/lexicons':
+      '@singi-labs/barazo-lexicons':
         specifier: link:../barazo-lexicons
         version: link:../barazo-lexicons
       '@tailwindcss/typography':
