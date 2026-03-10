@@ -55,7 +55,7 @@ describe('LoginPage', () => {
     render(<LoginPage />)
     const input = screen.getByLabelText(/handle/i)
     expect(input).toBeInTheDocument()
-    expect(input).toHaveAttribute('placeholder', 'jay.bsky.team')
+    expect(input).toHaveAttribute('placeholder', 'alice.bsky.social')
   })
 
   it('renders continue button', () => {
@@ -207,9 +207,9 @@ describe('LoginPage', () => {
   it('has links to create accounts on PDS hosts', () => {
     render(<LoginPage />)
 
-    const blueskyLink = screen.getByRole('link', { name: /bluesky/i })
-    expect(blueskyLink).toHaveAttribute('href', 'https://bsky.app')
-    expect(blueskyLink).toHaveAttribute('target', '_blank')
+    const blueskyLinks = screen.getAllByRole('link', { name: /bluesky/i })
+    const pdsBlueskyLink = blueskyLinks.find((l) => l.getAttribute('href') === 'https://bsky.app')!
+    expect(pdsBlueskyLink).toHaveAttribute('target', '_blank')
 
     const blackskyLink = screen.getByRole('link', { name: /blacksky/i })
     expect(blackskyLink).toHaveAttribute('href', 'https://blacksky.community')
