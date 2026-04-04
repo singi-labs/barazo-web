@@ -34,6 +34,11 @@ describe('TopicCard', () => {
     expect(screen.getByText(String(topic.reactionCount))).toBeInTheDocument()
   })
 
+  it('renders view count with accessible label', () => {
+    render(<TopicCard topic={topic} />)
+    expect(screen.getByLabelText(`${topic.viewCount} views`)).toBeInTheDocument()
+  })
+
   it('renders as an article element', () => {
     render(<TopicCard topic={topic} />)
     expect(screen.getByRole('article')).toBeInTheDocument()

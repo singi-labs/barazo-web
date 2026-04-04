@@ -6,7 +6,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChatCircle, Heart, Clock, PushPin } from '@phosphor-icons/react/dist/ssr'
+import { ChatCircle, Heart, Clock, PushPin, Eye } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime, getTopicUrl } from '@/lib/format'
@@ -111,6 +111,10 @@ export function TopicCard({ topic, className }: TopicCardProps) {
         <span className="flex items-center gap-1" aria-label={`${topic.reactionCount} reactions`}>
           <Heart className="h-4 w-4" weight="regular" aria-hidden="true" />
           {topic.reactionCount}
+        </span>
+        <span className="flex items-center gap-1" aria-label={`${topic.viewCount} views`}>
+          <Eye className="h-4 w-4" weight="regular" aria-hidden="true" />
+          {topic.viewCount}
         </span>
         <span
           className="hidden items-center gap-1 sm:flex"

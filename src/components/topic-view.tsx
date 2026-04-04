@@ -13,6 +13,7 @@ import {
   Tag,
   PencilSimple,
   Link as LinkIcon,
+  Eye,
 } from '@phosphor-icons/react/dist/ssr'
 import type { Topic } from '@/lib/api/types'
 import { cn } from '@/lib/utils'
@@ -249,6 +250,11 @@ export function TopicView({
             {formatCompactNumber(topic.replyCount)}
           </span>
         )}
+
+        <span className="flex items-center gap-1.5" aria-label={`${topic.viewCount} views`}>
+          <Eye className="h-4 w-4" weight="regular" aria-hidden="true" />
+          {formatCompactNumber(topic.viewCount)}
+        </span>
 
         {canReport && onReport && <ReportDialog subjectUri={topic.uri} onSubmit={onReport} />}
       </div>
