@@ -92,7 +92,12 @@ export default function EditTopicPage({ params }: EditTopicPageProps) {
     setError(null)
 
     try {
-      const accessToken = getAccessToken() ?? ''
+      const accessToken = getAccessToken()
+      if (!accessToken) {
+        setError('You must be logged in to edit a topic.')
+        setSubmitting(false)
+        return
+      }
       const updated = await updateTopic(
         rkey,
         {
