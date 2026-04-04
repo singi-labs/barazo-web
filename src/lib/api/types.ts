@@ -602,6 +602,13 @@ export interface UpdatePreferencesInput {
 
 // --- Per-Community Preference Overrides ---
 
+export interface NotificationPrefs {
+  replies: boolean
+  reactions: boolean
+  mentions: boolean
+  modActions: boolean
+}
+
 export interface CommunityPreferenceOverride {
   communityDid: string
   communityName: string
@@ -609,6 +616,7 @@ export interface CommunityPreferenceOverride {
   mutedWords: string[]
   blockedDids: string[]
   blockedProfiles: AuthorProfile[]
+  notificationPrefs: NotificationPrefs | null
 }
 
 export interface CommunityPreferencesResponse {
@@ -619,6 +627,7 @@ export interface UpdateCommunityPreferenceInput {
   maturityLevel?: 'inherit' | 'sfw' | 'mature'
   mutedWords?: string[]
   blockedDids?: string[]
+  notificationPrefs?: NotificationPrefs | null
 }
 
 export interface AgeDeclarationResponse {

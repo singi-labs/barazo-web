@@ -59,7 +59,7 @@ export default function SettingsPage() {
     handleAgeConfirm,
     handleAgeCancel,
     handleCrossPostAuthorize,
-  } = useSettingsForm()
+  } = useSettingsForm(publicSettings?.communityDid ?? undefined)
 
   const communityName = publicSettings?.communityName ?? ''
   const displayName = communityName || 'This Community'
@@ -165,12 +165,8 @@ export default function SettingsPage() {
                   />
 
                   <NotificationsSection
-                    notifyReplies={values.notifyReplies}
-                    notifyMentions={values.notifyMentions}
-                    notifyReactions={values.notifyReactions}
-                    onRepliesChange={(v) => setValues({ ...values, notifyReplies: v })}
-                    onMentionsChange={(v) => setValues({ ...values, notifyMentions: v })}
-                    onReactionsChange={(v) => setValues({ ...values, notifyReactions: v })}
+                    notificationLevel={values.notificationLevel}
+                    onLevelChange={(level) => setValues({ ...values, notificationLevel: level })}
                   />
 
                   <PluginSlot

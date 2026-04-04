@@ -643,6 +643,37 @@ export const handlers = [
     return HttpResponse.json({ ...mockUserPreferences, ...body })
   }),
 
+  // GET /api/users/me/preferences/communities
+  http.get(`${API_URL}/api/users/me/preferences/communities`, ({ request }) => {
+    const auth = request.headers.get('Authorization')
+    if (!auth?.startsWith('Bearer ')) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return HttpResponse.json({ communities: [] })
+  }),
+
+  // PUT /api/users/me/preferences/communities/:communityDid
+  http.put(
+    `${API_URL}/api/users/me/preferences/communities/:communityDid`,
+    async ({ request, params }) => {
+      const auth = request.headers.get('Authorization')
+      if (!auth?.startsWith('Bearer ')) {
+        return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      const body = (await request.json()) as Record<string, unknown>
+      return HttpResponse.json({
+        communityDid: params['communityDid'],
+        maturityOverride: null,
+        mutedWords: null,
+        blockedDids: null,
+        mutedDids: null,
+        notificationPrefs: null,
+        updatedAt: new Date().toISOString(),
+        ...body,
+      })
+    }
+  ),
+
   // POST /api/users/me/age-declaration
   http.post(`${API_URL}/api/users/me/age-declaration`, async ({ request }) => {
     const auth = request.headers.get('Authorization')

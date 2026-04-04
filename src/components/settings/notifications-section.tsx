@@ -1,26 +1,39 @@
 /**
- * NotificationsSection - Notification preference toggles.
+ * NotificationsSection — per-community notification level selector.
+ * Three levels: All notifications / Mentions only / None.
  * @see specs/prd-web.md Section M8
  */
 
 'use client'
 
+import type { NotificationLevel } from '@/lib/notification-level'
+
 interface NotificationsSectionProps {
-  notifyReplies: boolean
-  notifyMentions: boolean
-  notifyReactions: boolean
-  onRepliesChange: (enabled: boolean) => void
-  onMentionsChange: (enabled: boolean) => void
-  onReactionsChange: (enabled: boolean) => void
+  notificationLevel: NotificationLevel
+  onLevelChange: (level: NotificationLevel) => void
 }
 
+const LEVELS: { value: NotificationLevel; label: string; description: string }[] = [
+  {
+    value: 'all',
+    label: 'All notifications',
+    description: 'Replies, reactions, and mentions',
+  },
+  {
+    value: 'mentions_only',
+    label: 'Mentions only',
+    description: 'Only when someone mentions your handle',
+  },
+  {
+    value: 'none',
+    label: 'None',
+    description: 'No notifications from this community',
+  },
+]
+
 export function NotificationsSection({
-  notifyReplies,
-  notifyMentions,
-  notifyReactions,
-  onRepliesChange,
-  onMentionsChange,
-  onReactionsChange,
+  notificationLevel,
+  onLevelChange,
 }: NotificationsSectionProps) {
   return (
     <fieldset className="space-y-4 rounded-lg border border-border p-4">
@@ -30,33 +43,26 @@ export function NotificationsSection({
         provide an email address, so notifications are not sent via email.
       </p>
       <div className="space-y-3">
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={notifyReplies}
-            onChange={(e) => onRepliesChange(e.target.checked)}
-            className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-          />
-          <span className="text-sm text-foreground">Replies to my posts</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={notifyMentions}
-            onChange={(e) => onMentionsChange(e.target.checked)}
-            className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-          />
-          <span className="text-sm text-foreground">Mentions of my handle</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={notifyReactions}
-            onChange={(e) => onReactionsChange(e.target.checked)}
-            className="h-4 w-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
-          />
-          <span className="text-sm text-foreground">Reactions on my posts</span>
-        </label>
+        {LEVELS.map(({ value, label, description }) => {
+          const inputId = `notification-level-${value}`
+          return (
+            <div key={value} className="flex cursor-pointer items-start gap-3">
+              <input
+                id={inputId}
+                type="radio"
+                name="notification-level"
+                value={value}
+                checked={notificationLevel === value}
+                onChange={() => onLevelChange(value)}
+                className="mt-0.5 h-4 w-4 border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
+              />
+              <label htmlFor={inputId} className="flex cursor-pointer flex-col">
+                <span className="text-sm font-medium text-foreground">{label}</span>
+                <span className="text-xs text-muted-foreground">{description}</span>
+              </label>
+            </div>
+          )
+        })}
       </div>
     </fieldset>
   )
