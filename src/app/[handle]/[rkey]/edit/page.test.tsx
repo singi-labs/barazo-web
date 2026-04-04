@@ -3,7 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeAll, afterAll, afterEach, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { handlers } from '@/mocks/handlers'
 import EditTopicPage from './page'
@@ -150,5 +151,31 @@ describe('EditTopicPage', () => {
 
     render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
     expect(await screen.findByText('You can only edit your own posts.')).toBeInTheDocument()
+  })
+
+  it('shows error when getAccessToken returns null on submit', async () => {
+    const user = userEvent.setup()
+    mockUseAuth.mockReturnValue({
+      user: {
+        did: 'did:plc:user-jay-001',
+        handle: 'jay.bsky.team',
+        displayName: 'Jay',
+        avatarUrl: null,
+      } as Record<string, unknown> | null,
+      isAuthenticated: true,
+      isLoading: false,
+      getAccessToken: (() => null) as () => string | null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      setSessionFromCallback: vi.fn(),
+      authFetch: vi.fn(),
+    })
+
+    render(<EditTopicPage params={{ handle: 'jay.bsky.team', rkey: '3kf1abc' }} />)
+    const saveButton = await screen.findByRole('button', { name: 'Save Changes' })
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('You must be logged in to edit a topic.')
+    })
   })
 })
