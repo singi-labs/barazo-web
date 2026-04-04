@@ -7,9 +7,21 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getPreferences, updatePreferences, resolveHandles, declareAge } from '@/lib/api/client'
+import {
+  getPreferences,
+  updatePreferences,
+  resolveHandles,
+  declareAge,
+  getCommunityPreferences,
+  updateCommunityPreference,
+} from '@/lib/api/client'
 import type { AuthorProfile } from '@/lib/api/types'
 import { useAuth } from '@/hooks/use-auth'
+import {
+  notificationLevelFromPrefs,
+  notificationPrefsFromLevel,
+  type NotificationLevel,
+} from '@/lib/notification-level'
 
 export type MaturityLevel = 'sfw' | 'sfw-mature'
 
@@ -19,9 +31,7 @@ export interface SettingsValues {
   blockedUsers: AuthorProfile[]
   crossPostBluesky: boolean
   crossPostFrontpage: boolean
-  notifyReplies: boolean
-  notifyMentions: boolean
-  notifyReactions: boolean
+  notificationLevel: NotificationLevel
 }
 
 const INITIAL_VALUES: SettingsValues = {
@@ -30,12 +40,10 @@ const INITIAL_VALUES: SettingsValues = {
   blockedUsers: [],
   crossPostBluesky: true,
   crossPostFrontpage: false,
-  notifyReplies: true,
-  notifyMentions: true,
-  notifyReactions: false,
+  notificationLevel: 'mentions_only',
 }
 
-export function useSettingsForm() {
+export function useSettingsForm(communityDid?: string) {
   const { getAccessToken, crossPostScopesGranted, requestCrossPostAuth } = useAuth()
   const [values, setValues] = useState<SettingsValues>(INITIAL_VALUES)
   const [loading, setLoading] = useState(true)
@@ -58,17 +66,25 @@ export function useSettingsForm() {
       return
     }
 
-    getPreferences(token)
-      .then((prefs) => {
+    const globalPrefsPromise = getPreferences(token)
+    const communityPrefsPromise = communityDid
+      ? getCommunityPreferences(token)
+      : Promise.resolve(null)
+
+    Promise.all([globalPrefsPromise, communityPrefsPromise])
+      .then(([prefs, communityPrefsResponse]) => {
+        const communityPrefs = communityDid
+          ? (communityPrefsResponse?.communities.find((c) => c.communityDid === communityDid) ??
+            null)
+          : null
+
         setValues({
           maturityLevel: prefs.maturityLevel === 'mature' ? 'sfw-mature' : 'sfw',
           mutedWords: prefs.mutedWords.join(', '),
           blockedUsers: prefs.blockedProfiles ?? [],
           crossPostBluesky: prefs.crossPostBluesky,
           crossPostFrontpage: prefs.crossPostFrontpage,
-          notifyReplies: true,
-          notifyMentions: true,
-          notifyReactions: false,
+          notificationLevel: notificationLevelFromPrefs(communityPrefs?.notificationPrefs ?? null),
         })
         setDeclaredAge(prefs.declaredAge)
       })
@@ -77,7 +93,7 @@ export function useSettingsForm() {
         setGlobalError('Failed to load preferences')
       })
       .finally(() => setLoading(false))
-  }, [getAccessToken])
+  }, [getAccessToken, communityDid])
 
   const handleBlockUser = useCallback(
     async (handle: string) => {
@@ -130,13 +146,27 @@ export function useSettingsForm() {
       }
 
       try {
-        await updatePreferences(
-          {
-            crossPostBluesky: values.crossPostBluesky,
-            crossPostFrontpage: values.crossPostFrontpage,
-          },
-          token
-        )
+        const saves: Promise<unknown>[] = [
+          updatePreferences(
+            {
+              crossPostBluesky: values.crossPostBluesky,
+              crossPostFrontpage: values.crossPostFrontpage,
+            },
+            token
+          ),
+        ]
+
+        if (communityDid) {
+          saves.push(
+            updateCommunityPreference(
+              communityDid,
+              { notificationPrefs: notificationPrefsFromLevel(values.notificationLevel) },
+              token
+            )
+          )
+        }
+
+        await Promise.all(saves)
         setCommunitySuccess(true)
       } catch {
         setCommunityError('Failed to save community settings')
@@ -144,7 +174,13 @@ export function useSettingsForm() {
         setSavingCommunity(false)
       }
     },
-    [values.crossPostBluesky, values.crossPostFrontpage, getAccessToken]
+    [
+      values.crossPostBluesky,
+      values.crossPostFrontpage,
+      values.notificationLevel,
+      communityDid,
+      getAccessToken,
+    ]
   )
 
   const handleSaveGlobalSettings = useCallback(
