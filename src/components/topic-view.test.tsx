@@ -114,6 +114,11 @@ describe('TopicView', () => {
     expect(screen.getByLabelText(`${topic.reactionCount} reactions`)).toBeInTheDocument()
   })
 
+  it('renders view count with accessible label', () => {
+    render(<TopicView topic={topic} />)
+    expect(screen.getByLabelText(`${topic.viewCount} views`)).toBeInTheDocument()
+  })
+
   it('uses article element with aria-labelledby', () => {
     const { container } = render(<TopicView topic={topic} />)
     const article = container.querySelector('article')

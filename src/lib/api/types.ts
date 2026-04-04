@@ -120,6 +120,7 @@ export interface Topic {
   cid: string
   replyCount: number
   reactionCount: number
+  viewCount: number
   isAuthorDeleted: boolean
   isModDeleted: boolean
   isPinned: boolean
