@@ -59,6 +59,34 @@ export function MarkdownEditor({
     [value, onChange]
   )
 
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const textarea = textareaRef.current
+      if (!textarea) return
+
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
+      if (start === end) return // No selection — let default paste happen
+
+      const pasted = e.clipboardData.getData('text/plain')
+      if (!/^https?:\/\/\S+$/.test(pasted)) return // Not a URL
+
+      e.preventDefault()
+      const before = value.slice(0, start)
+      const selected = value.slice(start, end)
+      const after = value.slice(end)
+      const link = `[${selected}](${pasted})`
+      onChange(before + link + after)
+
+      const cursorPos = start + link.length
+      requestAnimationFrame(() => {
+        textarea.focus()
+        textarea.setSelectionRange(cursorPos, cursorPos)
+      })
+    },
+    [value, onChange]
+  )
+
   const handleToolbarKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const buttons = toolbarRef.current?.querySelectorAll<HTMLButtonElement>('button')
@@ -127,6 +155,7 @@ export function MarkdownEditor({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onPaste={handlePaste}
         placeholder={placeholder ?? 'Write your content using Markdown...'}
         required={required}
         aria-invalid={error ? 'true' : undefined}
