@@ -1,0 +1,54 @@
+# Companion to ci.yml. The real CI workflow is path-filtered to code paths, so a
+# pull request that only touches docs (e.g. README.md) never triggers it and the
+# required checks (Lint, Type Check, Test, Build) stay pending forever, blocking
+# the merge. This workflow runs on the inverse path set and reports those same
+# four check names as passing, so docs-only PRs are mergeable without weakening
+# branch protection. Any PR that touches code paths triggers ci.yml instead and
+# gets the real checks.
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths-ignore:
+      - 'src/**'
+      - 'e2e/**'
+      - 'public/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+      - 'next.config.ts'
+      - 'tailwind.config.*'
+      - 'playwright.config.ts'
+      - 'lighthouserc.json'
+      - '.github/workflows/ci.yml'
+      - '.github/actions/**'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No code paths changed; Lint not required for this PR."
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No code paths changed; Type Check not required for this PR."
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No code paths changed; Test not required for this PR."
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No code paths changed; Build not required for this PR."

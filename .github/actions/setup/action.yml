@@ -25,15 +25,17 @@ runs:
         git clone --depth 1 https://github.com/singi-labs/barazo-lexicons.git ../barazo-lexicons
         cd ../barazo-lexicons && pnpm install --ignore-scripts && pnpm run build
 
-    - name: Clone barazo-plugins
+    - name: Clone and prepare barazo-plugins
       shell: bash
-      run: git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
+      run: |
+        git clone --depth 1 https://github.com/singi-labs/barazo-plugins.git ../barazo-plugins
+        cd ../barazo-plugins/packages/plugin-signatures && pnpm install --ignore-scripts
 
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
 
-    - name: Replace plugin symlinks for Turbopack compatibility
+    - name: Copy plugin into node_modules for Turbopack
       shell: bash
       run: |
         LINK=node_modules/@barazo/plugin-signatures
@@ -42,3 +44,12 @@ runs:
           rm "$LINK"
           cp -r "$TARGET" "$LINK"
         fi
+        # Turbopack can't resolve .js → .tsx inside node_modules.
+        # Create .js symlinks so the plugin's ESM imports resolve.
+        cd "$LINK/frontend"
+        for f in *.tsx; do
+          ln -sf "$f" "${f%.tsx}.js"
+        done
+        for f in *.ts; do
+          [ ! -e "${f%.ts}.js" ] && ln -sf "$f" "${f%.ts}.js"
+        done
