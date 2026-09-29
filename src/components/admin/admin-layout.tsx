@@ -26,6 +26,7 @@ import {
   ShieldWarning,
   SealCheck,
   List,
+  ListNumbers,
   X,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
@@ -39,6 +40,7 @@ const NAV_ITEMS = [
   { href: '/admin/categories', label: 'Categories', icon: FolderSimple },
   { href: '/admin/pages', label: 'Pages', icon: Article },
   { href: '/admin/moderation', label: 'Moderation', icon: ShieldCheck },
+  { href: '/admin/rules', label: 'Rules', icon: ListNumbers },
   { href: '/admin/sybil-detection', label: 'Sybil Detection', icon: ShieldWarning },
   { href: '/admin/trust-seeds', label: 'Trust Seeds', icon: SealCheck },
   { href: '/admin/settings', label: 'Settings', icon: Gear },

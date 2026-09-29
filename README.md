@@ -94,7 +94,6 @@ The default frontend for Barazo forums. Communicates with the [barazo-api](https
 ## Planned Features
 
 - Plugin management UI (page exists, functionality pending)
-- Stripe billing dashboard integration
 - PWA (push notifications, offline, add-to-home-screen)
 - AI feature UI (semantic search, AI moderation dashboard, translation)
 - Cross-community search aggregator UI
