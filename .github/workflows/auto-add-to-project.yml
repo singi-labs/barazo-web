@@ -25,7 +25,7 @@ jobs:
 
       - name: Add to project
         if: steps.check.outputs.status == 'open'
-        uses: actions/add-to-project@v1.0.2
+        uses: actions/add-to-project@v2.0.0
         with:
           project-url: https://github.com/orgs/singi-labs/projects/2
           github-token: ${{ secrets.PROJECT_BOARD_TOKEN }}
