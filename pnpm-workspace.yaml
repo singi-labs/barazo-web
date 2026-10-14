@@ -6,7 +6,7 @@ ignoredBuiltDependencies:
 # When running in the workspace root, the root pnpm-workspace.yaml takes precedence.
 # Keep these versions in sync with the workspace root catalog.
 catalog:
-  zod: '4.3.6'
+  zod: '4.6.5'
   vitest: '4.1.4'
   typescript: '6.0.2'
   typescript-eslint: '8.56.1'
@@ -18,4 +18,4 @@ catalog:
   husky: '9.1.7'
   lint-staged: '16.4.0'
   multiformats: '13.4.2'
-  prettier: '3.8.2'
+  prettier: '3.9.10'
