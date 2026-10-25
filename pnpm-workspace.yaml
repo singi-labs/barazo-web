@@ -7,7 +7,7 @@ ignoredBuiltDependencies:
 # Keep these versions in sync with the workspace root catalog.
 catalog:
   zod: '4.3.6'
-  vitest: '4.1.4'
+  vitest: '4.1.11'
   typescript: '6.0.2'
   typescript-eslint: '8.56.1'
   eslint: '10.0.1'
